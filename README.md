@@ -1,2 +1,2 @@
 # EEG-Blinks
-BLINKER: Automated blink detector for EEG
+Tools for analyzing eye blinks from EEG data

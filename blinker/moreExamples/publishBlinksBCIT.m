@@ -1,0 +1,125 @@
+%% Code for dataset 1
+blinkDir = 'O:\ARL_Data\BCITBlinks';
+experiment = 'Experiment X2 Traffic Complexity';
+blinkFiles = cell(2, 1);
+blinkFile = 'Experiment X2 Traffic ComplexityIC.mat';
+load([blinkDir filesep blinkFile]);
+blinkFiles{blinkFile = 'Experiment X2 Traffic ComplexityChannel.mat';
+load([blinkDir filesep blinkFile]);
+blinkFiles{componentSize = size(blinkFiles{1}.blinkComponents, 2);
+blinkTraces = zeros(length(types), componentSize);
+used = blinkFiles{1}.usedComponent;
+blinkTraces(1, :) = blinkFiles{1}.blinkComponents(used, :);
+used = blinkFiles{2}.usedComponent;
+blinkTraces(2, :) = blinkFiles{2}.blinkComponents(used, :);
+load([blinkDir filesep blinkFile]);
+blinkFiles{%% Code for dataset 1
+blinkDir = 'O:\ARL_Data\BCITBlinks';
+experiment = 'Experiment X2 Traffic Complexity';
+blinkFiles = cell(2, 1);
+blinkFile = 'Experiment X2 Traffic ComplexityIC.mat';
+load([blinkDir filesep blinkFile]);
+blinkFiles{blinkFile = 'Experiment X2 Traffic ComplexityChannel.mat';
+load([blinkDir filesep blinkFile]);
+blinkFiles{componentSize = size(blinkFiles{1}.blinkComponents, 2);
+blinkTraces = zeros(length(types), componentSize);
+used = blinkFiles{1}.usedComponent;
+blinkTraces(1, :) = blinkFiles{1}.blinkComponents(used, :);
+used = blinkFiles{2}.usedComponent;
+blinkTraces(2, :) = blinkFiles{2}.blinkComponents(used, :);
+load([blinkDir filesep blinkFile]);
+blinkFiles{%% Code for dataset 1
+blinkDir = 'O:\ARL_Data\BCITBlinks';
+experiment = 'Experiment X2 Traffic Complexity';
+blinkFiles = cell(2, 1);
+blinkFile = 'Experiment X2 Traffic ComplexityIC.mat';
+load([blinkDir filesep blinkFile]);
+blinkFiles{blinkFile = 'Experiment X2 Traffic ComplexityChannel.mat';
+load([blinkDir filesep blinkFile]);
+blinkFiles{componentSize = size(blinkFiles{1}.blinkComponents, 2);
+blinkTraces = zeros(length(types), componentSize);
+used = blinkFiles{1}.usedComponent;
+blinkTraces(1, :) = blinkFiles{1}.blinkComponents(used, :);
+used = blinkFiles{2}.usedComponent;
+blinkTraces(2, :) = blinkFiles{2}.blinkComponents(used, :);
+load([blinkDir filesep blinkFile]);
+blinkFiles{%% Code for dataset 1
+blinkDir = 'O:\ARL_Data\BCITBlinks';
+experiment = 'Experiment X2 Traffic Complexity';
+blinkFiles = cell(2, 1);
+blinkFile = 'Experiment X2 Traffic ComplexityIC.mat';
+load([blinkDir filesep blinkFile]);
+blinkFiles{blinkFile = 'Experiment X2 Traffic ComplexityChannel.mat';
+load([blinkDir filesep blinkFile]);
+blinkFiles{componentSize = size(blinkFiles{1}.blinkComponents, 2);
+blinkTraces = zeros(length(types), componentSize);
+used = blinkFiles{1}.usedComponent;
+blinkTraces(1, :) = blinkFiles{1}.blinkComponents(used, :);
+used = blinkFiles{2}.usedComponent;
+blinkTraces(2, :) = blinkFiles{2}.blinkComponents(used, :);
+load([blinkDir filesep blinkFile]);
+blinkFiles{%% Code for dataset 1
+blinkDir = 'O:\ARL_Data\BCITBlinks';
+experiment = 'Experiment X2 Traffic Complexity';
+blinkFiles = cell(2, 1);
+blinkFile = 'Experiment X2 Traffic ComplexityIC.mat';
+load([blinkDir filesep blinkFile]);
+blinkFiles{blinkFile = 'Experiment X2 Traffic ComplexityChannel.mat';
+load([blinkDir filesep blinkFile]);
+blinkFiles{componentSize = size(blinkFiles{1}.blinkComponents, 2);
+blinkTraces = zeros(length(types), componentSize);
+used = blinkFiles{1}.usedComponent;
+blinkTraces(1, :) = blinkFiles{1}.blinkComponents(used, :);
+used = blinkFiles{2}.usedComponent;
+blinkTraces(2, :) = blinkFiles{2}.blinkComponents(used, :);
+load([blinkDir filesep blinkFile]);
+blinkFiles{%% Code for dataset 1
+blinkDir = 'O:\ARL_Data\BCITBlinks';
+experiment = 'Experiment X2 Traffic Complexity';
+blinkFiles = cell(2, 1);
+blinkFile = 'Experiment X2 Traffic ComplexityIC.mat';
+load([blinkDir filesep blinkFile]);
+blinkFiles{blinkFile = 'Experiment X2 Traffic ComplexityChannel.mat';
+load([blinkDir filesep blinkFile]);
+blinkFiles{componentSize = size(blinkFiles{1}.blinkComponents, 2);
+blinkTraces = zeros(length(types), componentSize);
+used = blinkFiles{1}.usedComponent;
+blinkTraces(1, :) = blinkFiles{1}.blinkComponents(used, :);
+used = blinkFiles{2}.usedComponent;
+blinkTraces(2, :) = blinkFiles{2}.blinkComponents(used, :);
+load([blinkDir filesep blinkFile]);
+blinkFiles{%% Code for dataset 1
+blinkDir = 'O:\ARL_Data\BCITBlinks';
+experiment = 'Experiment X2 Traffic Complexity';
+blinkFiles = cell(2, 1);
+blinkFile = 'Experiment X2 Traffic ComplexityIC.mat';
+load([blinkDir filesep blinkFile]);
+blinkFiles{blinkFile = 'Experiment X2 Traffic ComplexityChannel.mat';
+load([blinkDir filesep blinkFile]);
+blinkFiles{componentSize = size(blinkFiles{1}.blinkComponents, 2);
+blinkTraces = zeros(length(types), componentSize);
+used = blinkFiles{1}.usedComponent;
+blinkTraces(1, :) = blinkFiles{1}.blinkComponents(used, :);
+used = blinkFiles{2}.usedComponent;
+blinkTraces(2, :) = blinkFiles{2}.blinkComponents(used, :);
+load([blinkDir filesep blinkFile]);
+blinkFiles{outputDir = 'O:\ARL_Data\BCITOutput';
+blinkPropertiesFile = 'Experiment X2 Traffic ComplexityBlinkPropertiesNewIC.mat';
+load([blinkDir filesep blinkPropertiesFile]);
+theseFits = blinkFits{1};
+theseProperties = blinkProps{1};
+[~, dataName, ~] = fileparts(dBlinks.fileName);
+thisOutDir = [outputDir filesep dataName];
+if ~exist(thisOutDir, 'dir')
+   mkdir(thisOutDir);
+end
+startBatch = 1;
+endBatch = 257;
+blink = dBlinks.blinkComponent;
+
+n = 1; %#ok<NASGU>
+scriptName = 'plotBlinkScript';
+plotBlinkScript;
+close all;
+clear all;
+fclose all;
