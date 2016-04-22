@@ -3,8 +3,8 @@
 experiment = 'Shooter';
 %blinkDir = 'K:\CTAData\Shooter\ShooterBlinks';
 blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
-type = 'EOGUnref';
-%type = 'ChannelUnref';
+%type = 'EOGUnref';
+type = 'ChannelUnref';
 
 %% Load the files
 blinkFile = [experiment 'BlinksNew' type '.mat'];

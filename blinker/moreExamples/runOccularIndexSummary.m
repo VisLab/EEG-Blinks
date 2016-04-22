@@ -7,19 +7,19 @@
 % type = 'Channel';
 
 %% BCIT Examples
-experiment = 'BCITLevel0';
-blinkDir = 'O:\ARL_Data\BCITBlinks';
-type = 'ChannelUnref';
+% experiment = 'BCITLevel0';
+% blinkDir = 'O:\ARL_Data\BCITBlinks';
+% type = 'ChannelUnref';
 %% BCI2000 blinks
 % type = 'Channel';
 % experiment = 'BCI2000';
 % blinkDir = 'O:\ARL_Data\BCI2000\BCI2000Blinks';
 %% Shooter blinks
-% experiment = 'Shooter';
-% %blinkDir = 'K:\CTAData\Shooter\ShooterBlinks';
-% blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
-% %type = 'EOGUnref';
-% type = 'ChannelUnref';
+experiment = 'Shooter';
+%blinkDir = 'K:\CTAData\Shooter\ShooterBlinks';
+blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
+%type = 'EOGUnref';
+type = 'ChannelUnref';
 %% Read in the blink data for this collection
 blinkFile = [experiment 'BlinksNew' type '.mat'];
 blinkPropertiesFile = [experiment 'BlinksNewProperties' type '.mat'];
