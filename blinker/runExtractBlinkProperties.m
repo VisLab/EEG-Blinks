@@ -18,10 +18,10 @@ pop_editoptions('option_single', false, 'option_savetwofiles', false);
 % blinkStatsFiles = 'LSIEStatsOut.mat';
 
 %% BCIT Examples
-collectionType = 'FILES';
-experiment = 'BCITLevel0';
-blinkDir = 'O:\ARL_Data\BCITBlinks';
-type = 'ChannelUnref';
+% collectionType = 'FILES';
+% experiment = 'BCITLevel0';
+% blinkDir = 'O:\ARL_Data\BCITBlinks';
+% type = 'ChannelUnref';
 % %type = 'EOG';
 % type = 'IC';
 % blinkDir = 'O:\ARL_Data\BCITBlinks';
@@ -45,13 +45,6 @@ type = 'ChannelUnref';
 % %type = 'IC';
 % type = 'Channel';
 
-% %% UMICH LSIE
-% %type = 'Channel';
-% type = 'IC';
-% collectionType = 'FILES';
-% experiment = 'LSIE_UM';
-% blinkDir = 'E:\CTAData\LSIE_UM_Blinks';
-
 %% Shooter
 % type = 'ChannelUnref';
 % %type = 'EOGUnref';
@@ -62,6 +55,15 @@ type = 'ChannelUnref';
 % type = 'Channel';
 % experiment = 'BCI2000';
 % blinkDir = 'O:\ARL_Data\BCI2000\BCI2000Blinks';
+
+%% UMICH LSIE
+organizationType = 'UM';
+type = 'ChannelUnref';
+undoReference = false;
+collectionType = 'FILES';
+experiment = 'LSIE_UM';
+pathName = 'E:\CTADATA\Michigan\EEG_data_for_blink_detection_out';
+blinkDir = 'E:\CTADATA\Michigan\EEG_Blinks';
 
 %% Update file names with the experiment
 blinkFile = [experiment 'BlinksNew' type '.mat'];

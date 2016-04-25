@@ -3,7 +3,7 @@ function badBlinkMask = getBadBlinks(blinkFits, blinkProperties)
 corrThreshhold = 0.95;
 
 %% Test for negative durations
-tentDuration = cellfun(@double, {blinkProperties.tentDuration}) < 0.05;
+durationTent = cellfun(@double, {blinkProperties.durationTent}) < 0.05;
 closingTime = cellfun(@double,{blinkProperties.closingTimeTent}) < 0;
 reopeningTime = cellfun(@double,{blinkProperties.reopeningTimeTent}) < 0;
 
@@ -11,4 +11,4 @@ reopeningTime = cellfun(@double,{blinkProperties.reopeningTimeTent}) < 0;
 leftR2 = cellfun(@double,{blinkFits.leftR2}) < corrThreshhold;
 rightR2 = cellfun(@double,{blinkFits.rightR2}) < corrThreshhold;
 
-badBlinkMask = tentDuration | closingTime | reopeningTime | leftR2 | rightR2;
+badBlinkMask = durationTent | closingTime | reopeningTime | leftR2 | rightR2;

@@ -4,11 +4,11 @@
 % blinkDir = 'O:\ARL_Data\VEP\VEPBlinks';
 
 %% Consolidate BCIT statistics
-type = 'ChannelUnref';
-%type = 'EOGUnref';
+type = 'Channel';
+type = 'EOGUnref';
 experiment = 'BCITLevel0';
 blinkDir = 'O:\ARL_Data\BCITBlinks';
-%blinkDir = 'K:\BCITBlinks';
+blinkDir = 'K:\BCITBlinks';
 %experiment = 'Experiment X2 Traffic Complexity';
 % experiment = 'Experiment X6 Speed Control';
 % experiment = 'X3 Baseline Guard Duty';
@@ -19,10 +19,10 @@ blinkDir = 'O:\ARL_Data\BCITBlinks';
 % experiment = 'X2 RSVP Expertise';
 
 %% NCTU
-% type = 'Channel';
-% blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
-% experiment = 'NCTU_LK';
-% excludeTasks = {};
+type = 'Channel';
+blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
+experiment = 'NCTU_LK';
+excludeTasks = {};
 
 % %% UMICH LSIE
 % %type = 'Channel';

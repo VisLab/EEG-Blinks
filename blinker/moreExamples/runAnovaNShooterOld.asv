@@ -8,7 +8,7 @@ type = 'ChannelUnref';
 taskTypes = {{'SEF2', 'SEF4', 'SEO2', 'SEO4'};
               {'DEF2', 'DEF4', 'DEO2', 'DEO4', 'ARIT'};
               {'EC', 'EO'}};
-excludeTasks = 3;             
+              
     
 %% Load the files
 blinkFile = [experiment 'BlinksNew' type '.mat'];
@@ -37,6 +37,18 @@ for k = 1:length(uniqueSubjects)
     [sortTimes, sortIndex] = sort(theseTimes);
     thesePositions = datasetIndex(theseSubjects);
     taskOrder(theseSubjects) = sortIndex;
+    theseTasks = tasks(theseSubjects);
+    singleTasks = strcmpi(theseTasks, 'SEF2') | strcmpi(theseTasks, 'SEF4') | ...
+                  strcmpi(theseTasks, 'SEO2') | strcmpi(theseTasks, 'SEO4');
+    dualTasks = strcmpi(theseTasks, 'DEF2') | strcmpi(theseTasks, 'DEF4') | ...
+                strcmpi(theseTasks, 'DEO2') | strcmpi(theseTasks, 'DEO4') | ...
+                strcmpi(theseTasks, 'ARIT');
+    ecoTasks = strcmpi(theseTasks, 'EC') | strcmpi(theseTasks, 'EO');
+    theseGroups = taskGroups(theseSubjects);
+    theseGroups(ecoTasks) = 0;
+    theseGroups(singleTasks) = 1;
+    theseGroups(dualTasks) = 2;
+    taskGroups(theseSubjects) = theseGroups;
 end
 
 %% Initialize the structures
@@ -51,7 +63,7 @@ for k = 1:length(indicatorType)
     indicatorBase = occularIndices.(indicatorType{k})(:, 1);
     indicatorValid = ~isnan(indicatorBase) & componentValid';
     theseSubjects = subjects(indicatorValid);
-    theseTasks = taskGroups(indicatorValid);
+    theseTasks = tasks(indicatorValid);
     indicator = indicatorBase(indicatorValid);
     theseOrders = taskOrder(indicatorValid);
     
@@ -80,8 +92,8 @@ for k = 1:length(indicatorType)
     pValues{k, 2} = b;
     
     %% ANova subject-task with EC/EO eliminated
-    noExcludeTasks = taskGroups ~= excludeTasks;
-    indicatorNoEC = indicatorValid(:) & noExcludeTasks(:);
+    noECTasks = strcmpi(tasks, 'EC') | strcmpi(tasks, 'EO');
+    indicatorNoEC = indicatorValid(:) & ~noECTasks(:);
     theseSubjects = subjects(indicatorNoEC);
     theseTasks = tasks(indicatorNoEC);
     indicator = indicatorBase(indicatorNoEC);

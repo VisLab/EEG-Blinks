@@ -41,44 +41,49 @@ end
 
 function [] =  showDurations(dataName, data)
     badMask = logical(round(data(:, d.BADMASK)));
-    zeroDurations = data(:, d.ZERODUR);
-    zeroDurations(zeroDurations < 0) = NaN;
-    tentDurations = data(:, d.TENTDUR);
-    tentDurations(tentDurations < 0) = NaN;
-    baseHalfDurations = data(:, d.BASEHALFDUR);
-    baseHalfDurations(baseHalfDurations < 0) = NaN;
-    zeroHalfDurations = data(:, d.ZEROHALFDUR);
-    zeroHalfDurations(zeroHalfDurations < 0) = NaN;
+    durationZero = data(:, d.DURZERO);
+    durationZero(durationZero < 0) = NaN;
+    durationBase = data(:, d.DURBASE);
+    durationBase(durationBase < 0) = NaN;
+    durationTent = data(:, d.DURTENT);
+    durationTent(durationTent < 0) = NaN;
+    durationHalfBase = data(:, d.DURHALFBASE);
+    durationHalfBase(durationHalfBase < 0) = NaN;
+    durationHalfZero = data(:, d.DURHALFZERO);
+    durationHalfZero(durationHalfZero < 0) = NaN;
     
     fprintf('Blink zero durations: %g mean %g SD  median %g\n', ...
-        nanmean(zeroDurations), nanstd(zeroDurations), ...
-        nanmedian(zeroDurations));
+        nanmean(durationZero), nanstd(durationZero), ...
+        nanmedian(durationZero));
+    fprintf('Blink base durations: %g mean %g SD  median %g\n', ...
+        nanmean(durationBase), nanstd(durationBase), ...
+        nanmedian(durationBase));
     fprintf('Tent durations: %g mean %g SD median %g\n', ...
-        nanmean(tentDurations), nanstd(tentDurations), nanmedian(tentDurations)); 
+        nanmean(durationTent), nanstd(durationTent), nanmedian(durationTent)); 
     fprintf('Base half durations: %g mean %g SD  median %g\n', ...
-        nanmean(baseHalfDurations), nanstd(baseHalfDurations), ...
-        nanmedian(baseHalfDurations)); 
+        nanmean(durationHalfBase), nanstd(durationHalfBase), ...
+        nanmedian(durationHalfBase)); 
     fprintf('Zero half durations: %g mean %g SD  median %g\n', ...
-        nanmean(zeroHalfDurations), nanstd(zeroHalfDurations), ...
-        nanmedian(zeroHalfDurations)); 
+        nanmean(durationHalfZero), nanstd(durationHalfZero), ...
+        nanmedian(durationHalfZero)); 
 %% Threshhold the durations for plotting
     durationThreshhold = 1.0;
-    zeroDurations(zeroDurations > durationThreshhold) = durationThreshhold;
-    tentDurations(tentDurations > durationThreshhold) = durationThreshhold;
-    zeroHalfDurations(zeroHalfDurations > durationThreshhold) = durationThreshhold;
-    baseHalfDurations(baseHalfDurations > durationThreshhold) = durationThreshhold;    
+    durationZero(durationZero > durationThreshhold) = durationThreshhold;
+    durationTent(durationTent > durationThreshhold) = durationThreshhold;
+    durationHalfZero(durationHalfZero > durationThreshhold) = durationThreshhold;
+    durationHalfBase(durationHalfBase > durationThreshhold) = durationThreshhold;    
     
 %% Plot the tent versus blink durations
-    [m, b, R2] = getLinearEquation(zeroDurations(~badMask), ...
-                                   tentDurations(~badMask));
+    [m, b, R2] = getLinearEquation(durationZero(~badMask), ...
+                                   durationTent(~badMask));
     theTitle = {[dataName '(bad/total = ' ...
         num2str(sum(badMask)) '/' num2str(length(badMask)) ')'], ...
         ['[y = ' num2str(m) '*x + ' num2str(b) ', R2 = ' num2str(R2) ']']};
-    figure('Color', [1, 1, 1]) 
+    figure('Color', [1, 1, 1], 'Name', 'Zero versus tent duration') 
    
     hold on
-    plot(zeroDurations(badMask), tentDurations(badMask), 'ro')
-    plot(zeroDurations(~badMask), tentDurations(~badMask), 'kx')
+    plot(durationZero(badMask), durationTent(badMask), 'ro')
+    plot(durationZero(~badMask), durationTent(~badMask), 'kx')
     xLim = get(gca, 'XLim');
     plot([0, xLim(2)], [0, 0], 'Color', [0.8, 0.8, 0.8])
     plot([0, xLim(2)], [0, xLim(2)], 'Color', [0.8, 0.8, 0.8])
@@ -90,16 +95,16 @@ function [] =  showDurations(dataName, data)
     box on
     
     %% Plot the tent versus blink durations
-    [m, b, R2] = getLinearEquation(zeroDurations(~badMask), ...
-                                   zeroHalfDurations(~badMask));
+    [m, b, R2] = getLinearEquation(durationZero(~badMask), ...
+                                   durationHalfZero(~badMask));
     theTitle = {[dataName '(bad/total = ' ...
         num2str(sum(badMask)) '/' num2str(length(badMask)) ')'], ...
         ['[y = ' num2str(m) '*x + ' num2str(b) ', R2 = ' num2str(R2) ']']};
-    figure('Color', [1, 1, 1]) 
+    figure('Color', [1, 1, 1], 'Name', 'Zero versus half-zero duration') 
     
     hold on
-    plot(zeroDurations(badMask), zeroHalfDurations(badMask), 'ro')
-    plot(zeroDurations(~badMask),zeroHalfDurations(~badMask), 'kx')
+    plot(durationZero(badMask), durationHalfZero(badMask), 'ro')
+    plot(durationZero(~badMask),durationHalfZero(~badMask), 'kx')
     xLim = get(gca, 'XLim');
     plot([0, xLim(2)], [0, 0], 'Color', [0.8, 0.8, 0.8])
     plot([0, xLim(2)], [0, xLim(2)], 'Color', [0.8, 0.8, 0.8])
@@ -111,16 +116,16 @@ function [] =  showDurations(dataName, data)
     box on
     
     %% Plot the base versus zero durations
-    [m, b, R2] = getLinearEquation(zeroHalfDurations(~badMask), ...
-                                   baseHalfDurations(~badMask));
+    [m, b, R2] = getLinearEquation(durationHalfZero(~badMask), ...
+                                   durationHalfBase(~badMask));
     theTitle = {[dataName '(bad/total = ' ...
         num2str(sum(badMask)) '/' num2str(length(badMask)) ')'], ...
         ['[y = ' num2str(m) '*x + ' num2str(b) ', R2 = ' num2str(R2) ']']};
-    figure('Color', [1, 1, 1]) 
+    figure('Color', [1, 1, 1], 'Name', 'Half zero vs half base duration') 
  
     hold on
-    plot(zeroHalfDurations(badMask), baseHalfDurations(badMask), 'ro')
-    plot(zeroHalfDurations(~badMask), baseHalfDurations(~badMask), 'kx')
+    plot(durationHalfZero(badMask), durationHalfBase(badMask), 'ro')
+    plot(durationHalfZero(~badMask), durationHalfBase(~badMask), 'kx')
     xLim = get(gca, 'XLim');
     plot([0, xLim(2)], [0, 0], 'Color', [0.8, 0.8, 0.8])
     plot([0, xLim(2)], [0, xLim(2)], 'Color', [0.8, 0.8, 0.8])
@@ -132,21 +137,21 @@ function [] =  showDurations(dataName, data)
     box on
     
     %% Show overlaid histograms of durations
-    numberBins = round(max(10, sqrt(length(zeroDurations))));
+    numberBins = round(max(10, sqrt(length(durationZero))));
     binLimit = durationThreshhold/numberBins;
     bins = binLimit*(0:numberBins); 
-    [hZero, fZero] = hist(zeroDurations, bins);
-    [hTent, fTent] = hist(tentDurations, bins);
-    [hHalfBase, fHalfBase] = hist(baseHalfDurations, bins);
-    [hHalfZero, fHalfZero] = hist(zeroHalfDurations, bins);
+    [hZero, fZero] = hist(durationZero, bins);
+    [hTent, fTent] = hist(durationTent, bins);
+    [hHalfBase, fHalfBase] = hist(durationHalfBase, bins);
+    [hHalfZero, fHalfZero] = hist(durationHalfZero, bins);
     theTitle = [dataName ' Comparison of duration methods'];
     figure('Color', [1, 1, 1], 'Name', theTitle)
     hold on
-    plot(fZero, hZero/length(zeroDurations), 'k-', 'LineWidth', 2)
-    plot(fTent, hTent/length(tentDurations), 'r-', 'LineWidth', 2)
-    plot(fHalfZero, hHalfZero/length(zeroHalfDurations), 'g-', 'LineWidth', 2)
-    plot(fHalfBase, hHalfBase/length(baseHalfDurations), 'b-', 'LineWidth', 2)
-    plot(fTent, hTent/length(tentDurations), 'r-', 'LineWidth', 2)
+    plot(fZero, hZero/length(durationZero), 'k-', 'LineWidth', 2)
+    plot(fTent, hTent/length(durationTent), 'r-', 'LineWidth', 2)
+    plot(fHalfZero, hHalfZero/length(durationHalfZero), 'g-', 'LineWidth', 2)
+    plot(fHalfBase, hHalfBase/length(durationHalfBase), 'b-', 'LineWidth', 2)
+    plot(fTent, hTent/length(durationTent), 'r-', 'LineWidth', 2)
     xlabel('Blink duration (s)')
     ylabel('Fraction of occurences')
     legend('Zero', 'Tent', 'HalfZero', 'HalfBase')
@@ -194,7 +199,7 @@ function [] = showAmplitudeVelocityRatios(dataName, data)
         num2str(sum(badMask)) '/' num2str(length(badMask)) ')'], ...
         ['[y = ' num2str(m) '*x + ' num2str(b) ', R2 = ' num2str(R2) ']']};
     
-    figure('Color', [1, 1, 1]) 
+    figure('Color', [1, 1, 1], 'Name', 'Zero vs tent pAVR') 
     hold on
     plot(pAVRZero(badMask), pAVRTent(badMask), 'ro')
     plot(pAVRZero(~badMask), pAVRTent(~badMask), 'kx')
@@ -214,7 +219,7 @@ function [] = showAmplitudeVelocityRatios(dataName, data)
     theTitle = {[dataName '(bad/total = ' ...
         num2str(sum(badMask)) '/' num2str(length(badMask)) ')'], ...
         ['[y = ' num2str(m) '*x + ' num2str(b) ', R2 = ' num2str(R2) ']']};
-    figure('Color', [1, 1, 1]) 
+    figure('Color', [1, 1, 1], 'Name', 'Zero vs base pAVR') 
     hold on
     plot(pAVRZero(badMask), pAVRBase(badMask), 'ro')
     plot(pAVRZero(~badMask), pAVRBase(~badMask), 'kx')
@@ -223,6 +228,52 @@ function [] = showAmplitudeVelocityRatios(dataName, data)
     plot([0, xLim(2)], [0, xLim(2)], 'Color', [0.8, 0.8, 0.8])
     xlabel('Zero pAVR (10 ms)')
     ylabel('Base pAVR (10 ms)')
+    title(theTitle, 'Interpreter', 'None');
+    legend('corr < 0.95', 'corr > 0.95')
+    hold off
+    box on
+    
+    
+    %% Plot zero pAVR versus half base duration
+    durationHalfBase = data(:, d.DURHALFBASE);
+    durationHalfBase(durationHalfBase < 0) = NaN;
+    [m, b, R2] = getLinearEquation(pAVRZero, durationHalfBase);
+    theTitle = {[dataName '(bad/total = ' ...
+        num2str(sum(badMask)) '/' num2str(length(badMask)) ')'], ...
+        ['[y = ' num2str(m) '*x + ' num2str(b) ', R2 = ' num2str(R2) ']']};
+    
+    figure('Color', [1, 1, 1], 'Name', 'Zero pAVR vs half base duration') 
+    hold on
+    plot(pAVRZero(badMask), durationHalfBase(badMask), 'ro')
+    plot(pAVRZero(~badMask), durationHalfBase(~badMask), 'kx')
+    xLim = get(gca, 'XLim');
+    plot([0, xLim(2)], [b, m*xLim(2) + b], 'Color', [0.8, 0.8, 0.8])
+    
+    xlabel('Zero pAVR (10 ms)')
+    ylabel('Duration half base (s)')
+    title(theTitle, 'Interpreter', 'None');
+    legend('corr < 0.95', 'corr > 0.95')
+    hold off
+    box on
+    
+    
+    %% Plot zero nAVR versus half base duration
+    durationHalfBase = data(:, d.DURHALFBASE);
+    durationHalfBase(durationHalfBase < 0) = NaN;
+    [m, b, R2] = getLinearEquation(nAVRZero, durationHalfBase);
+    theTitle = {[dataName '(bad/total = ' ...
+        num2str(sum(badMask)) '/' num2str(length(badMask)) ')'], ...
+        ['[y = ' num2str(m) '*x + ' num2str(b) ', R2 = ' num2str(R2) ']']};
+    
+    figure('Color', [1, 1, 1], 'Name', 'Zero nAVR vs half base duration') 
+    hold on
+    plot(nAVRZero(badMask), durationHalfBase(badMask), 'ro')
+    plot(nAVRZero(~badMask), durationHalfBase(~badMask), 'kx')
+    xLim = get(gca, 'XLim');
+    plot([0, xLim(2)], [b, m*xLim(2) + b], 'Color', [0.8, 0.8, 0.8])
+    
+    xlabel('Zero nAVR (10 ms)')
+    ylabel('Duration half base (s)')
     title(theTitle, 'Interpreter', 'None');
     legend('corr < 0.95', 'corr > 0.95')
     hold off
@@ -254,7 +305,7 @@ function [] = showAmplitudeVelocityRatios(dataName, data)
         num2str(sum(badMask)) '/' num2str(length(badMask)) ')'], ...
         ['[y = ' num2str(m) '*x + ' num2str(b) ', R2 = ' num2str(R2) ']']};
     
-    figure('Color', [1, 1, 1]) 
+    figure('Color', [1, 1, 1], 'Name', 'Zero versus tent nAVR') 
     hold on
     plot(nAVRZero(badMask), nAVRTent(badMask), 'ro')
     plot(nAVRZero(~badMask), nAVRTent(~badMask), 'kx')
@@ -274,7 +325,7 @@ function [] = showAmplitudeVelocityRatios(dataName, data)
     theTitle = {[dataName '(bad/total = ' ...
         num2str(sum(badMask)) '/' num2str(length(badMask)) ')'], ...
         ['[y = ' num2str(m) '*x + ' num2str(b) ', R2 = ' num2str(R2) ']']};
-    figure('Color', [1, 1, 1]) 
+    figure('Color', [1, 1, 1], 'Name', 'Zero vs base nAVR') 
     hold on
     plot(nAVRZero(badMask), nAVRBase(badMask), 'ro')
     plot(nAVRZero(~badMask), nAVRBase(~badMask), 'kx')
@@ -283,6 +334,25 @@ function [] = showAmplitudeVelocityRatios(dataName, data)
     plot([0, xLim(2)], [0, xLim(2)], 'Color', [0.8, 0.8, 0.8])
     xlabel('Zero nAVR (10 ms)')
     ylabel('Base nAVR (10 ms)')
+    title(theTitle, 'Interpreter', 'None');
+    legend('corr < 0.95', 'corr > 0.95')
+    hold off
+    box on
+
+    %% Plot the blink nAVR versus extended nAVR
+    [m, b, R2] = getLinearEquation(pAVRZero(~badMask), ...
+                                   nAVRZero(~badMask));
+    theTitle = {[dataName '(bad/total = ' ...
+        num2str(sum(badMask)) '/' num2str(length(badMask)) ')'], ...
+        ['[y = ' num2str(m) '*x + ' num2str(b) ', R2 = ' num2str(R2) ']']};
+    figure('Color', [1, 1, 1], 'Name', 'Positive vs Negative AVRZ') 
+    hold on
+    plot(pAVRZero(badMask), nAVRBase(badMask), 'ro')
+    plot(pAVRZero(~badMask), nAVRBase(~badMask), 'kx')
+    xLim = get(gca, 'XLim');
+    plot([0, xLim(2)], [b, m*xLim(2) + b], 'Color', [0.8, 0.8, 0.8])
+    xlabel('Zero pAVR (10 ms)')
+    ylabel('Zero nAVR (10 ms)')
     title(theTitle, 'Interpreter', 'None');
     legend('corr < 0.95', 'corr > 0.95')
     hold off

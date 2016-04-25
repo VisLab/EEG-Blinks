@@ -1,15 +1,17 @@
-% Calculate the anovan on the shooter blinks
+% Calculate the anovan on the NCTU blinks
 %% Shooter blinks
 experiment = 'Shooter';
 %blinkDir = 'K:\CTAData\Shooter\ShooterBlinks';
 blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
 %type = 'EOGUnref';
 type = 'ChannelUnref';
-taskTypes = {{'SEF2', 'SEF4', 'SEO2', 'SEO4'};
-              {'DEF2', 'DEF4', 'DEO2', 'DEO4', 'ARIT'};
-              {'EC', 'EO'}};
-excludeTasks = 3;             
-    
+
+%% NCTU blinks
+type = 'Channel';
+blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
+experiment = 'NCTU_LK';
+
+
 %% Load the files
 blinkFile = [experiment 'BlinksNew' type '.mat'];
 blinkPropertiesFile = [experiment 'BlinksNewProperties' type '.mat'];
@@ -29,7 +31,7 @@ taskTimes = cell2mat({blinks.startTime});
 %% Compute the order variables
 uniqueSubjects = unique(subjects);
 taskOrder = zeros(size(subjects));
-taskGroups = getTaskGroups(tasks, taskTypes);
+taskGroups = zeros(size(subjects));
 datasetIndex = 1:length(blinks);
 for k = 1:length(uniqueSubjects)
     theseSubjects = strcmpi(subjects, uniqueSubjects{k});
@@ -37,6 +39,18 @@ for k = 1:length(uniqueSubjects)
     [sortTimes, sortIndex] = sort(theseTimes);
     thesePositions = datasetIndex(theseSubjects);
     taskOrder(theseSubjects) = sortIndex;
+    theseTasks = tasks(theseSubjects);
+    singleTasks = strcmpi(theseTasks, 'SEF2') | strcmpi(theseTasks, 'SEF4') | ...
+                  strcmpi(theseTasks, 'SEO2') | strcmpi(theseTasks, 'SEO4');
+    dualTasks = strcmpi(theseTasks, 'DEF2') | strcmpi(theseTasks, 'DEF4') | ...
+                strcmpi(theseTasks, 'DEO2') | strcmpi(theseTasks, 'DEO4') | ...
+                strcmpi(theseTasks, 'ARIT');
+    ecoTasks = strcmpi(theseTasks, 'EC') | strcmpi(theseTasks, 'EO');
+    theseGroups = taskGroups(theseSubjects);
+    theseGroups(ecoTasks) = 0;
+    theseGroups(singleTasks) = 1;
+    theseGroups(dualTasks) = 2;
+    taskGroups(theseSubjects) = theseGroups;
 end
 
 %% Initialize the structures
@@ -51,7 +65,7 @@ for k = 1:length(indicatorType)
     indicatorBase = occularIndices.(indicatorType{k})(:, 1);
     indicatorValid = ~isnan(indicatorBase) & componentValid';
     theseSubjects = subjects(indicatorValid);
-    theseTasks = taskGroups(indicatorValid);
+    theseTasks = tasks(indicatorValid);
     indicator = indicatorBase(indicatorValid);
     theseOrders = taskOrder(indicatorValid);
     
@@ -80,8 +94,8 @@ for k = 1:length(indicatorType)
     pValues{k, 2} = b;
     
     %% ANova subject-task with EC/EO eliminated
-    noExcludeTasks = taskGroups ~= excludeTasks;
-    indicatorNoEC = indicatorValid(:) & noExcludeTasks(:);
+    noECTasks = strcmpi(tasks, 'EC') | strcmpi(tasks, 'EO');
+    indicatorNoEC = indicatorValid(:) & ~noECTasks(:);
     theseSubjects = subjects(indicatorNoEC);
     theseTasks = tasks(indicatorNoEC);
     indicator = indicatorBase(indicatorNoEC);

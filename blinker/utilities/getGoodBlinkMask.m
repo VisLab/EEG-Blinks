@@ -7,6 +7,7 @@ function goodMask = getGoodBlinkMask(blinkFits, correlationThreshold)
 %     goodMask              mask indicating which blinks are good
 %
 % Currently this function uses a good linear fit on upshot and downshot.
+% If the correlationThreshold is zero, all successfully fitted blinks
 
 goodMask = NaN;
 if isempty(blinkFits)
@@ -19,5 +20,5 @@ rightR2 = {blinkFits.rightR2};
 indicesNaN = cellfun(@isnan, leftR2) | cellfun(@isnan, rightR2);
 leftR2 = cellfun(@double, leftR2);
 rightR2 = cellfun(@double, rightR2);
-goodMask = ~indicesNaN & leftR2 > correlationThreshold & ...
-    rightR2 > correlationThreshold;
+goodMask = ~indicesNaN & leftR2 >= correlationThreshold & ...
+    rightR2 >= correlationThreshold;

@@ -1,4 +1,4 @@
-%% Show normplots and histograms of the different occular indices
+%% Show normplots of the different occular indices for different experiments
 numExp = 4;
 experiments(numExp) = struct('experiment', [], 'blinkDir', [], ...
                              'type', [], 'excludeTasks', [], ...
@@ -123,7 +123,7 @@ for k = 1:numExp
 end
 hold off
 box on
-xlabel('Good blinks/min')
+xlabel('Prototypical blinks/min')
 legend(legendHandlesGB, legendEntriesGB, 'Location', 'SouthEast', ...
       'Interpreter', 'None')
 %% Blink duration
@@ -144,7 +144,7 @@ for k = 1:numExp
 end
 hold off
 box on
-xlabel('Good blink duration (s)')
+xlabel('Duration (s) for prototypical blinks')
 legend(legendHandlesGHB, legendEntriesGHB, 'Location', 'SouthEast', ...
       'Interpreter', 'None')
 set(gca, 'XLim', [0.05, 0.35])
@@ -209,7 +209,7 @@ for k = 1:numExp
 end
 hold off
 box on
-xlabel('pAVRZ for good blinks')
+xlabel('pAVRZ for prototypical blinks')
 legend(legendHandlesGP, legendEntriesGP, 'Location', 'SouthEast', ...
       'Interpreter', 'None')
 
@@ -253,7 +253,7 @@ for k = 1:numExp
 end
 hold off
 box on
-xlabel('nAVRZ for good blinks')
+xlabel('nAVRZ for prototypical blinks')
 legend(legendHandlesGN, legendEntriesGN, 'Location', 'SouthEast', ...
       'Interpreter', 'None')
 

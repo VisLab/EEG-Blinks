@@ -63,21 +63,22 @@ channelList256 = {'E12', 'E13', 'E14', 'E11', 'E10', 'E9', 'E28', 'E27', 'E26'};
 % experiment = 'VEP';
 
 %% UMICH LSIE
-% type = 'Channel';
-% undoReference = false;
-% collectionType = 'FILES';
-% experiment = 'LSIE_UM';
-% pathName = 'E:\CTAData\LSIE_UM_ICA';
-% outDir = 'E:\CTAData\LSIE_UM_Blinks';
-
-%% Shooter
-organizationType = 'Shooter';
+organizationType = 'UM';
 type = 'ChannelUnref';
 undoReference = false;
-collectionType = 'FILES2';
-experiment = 'Shooter';
-pathName = 'E:\CTADATA\Shooter\Level0';
-outDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
+collectionType = 'FILES';
+experiment = 'LSIE_UM';
+pathName = 'E:\CTADATA\Michigan\EEG_data_for_blink_detection_out';
+outDir = 'E:\CTADATA\Michigan\EEG_Blinks';
+
+%% Shooter
+% organizationType = 'Shooter';
+% type = 'ChannelUnref';
+% undoReference = false;
+% collectionType = 'FILES2';
+% experiment = 'Shooter';
+% pathName = 'E:\CTADATA\Shooter\Level0';
+% outDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
 
 %% Get a list of the EEG files
 files  = getFileList(collectionType, pathName);
