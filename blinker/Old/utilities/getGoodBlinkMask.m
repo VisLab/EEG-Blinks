@@ -1,5 +1,5 @@
 function goodMask = getGoodBlinkMask(blinkFits, correlationThreshold)
-% Mask with good blinks based on correlations.
+% Return a mask with 1 indicating a good blink and 0 indicating a bad blink
 %
 %  Parameters:
 %     blinkFits             blink fit structure for a dataset

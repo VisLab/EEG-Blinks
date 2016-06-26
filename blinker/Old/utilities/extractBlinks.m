@@ -1,17 +1,16 @@
-function blinks = extractBlinks(signals, srate, signalIndices, signalInfo)
-% Extract a blinks structure from an array of time series
+function blinks = extractBlinks(blinkComponents, blinkInfo, componentIndices, srate)
+% Extract a blinks structure from an array of blink components
 %
 % Parameters:
-%     signals           channels(ICs) x time array of potential signals
-%     srate             sampling rate for the signal
-%     signalIndices     indices in the original data array of the signals
-%     signalInfo        structure with details about the signals
+%     blinkComponents    channels(ICs) x time array of potential components
+%     blinkInfo          structure with details about the blink components
+%     componentIndices   indices in the original EEG of the components
+%     srate              blinks structure
 %
 %  Output:
 %     blinks             a blink structure 
 %
-% The function band-pass filters prior to analysis. The signals can be
-% EEG channels, 
+% The function band-pass filters prior to analysis
 
 %% Defaults 
 correlationThreshold = 0.90;
@@ -23,23 +22,23 @@ blinks  = createBlinksStructure();
 blinks.srate = srate;
 blinks.status = ''; 
 %% Set the blink information in the blinks structure
-blinks.blinkComponents = signals;
-blinks.blinkInfo = signalInfo;
-blinks.componentIndices = signalIndices;
+blinks.blinkComponents = blinkComponents;
+blinks.blinkInfo = blinkInfo;
+blinks.componentIndices = componentIndices;
 
 %% Compute raw blinks
-blinkPositions = cell(length(signalIndices), 1);
-numberBlinks = zeros(length(signalIndices), 1);
+blinkPositions = cell(length(componentIndices), 1);
+numberBlinks = zeros(length(componentIndices), 1);
 
-for k = 1:length(signalIndices)
-  blinkPositions{k} = getBlinkPositions(signals(k, :), srate);
+for k = 1:length(componentIndices)
+  blinkPositions{k} = getBlinkPositions(blinkComponents(k, :), srate);
   numberBlinks(k) = size(blinkPositions{k}, 2);
 end
 blinks.blinkPositions = blinkPositions;
 blinks.numberBlinks = numberBlinks;
-goodBlinks = zeros(length(signalIndices), 1);
-blinkAmpRatio = zeros(length(signalIndices), 1);
-for k = 1:length(signalIndices)
+goodBlinks = zeros(length(componentIndices), 1);
+blinkAmpRatio = zeros(length(componentIndices), 1);
+for k = 1:length(componentIndices)
     try
       blinkFits = fitBlinks(blinks.blinkComponents(k, :), ...
                                blinks.blinkPositions{k}, zeroLevel);

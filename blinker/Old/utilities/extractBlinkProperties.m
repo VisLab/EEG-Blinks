@@ -1,5 +1,5 @@
 function [blinkProps, blinkFits] = ...
-                       extractBlinkProperties(blink, blinkPositions, srate)
+                          extractBlinkProperties(blink, blinkPositions, srate)
 % Return a structure with blink properties for individual blinks
 %
 % Parameters:
@@ -51,6 +51,7 @@ for k = 1:numberBlinks
             (blinkFits(k).rightBaseHalfHeight - blinkFits(k).leftBaseHalfHeight + 1)./srate;
         blinkProps(k).durationHalfZero = ...
             (blinkFits(k).rightZeroHalfHeight - blinkFits(k).leftZeroHalfHeight + 1)./srate;
+        
         %% Blink amplitude-velocity ratio from zero to max
         upStroke = blinkFits(k).leftZero:blinkFits(k).maxFrame;
         [~, velFrame] = max(blinkVelocity(upStroke));

@@ -1,21 +1,16 @@
-function [sortedBlinks, usedPositions] = getSortedBlinkMaxima(blinkData, n)
-% Returns sorted array of blink maxima of the different types for dataset n
-%
-% Parameters:
-%    blinkData     cell array of Blinker blinks data structures
-%    n             position of the dataset to be extracted
-%    sortedBlinks  (output) combined sorted blink maximum frames
+function [sortedBlinks, usedIndices] = getSortedBlinkMaxima(blinkData, n)
+% Returns sorted array containing positions of blink maxima.
 
-%% Find total blinks and the individual blink maxima
+%% Find total blinks
 totalBlinks = 0;
 individualMaxima = cell(length(blinkData), 1);
-usedPositions = -ones(length(blinkData), 1);
+usedIndices = -ones(length(blinkData), 1);
 for k = 1:length(blinkData)
-   [individualMaxima{k}, usedPositions(k)] = getBlinkMaxima(blinkData{k}(n), []);
+   [individualMaxima{k}, usedIndices(k)] = getBlinkMaxima(blinkData{k}(n), []);
    totalBlinks = totalBlinks + length(individualMaxima{k});                       
 end
 
-%% Now create an array with all of the blink max frames from all versions
+%% Now create an array with all of the blinks
 sortedBlinks = nan(totalBlinks, 4);
 startBlinks = 1;
 for k = 1:length(blinkData)

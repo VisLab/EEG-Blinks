@@ -1,18 +1,30 @@
-function [blinkMaxima, used] = getBlinkMaxima(blinks, used)
-% Returns an array of blink maxima for used component (empty uses default) 
+function [blinkMaxima, usedPositions] = getBlinkMaxima(blinks, usedComponent)
+% Returns array of frames at which blink maxima occur for specified component 
+%
+% Parameters:
+%     blinks        Blinker blinks data structure for data collection
+%     usedComponent Vector of channel (or component) numbers to use for 
+%                   match (or empty for default)
+%     blinkMaxima   (output) frames at which maxima occur
+%     usedPositions (output) Positions of the used components in 
+%                   blinkPositions
+%
+% Written by:  Kay Robbins, UTSA
+%
     blinkMaxima = [];
-    if isempty(used)
-        used = blinks.usedComponent;
-        if isnan(used) || isempty(used)
+    if isempty(usedComponent)
+        usedComponent = blinks.usedComponent;
+        if isnan(usedComponent) || isempty(usedComponent)
             return;
         end
-        used = find(blinks.componentIndices == used, 1, 'first');
     end
-    blinkPositions = blinks.blinkPositions{used};
+    usedPositions = find(blinks.componentIndices == usedComponent, 1, 'first');
+  
+    blinkPositions = blinks.blinkPositions{usedPositions};
     if isempty(blinkPositions) || sum(isnan(blinkPositions(:)) ~= 0)
         return;
     end
-    blinkComponent = blinks.blinkComponents(used, :);
+    blinkComponent = blinks.blinkComponents(usedPositions, :);
     startBlinks = blinkPositions(1, :);
     endBlinks = blinkPositions(2, :);
 
