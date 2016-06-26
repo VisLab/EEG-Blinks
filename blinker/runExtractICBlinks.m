@@ -1,60 +1,43 @@
-%% Extract the blinks structure
+%% Extract the blinks structure based on IC time series
+% This script assumes that EEGLAB is in the path, that the datasets are
+% in EEGLAB EEG structures and that these datasets contain an ICA 
+% decomposition. The particular example run is for the ARL-Shoot
+% collection. To run for your own data:
+% 
+%  1)  Put your data in one of the supported formats as indicated by
+%      the collectionType:
+%        FILES    all of the .set files are in one directory
+%        FILES2     .set files are in subdirectories one level down from root
+%        ESSLEVEL1  .set files are in an ESS Level 1 container
+%        ESSLEVEL2  .set files are in an ESS Level 2 container
+%        ESSDERIVED .set files are in an ESS Level derived container
+%      The collectionType is used with the getFileList function to 
+%      get a cell array called files with the full paths of all of the 
+%      EEG .set files to be analyzed. If your data is in a different 
+%      format, you will need to provide your own cell array called files 
+%      with the full paths of the EEG files to be analyzed.
+%      
+%   2)  Downstream analysis requires the following information for each
+%       dataset: [subjectID, experiment, uniqueName, task, startTime]  
+%       You must manually put this into the blinks structure or add
+%       code to getDatasetInfo function to do this during this call.
+%
+%% Start of the script
+% Set up options for EEGLAB
 pop_editoptions('option_single', false, 'option_savetwofiles', false);
 
-%% BCIT
-organizationType = 'BCIT';
-%type = 'IC';
+%% Shooter collection location
 type = 'ICPrepClean';
 undoReference = false;
-collectionType = 'ESSDERIVED';
-baseDir = 'O:\ARL_Data\BCIT_ESS_256Hz_PrepClean_ICA';
-%baseDir = 'O:\ARL_Data\BCIT_ESS_256Hz_ICA_Infomax';
-levelDerivedFile = 'studyLevelDerived_description.xml';
-outDir = 'O:\ARL_Data\BCITBlinks';
-experiment = 'Experiment X2 Traffic Complexity';
-%experiment = 'Experiment X6 Speed Control';
-%experiment = 'X3 Baseline Guard Duty';
-%experiment = 'X4 Advanced Guard Duty';
-%experiment = 'X1 Baseline RSVP';
-%experiment = 'Experiment XC Calibration Driving';
-%experiment = 'Experiment XB Baseline Driving';
-%experiment = 'X2 RSVP Expertise';
-pathName = [baseDir filesep experiment filesep levelDerivedFile];
-
-%% NCTU
-% baseDir = 'O:\ARL_Data\NCTU\NCTU_PrepClean_InfomaxNew';
-% %baseDir = 'O:\ARL_Data\NCTU\NCTU_Robust_0p5HzHP_ICA_Infomax';
-% levelDerivedFile = 'studyLevelDerived_description.xml';
-% outDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
-% experiment = 'NCTU_LK';
-% derivedXMLFile = [baseDir filesep levelDerivedFile];
-
-%% VEP
-% collectionType = 'File';
-% baseDir = 'O:\ARL_Data\VEP\VEP_PrepClean_Infomax';
-% outDir = 'O:\ARL_Data\VEP\VEPBlinks';
-% experiment = 'VEP';
-
-% %% UMICH LSIE
-% type = 'IC';
-% undoReference = false;
-% collectionType = 'FILES';
-% experiment = 'LSIE_UM';
-% pathName = 'E:\CTAData\LSIE_UM_ICA';
-% outDir = 'E:\CTAData\LSIE_UM_Blinks';
-
-%% Shooter
-% %type = 'ICNoPrepClean';
-% type = 'ICPrepClean';
-% undoReference = false;
-% collectionType = 'FILES';
-% experiment = 'Shooter';
-% pathName = 'O:\ARL_Data\Shooter\Shooter_Robust_1Hz_PrepInfomax';
-% %pathName = 'O:\ARL_Data\Shooter\Shooter_Robust_1Hz_Infomax';
-% outDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
+collectionType = 'FILES';   % Shooter has all files in same directory
+organizationType = 'Shoot'; %
+experiment = 'Shooter';
+pathName = 'O:\ARL_Data\Shooter\Shooter_Robust_1Hz_PrepInfomax';
+outDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
 
 %% Get a list of the EEG files
 files = getFileList(collectionType, pathName);
+
 %% Set the blink files
 blinkFile = [experiment 'BlinksNew' type '.mat'];
 
@@ -66,12 +49,12 @@ for k = 1:length(files)
     try   
        EEG = pop_loadset(files{k});
        if undoReference
-           EEG = unreference(EEG);
+           EEG = unreference(EEG); %#ok<UNRCH>
        end
        [blinkComponents, blinkInfo, componentIndices] = ...
                                   getICBlinkComponents(EEG);
-       blinks(k) = extractBlinks(blinkComponents, blinkInfo, ...
-                                 componentIndices, EEG.srate);
+       blinks(k) = extractBlinks(blinkComponents, EEG.srate,  ...
+                                 componentIndices, blinkInfo);
        blinks(k).status = 'success';
     catch Mex
         blinks(k).status = ['failure:' Mex.message]; 

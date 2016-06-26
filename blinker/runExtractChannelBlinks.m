@@ -1,86 +1,53 @@
+%% Extract the blinks structure based on channel or EOG time series
+% This script assumes that EEGLAB is in the path, that the datasets are
+% in EEGLAB EEG structures. The particular example run is for the ARL-Shoot
+% collection. To run for your own data:
+% 
+%  1)  Put your data in one of the supported formats as indicated by
+%      the collectionType:
+%        FILES    all of the .set files are in one directory
+%        FILES2     .set files are in subdirectories one level down from root
+%        ESSLEVEL1  .set files are in an ESS Level 1 container
+%        ESSLEVEL2  .set files are in an ESS Level 2 container
+%        ESSDERIVED .set files are in an ESS Level derived container
+%      The collectionType is used with the getFileList function to 
+%      get a cell array called files with the full paths of all of the 
+%      EEG .set files to be analyzed. If your data is in a different 
+%      format, you will need to provide your own cell array called files 
+%      with the full paths of the EEG files to be analyzed.
+%      
+%   2)  Downstream analysis requires the following information for each
+%       dataset: [subjectID, experiment, uniqueName, task, startTime]  
+%       You must manually put this into the blinks structure or add
+%       code to getDatasetInfo function to do this during this call.
+%
 %% Extract the blinks structure
 pop_editoptions('option_single', false, 'option_savetwofiles', false);
 
-%% Set type of calculation
+%% Set type of calculation (channels)
 reference = [];
 channelList32 = {'FP1', 'FP2', 'F3', 'Fz', 'F4'};
 channelList64 = {'Fpz', 'Fp1', 'Fp2', 'AF7', 'AF3', 'AFz', 'AF4', 'AF8'};
 channelList256 = {'E12', 'E13', 'E14', 'E11', 'E10', 'E9', 'E28', 'E27', 'E26'};
-
+byType = '';
+%% Set type of calculation (EOG)
 % reference = [];
 % channelList32 = {'HEOL', 'HEOR', 'VEOU', 'VEOL'};
 % channelList64 = {'EXG1', 'EXG2', 'EXG3', 'EXG4', 'EXG5', 'EXG6'};
 % channelList256 = {'EXG1', 'EXG2', 'EXG3', 'EXG4', 'EXG5', 'EXG6', 'EXG7', 'EXG8'};
-
-% %% BCIT
-% organizationType = 'BCIT';
-% %type = 'IC';
-% type = 'EOG';
-% undoReference = false;
-% collectionType = 'ESSDERIVED';
-% baseDir = 'O:\ARL_Data\BCIT_ESS_256Hz_PrepClean_ICA';
-% %baseDir = 'O:\ARL_Data\BCIT_ESS_256Hz_ICA_Infomax';
-% levelDerivedFile = 'studyLevelDerived_description.xml';
-% outDir = 'O:\ARL_Data\BCITBlinks';
-% %experiment = 'BCITLevel0';
-% experiment = 'Experiment X2 Traffic Complexity';
-% %experiment = 'Experiment X6 Speed Control';
-% %experiment = 'X3 Baseline Guard Duty';
-% %experiment = 'X4 Advanced Guard Duty';
-% %experiment = 'X1 Baseline RSVP';
-% %experiment = 'Experiment XC Calibration Driving';
-% %experiment = 'Experiment XB Baseline Driving';
-% %experiment = 'X2 RSVP Expertise';
-% pathName = [baseDir filesep experiment filesep levelDerivedFile];
-
-%% NCTU
-% organizationType = 'NCTU';
-% collectionType = 'ESSLEVEL2';
-% type = 'Channel';
-% undoReference = false;
-% %baseDir = 'O:\ARL_Data\NCTU\NCTU_PrepClean_InfomaxNew';
-% %baseDir = 'O:\ARL_Data\NCTU\NCTU_Robust_0p5HzHP_ICA_Infomax';
-% baseDir = 'O:\ARL_Data\NCTU\NCTU_Robust_1Hz';
-% levelDerivedFile = 'studyLevel2_description.xml';
-% outDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
-% experiment = 'NCTU_LK';
-% pathName = [baseDir filesep levelDerivedFile];
-
-%% BCI2000
-% organizationType = 'BCI2000';
-% type = 'Channel';
-% undoReference = false;
-% collectionType = 'FILES';
-% experiment = 'BCI2000';
-% pathName = 'O:\ARL_Data\BCI2000\BCI2000Robust_1Hz_Unfiltered';
-% outDir = 'O:\ARL_Data\BCI2000\BCI2000Blinks';
-
-%% VEP
-% collectionType = 'File';
-% baseDir = 'E:\CTAData\VEP';
-% %baseDir = 'O:\ARL_Data\VEP\VEP_PrepClean_Infomax';
-% outDir = 'O:\ARL_Data\VEP\VEPBlinks';
-% experiment = 'VEP';
-
-%% UMICH LSIE
-organizationType = 'UM';
-type = 'ChannelUnref';
-undoReference = false;
-collectionType = 'FILES';
-experiment = 'LSIE_UM';
-pathName = 'E:\CTADATA\Michigan\EEG_data_for_blink_detection_out';
-outDir = 'E:\CTADATA\Michigan\EEG_Blinks';
+% byType = 'EOG';
 
 %% Shooter
-% organizationType = 'Shooter';
-% type = 'ChannelUnref';
-% undoReference = false;
-% collectionType = 'FILES2';
-% experiment = 'Shooter';
-% pathName = 'E:\CTADATA\Shooter\Level0';
-% outDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
+organizationType = 'Shooter';
+%type = 'ChannelUnref';
+type = 'EOGUnref';
+undoReference = false;
+collectionType = 'FILES2';    %Shooter organized is subdirectories by subject
+experiment = 'Shooter';
+pathName = 'E:\CTADATA\Shooter\Level0';
+outDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
 
-%% Get a list of the EEG files
+%% Get a list of the EEG files -- remainder of the code needs list of .set files
 files  = getFileList(collectionType, pathName);
 
 %% Set the blink files
@@ -92,11 +59,16 @@ for k = 1:length(files)
     fprintf('%d: %s\n', k, files{k});
     [myPath, myName, myExt] = fileparts(files{k});
     try
+        % Load the EEG dataset
         EEG = pop_loadset(files{k});
         if undoReference
            EEG = unreference(EEG); %#ok<UNRCH>
         end
-        if length(EEG.chanlocs) >= 256
+        if ~isempty(byType) % Select channels by their channel type
+            channelTypes = {EEG.chanlocs.type};
+            channelLabels = {EEG.chanlocs.labels};
+            channelList = channelLabels(strcmpi(channelTypes, byType));
+        elseif length(EEG.chanlocs) >= 256 % Use a list of channels
             channelList = channelList256;
         elseif length(EEG.chanlocs) >= 64
             channelList = channelList64;
@@ -105,15 +77,16 @@ for k = 1:length(files)
         end
 
         [blinkComponents, blinkInfo, componentIndices] = ...
-            getChannelBlinkComponents(EEG, channelList);       
-        blinks(k) = extractBlinks(blinkComponents, blinkInfo, ...
-            componentIndices, EEG.srate);
+                   getChannelBlinkComponents(EEG, channelList);       
+        blinks(k) = extractBlinks(blinkComponents, EEG.srate, ...
+                                  componentIndices, blinkInfo);
         blinks(k).status = 'success';
     catch Mex
         blinks(k).status = ['failure:' Mex.message];
     end
     blinks(k).fileName = files{k};
     blinks(k).type = type;
+    % Fill in information about your data 
     [subjectID, experiment, uniqueName, task, startTime] = ...
                                  getDatasetInfo(EEG, organizationType);
     blinks(k).subjectID = subjectID;
