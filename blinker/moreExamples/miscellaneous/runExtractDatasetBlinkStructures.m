@@ -11,9 +11,10 @@
 % datasetList = [89, 102, 159, 160];  
 % datasetNames = {'T2_M053_S2018_XB', 'T2_M067_S2023_XC',  ...
 %             'T2_M126_S2043_XC', 'T2_M128_S2043_X6'};
-datasetList = [59, 73, 97];  
-datasetNames = {'T2_M022_S2008_XC', 'T2_M037_S2013_XC', 'T2_M061_S2021_XC'};
-
+% datasetList = [59, 73, 97];  
+% datasetNames = {'T2_M022_S2008_XC', 'T2_M037_S2013_XC', 'T2_M061_S2021_XC'};
+datasetList = [92, 116, 134];
+datasetNames = {'T2_M055_S2019_X2', 'T2_M082_S2028_XC', 'T2_M100_S2034_X6'};
 %% BCIT other examples
 experiment = 'BCITLevel0';
 blinkDir = 'O:\ARL_Data\BCITBlinks';

@@ -1,25 +1,11 @@
-%% Run the blink statistics given
+%% This script adds subject information for BCIT to blinks. 
+% It assumes that the subject map has already been created.
+%
 pop_editoptions('option_single', false, 'option_savetwofiles', false);
-%type = 'IC';
-%type = 'EOGUnref';
-%type = 'Channel';
-
-%% VEP setup
-% experiment = 'vep';
-% blinkDir = 'O:\ARL_Data\VEP\VEPBlinks';
-
-%% Miscellaneous
-% blinkDir = 'D:\Research\BlinkerLeftovers\VideoHTML';
-% blinkFile = 'ARL_BCIT_T1_M051_S1026PREPICABlinks.mat';
-% blinkStatsFiles = 'ARL_BCIT_T1_M051_S1026PREPICAStatsOut.mat';
-
-% blinkDir = 'E:\CTAData\LSIE_UM_Blinks';
-% blinkFile = 'LSIEBlinks.mat';
-% blinkStatsFiles = 'LSIEStatsOut.mat';
 
 %% BCIT Examples
-%type = 'ChannelUnref';
-type = 'EOGUnref';
+type = 'ChannelUnref';
+%type = 'EOGUnref';
 collectionType = 'FILES';
 experiment = 'BCITLevel0';
 blinkDir = 'O:\ARL_Data\BCITBlinks';
@@ -32,22 +18,6 @@ blinkDir = 'O:\ARL_Data\BCITBlinks';
 %experiment = 'Experiment XC Calibration Driving';
 %experiment = 'Experiment XB Baseline Driving';
 % experiment = 'X2 RSVP Expertise';
-
-%% VEP
-% blinkDir = 'O:\ARL_Data\VEP\VEPBlinks';
-% experiment = 'VEP';
-
-%% NCTU
-% collectionType = 'ESSLEVEL2';
-% blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
-% experiment = 'NCTU_LK';
-
-% %% UMICH LSIE
-% %type = 'Channel';
-% type = 'IC';
-% collectionType = 'FILES';
-% experiment = 'LSIE_UM';
-% blinkDir = 'E:\CTAData\LSIE_UM_Blinks';
 
 %% Load the blinks data
 blinkFile = [experiment 'BlinksNew' type '.mat'];
@@ -67,26 +37,26 @@ end
 
 %% Construct a map with task names
 taskMap = containers.Map('KeyType', 'char', 'ValueType', 'any');
-taskMap('Experiment X2 Traffic Complexity') = 'X2';
-taskMap('Experiment X6 Speed Control') = 'X6';
-taskMap('X3 Baseline Guard Duty') = 'X3';
-taskMap('X4 Advanced Guard Duty') = 'X4';
-taskMap('X1 Baseline RSVP') = 'X1';
+taskMap('Experiment X2 Traffic Complexity') = 'T2X2';
+taskMap('Experiment X6 Speed Control') = 'T2X6';
+taskMap('X3 Baseline Guard Duty') = 'T3X3';
+taskMap('X4 Advanced Guard Duty') = 'T3X4';
+taskMap('X1 Baseline RSVP') = 'T3X1';
 taskMap('Experiment XC Calibration Driving') = 'XC';
 taskMap('Experiment XB Baseline Driving') = 'XB';
-taskMap('X2 RSVP Expertise') = 'X2';
-taskMap('X7 Auditory Cueing Driving') = 'X7';
-taskMap('X8 Mind Wandering Driving') = 'X8';
-taskMap('X2') = 'Experiment X2 Traffic Complexity';
-taskMap('X6') = 'Experiment X6 Speed Control';
-taskMap('X3') = 'X3 Baseline Guard Duty';
-taskMap('X4') = 'X4 Advanced Guard Duty';
-taskMap('X1') = 'X1 Baseline RSVP';
+taskMap('X2 RSVP Expertise') = 'T3X2';
+taskMap('X7 Auditory Cueing Driving') = 'T2X7';
+taskMap('X8 Mind Wandering Driving') = 'T2X8';
+taskMap('T2X2') = 'Experiment X2 Traffic Complexity';
+taskMap('T2X6') = 'Experiment X6 Speed Control';
+taskMap('T3X3') = 'X3 Baseline Guard Duty';
+taskMap('T3X4') = 'X4 Advanced Guard Duty';
+taskMap('T3X1') = 'X1 Baseline RSVP';
 taskMap('XC') = 'Experiment XC Calibration Driving';
 taskMap('XB') = 'Experiment XB Baseline Driving';
-taskMap('X2') = 'X2 RSVP Expertise';
-taskMap('X7') = 'X7 Auditory Cueing Driving';
-taskMap('X8') = 'X8 Mind Wandering Driving';
+taskMap('T3X2') = 'X2 RSVP Expertise';
+taskMap('T2X7') = 'X7 Auditory Cueing Driving';
+taskMap('T2X8') = 'X8 Mind Wandering Driving';
 %% Replicate handling map
 replicateMap = containers.Map('KeyType', 'char', 'ValueType', 'any');
 %% Set up the temporary blinks file
@@ -108,6 +78,11 @@ for k = 1:numberFiles
     end
     pieces = strsplit(theName, '_');
     blinks(k).task = pieces{6};
+    if strcmpi(pieces{6}, 'XB') || strcmpi(pieces{6}, 'XC')
+        blinks(k).task = pieces{6};
+    else
+        blinks(k).task = [pieces{3} pieces{6}];
+    end
     blinks(k).experiment = taskMap(blinks(k).task);
     blinks(k).uniqueName = [blinks(k).subjectID '_' blinks(k).task];
     if isKey(replicateMap, blinks(k).uniqueName)
