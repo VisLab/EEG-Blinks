@@ -1,25 +1,23 @@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Input:
-%       blink_comp:  The independent component (IC) of eye-related
+%       blinkComp:  The independent component (IC) of eye-related
 %                    activations derived from EEG.  This component should
 %                    be "upright" 
 %
 %       srate:       the sample rate at which the EEG data was taken
-%
+%       stdTreshold  number of standard deviations above threshold for blink
 % Output:
-%       blinks:      a structure containing, for each blink:
-%         t_up:      time tick for event threshold crossing going up
-%         t_dn:      time tick for event threshold crossing going down
+%       blinkPositions   2 x n array with start and end frames of blinks
 %
 % Notes:
 %   This function uses EEGLAB functions, so EEGLAB must be running
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function blinkPosition = getBlinkPositions(blinkComp, srate)
+function blinkPosition = getBlinkPositions(blinkComp, srate, stdThreshold)
 %% Constants:
 minEventLen = 0.05; % events less than 50 ms are discarded
-stdThreshold = 1.5; % factor (# of std devs) for blink detection
+%stdThreshold = 1.5; % factor (# of std devs) for blink detection
 
 mu = mean(blinkComp); 
 stdDev = std(blinkComp);

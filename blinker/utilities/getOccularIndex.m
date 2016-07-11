@@ -5,7 +5,7 @@ function occularValues = getOccularIndex(dBlinks, dBlinkProperties, dBlinkFits, 
 %    dBlink   blink structure for the dataset
 %    dBlinkProperties   blink structure array for dataset properties
 occularValues = NaN;
-if isempty(dBlinks.usedComponent) || isnan(dBlinks.usedComponent)
+if isempty(dBlinks.usedSignal) || isnan(dBlinks.usedSignal)
     return;
 end
 correlationThreshold = 0.90;
@@ -26,7 +26,7 @@ switch type
     case 'durationHB'
         values = cellfun(@double, {dBlinkProperties.durationHalfBase});
     case 'blinksPerMin'
-        numberMinutes = size(dBlinks.blinkComponents, 2)/(dBlinks.srate * 60);
+        numberMinutes = size(dBlinks.candidateSignals, 2)/(dBlinks.srate * 60);
         goodBlinks = length(dBlinkFits(goodMask))./numberMinutes;
         allBlinks = length(dBlinkFits)./numberMinutes;
         

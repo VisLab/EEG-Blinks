@@ -1,11 +1,9 @@
 %% Run the blink statistics given
 pop_editoptions('option_single', false, 'option_savetwofiles', false);
-%type = 'IC';
-%type = 'EOGUnref';
-%type = 'Channel';
 
 %% VEP setup
-% experiment = 'vep';
+% type = 'ChannelUnref';
+% experiment = 'VEP';
 % blinkDir = 'O:\ARL_Data\VEP\VEPBlinks';
 
 %% Miscellaneous
@@ -20,10 +18,11 @@ pop_editoptions('option_single', false, 'option_savetwofiles', false);
 %% BCIT Examples
 collectionType = 'FILES';
 experiment = 'BCITLevel0';
-type = 'ChannelUnref';
-%type = 'EOG';
+%type = 'ChannelUnref';
+%type = 'EOGUnrefNew';
+type = 'EOGUnrefNew';
 %type = 'IC';
-blinkDir = 'O:\ARL_Data\BCITBlinks';
+blinkDir = 'O:\ARL_Data\BCITBlinksNew';
 %blinkDir = 'K:\BCITBlinks';
 % experiment = 'Experiment X2 Traffic Complexity';
 % experiment = 'Experiment X6 Speed Control';
@@ -34,9 +33,6 @@ blinkDir = 'O:\ARL_Data\BCITBlinks';
 % experiment = 'Experiment XB Baseline Driving';
 % experiment = 'X2 RSVP Expertise';
 
-%% VEP
-% blinkDir = 'O:\ARL_Data\VEP\VEPBlinks';
-% experiment = 'VEP';
 
 %% NCTU
 % blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
@@ -63,17 +59,16 @@ blinkDir = 'O:\ARL_Data\BCITBlinks';
 % experiment = 'LSIE_UM';
 % blinkDir = 'E:\CTADATA\Michigan\EEG_blinks2';
 
-% %% Dreams
+%% Dreams
 % organizationType = 'Dreams';
-% type = 'ChannelUnref';
-% %type = 'EOGUnref';
-% undoReference = false;
+% %type = 'ChannelMast';
+% type = 'EOGMast';
 % collectionType = 'FILES';
 % experiment = 'Dreams';
 % pathName = 'E:\CTADATA\WholeNightDreams\data\level0';
 % blinkDir = 'E:\CTADATA\WholeNightDreams\data\blinks';
-% byType = 'EEG';
-% %byType = 'EOG';
+% %byType = 'EEG';
+% byType = 'EOG';
 
 %% Update file names with the experiment
 blinkFile = [experiment 'BlinksNew' type '.mat'];
@@ -91,16 +86,16 @@ blinkProperties = cell(1, length(blinks));
 for n = 1:length(blinks)
     fprintf('Dataset %d:\n', n);
     dBlinks = blinks(n);
-    if isempty(dBlinks.usedComponent) || isnan(dBlinks.usedComponent)
+    if isempty(dBlinks.usedSignal) || isnan(dBlinks.usedSignal)
         warning('%d: [%s] does not have blinks\n', n, dBlinks.fileName);
         blinkProperties{n} = NaN;
         blinkFits{n} = NaN;
         continue;
     end
-    blinkIndex = find(dBlinks.componentIndices == dBlinks.usedComponent, ...
+    blinkIndex = find(dBlinks.signalIndices == dBlinks.usedSignal, ...
         1, 'first');
     [blinkProperties{n}, blinkFits{n}] = extractBlinkProperties( ...
-        dBlinks.blinkComponents(blinkIndex, :), ...
+        dBlinks.candidateSignals(blinkIndex, :), ...
         dBlinks.blinkPositions{blinkIndex}, dBlinks.srate);
 end
 

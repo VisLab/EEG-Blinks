@@ -1,7 +1,7 @@
 %% BCIT counts
 experiment = 'BCITLevel0';
 blinkDir = 'O:\ARL_Data\BCITBlinks';
-type = 'EOGUnref';
+type = 'EOGUnrefNew';
 excludedTasks = {};
 VEOGChannels = [67, 68, 259, 260];
 
@@ -14,7 +14,7 @@ VEOGChannels = [67, 68, 259, 260];
 % VEOGChannels = [5, 6];
 %% Read in the blink data for this collection
 blinkFile = [experiment 'BlinksNew' type '.mat'];
-load([blinkDir filesep blinkFile]);
+%load([blinkDir filesep blinkFile]);
 
 %% Find the excluded tasks
 excludedMask = false(1, length(blinks));
@@ -30,8 +30,9 @@ for k = 1:length(blinks)
 end
 
 %% Analyze the blinks 
-usedComponents = cell2mat({blinks.usedComponent});
-uniqueComponents = unique(usedComponents(~excludedMask));
+usedSignals = {blinks.usedSignal};
+usedSignals = cellfun(@double, usedSignals);
+uniqueComponents = unique(usedSignals(~excludedMask));
 nanComponents = isnan(uniqueComponents);
 theComponents = uniqueComponents(~nanComponents);
 numDatasets = length(blinks);
@@ -41,11 +42,11 @@ datasetBase = 1:numDatasets;
 fprintf('Percentage of NaN datasets: %g\n', ...
                          100*sum(nanComponents)/numActual);
 fprintf('Number of NaN datasets: %g\n  [', sum(nanComponents));
-fprintf('%d ', datasetBase(isnan(usedComponents) & ~excludedMask));
+fprintf('%d ', datasetBase(isnan(usedSignals) & ~excludedMask));
 fprintf(']\n');
-datasetBase = 1:length(usedComponents);
+datasetBase = 1:length(usedSignals);
 for k = 1:length(theComponents)
-    theseDatasets = (usedComponents == theComponents(k)) & ~excludedMask;
+    theseDatasets = (usedSignals == theComponents(k)) & ~excludedMask;
     numberDatasets = sum(theseDatasets);
     datasetIndices = datasetBase(theseDatasets);
     fprintf('Component %g: has %g datasets \n  [ ', ...
@@ -55,12 +56,12 @@ for k = 1:length(theComponents)
 end
 
 %% Now check to make sure that the desired one is there.
-componentIndices = {blinks.componentIndices};
-for k = 1:length(componentIndices)
+signalIndices = {blinks.signalIndices};
+for k = 1:length(signalIndices)
     if excludedMask(k)
        continue;
     end
-    theseIndices = componentIndices{k};
+    theseIndices = signalIndices{k};
     totalThese = 0;
     for n = 1:length(VEOGChannels)
         totalThese = totalThese + sum(theseIndices == VEOGChannels(n));
@@ -78,18 +79,18 @@ for k = 1:numDatasets
     if excludedMask(k)
         continue;
     end
-    thisComponent = blinks(k).usedComponent;
-    theComponents = blinks(k).componentIndices;
-    if isnan(blinks(k).usedComponent)
+    thisComponent = blinks(k).usedSignal;
+    theseComponents = blinks(k).signalIndices;
+    if isnan(blinks(k).usedSignal)
         continue;
     end
-    thisIndex = find(theComponents == thisComponent);
+    thisIndex = find(theseComponents == thisComponent);
     numberBlinks = blinks(k).numberBlinks(thisIndex);
     goodBlinks = blinks(k).goodBlinks(thisIndex);
     totalBlinks = totalBlinks + numberBlinks;
     totalGood = totalGood + goodBlinks;
     totalSeconds = totalSeconds + ...
-                length(blinks(k).blinkComponents(1, :))/blinks(k).srate;
+                length(blinks(k).candidateSignals(1, :))/blinks(k).srate;
 end
 fprintf('Total blinks: %d\n', totalBlinks);
 fprintf('Total good blinks: %d\n', totalGood);

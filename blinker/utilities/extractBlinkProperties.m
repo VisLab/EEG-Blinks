@@ -1,5 +1,5 @@
 function [blinkProps, blinkFits] = ...
-                       extractBlinkProperties(blink, blinkPositions, srate)
+                       extractBlinkProperties(signal, blinkPositions, srate)
 % Return a structure with blink properties for individual blinks
 %
 % Parameters:
@@ -28,17 +28,17 @@ for k = 1:numberBlinks
 end
 
 %% Compute the fits
-blinkFits = fitBlinks(blink, blinkPositions, baseLevel);
+blinkFits = fitBlinks(signal, blinkPositions, baseLevel);
 if isempty(blinkFits)
     return;
 end
-blinkVelocity = diff(blink);
+blinkVelocity = diff(signal);
 peaks = cell2mat({blinkFits.maxFrame});
-peaks = [peaks length(blink)];
+peaks = [peaks length(signal)];
 peaksPosVelZero = ones(size(peaks));
-peaksPosVelZero(end) = length(blink);
+peaksPosVelZero(end) = length(signal);
 peaksPosVelBase = ones(size(peaks));
-peaksPosVelBase(end) = length(blink);
+peaksPosVelBase(end) = length(signal);
 for k = 1:numberBlinks
     try
         blinkProps(k).number = k;
@@ -57,13 +57,13 @@ for k = 1:numberBlinks
         velFrame = velFrame(1) + upStroke(1) - 1;
         peaksPosVelZero(k) = velFrame;
         blinkProps(k).posAmpVelRatioZero = ...
-            100*abs(blink(blinkFits(k).maxFrame)./blinkVelocity(velFrame))/srate;
+            100*abs(signal(blinkFits(k).maxFrame)./blinkVelocity(velFrame))/srate;
         
         downStroke = blinkFits(k).maxFrame:blinkFits(k).rightZero;
         [~, velFrame] = min(blinkVelocity(downStroke));
         velFrame = velFrame(1) + downStroke(1) - 1;
         blinkProps(k).negAmpVelRatioZero = ...
-            100*abs(blink(blinkFits(k).maxFrame)./blinkVelocity(velFrame))/srate;
+            100*abs(signal(blinkFits(k).maxFrame)./blinkVelocity(velFrame))/srate;
         
       %% Blink amplitude-velocity ratio from base to max        
         upStroke = blinkFits(k).leftBase:blinkFits(k).maxFrame;
@@ -71,27 +71,27 @@ for k = 1:numberBlinks
         velFrame = velFrame(1) + upStroke(1) - 1;
         peaksPosVelBase(k) = velFrame;
         blinkProps(k).posAmpVelRatioBase = ...
-            100*abs(blink(blinkFits(k).maxFrame)./blinkVelocity(velFrame))/srate;
+            100*abs(signal(blinkFits(k).maxFrame)./blinkVelocity(velFrame))/srate;
         
         downStroke = blinkFits(k).maxFrame:blinkFits(k).rightBase;
         [~, velFrame] = min(blinkVelocity(downStroke));
         velFrame = velFrame(1) + downStroke(1) - 1;
         blinkProps(k).negAmpVelRatioBase = ...
-            100*abs(blink(blinkFits(k).maxFrame)./blinkVelocity(velFrame))/srate;
+            100*abs(signal(blinkFits(k).maxFrame)./blinkVelocity(velFrame))/srate;
  
        %% Blink amplitude-velocity ratio estimated from tent slope    
         averNegVel = blinkFits(k).rightPCoef(1)./blinkFits(k).rightMuCoef(2);
         blinkProps(k).negAmpVelRatioTent = ...
-            100*abs(blink(blinkFits(k).maxFrame)./averNegVel)/srate;
+            100*abs(signal(blinkFits(k).maxFrame)./averNegVel)/srate;
         averPosVel = blinkFits(k).leftPCoef(1)./blinkFits(k).leftMuCoef(2);
         blinkProps(k).posAmpVelRatioTent = ...
-            100*abs(blink(blinkFits(k).maxFrame)./averPosVel)/srate; 
+            100*abs(signal(blinkFits(k).maxFrame)./averPosVel)/srate; 
 
   
         %% Time zero shut
         blinkProps(k).closingTimeZero = (blinkFits(k).maxFrame - blinkFits(k).leftZero)./srate;
         blinkProps(k).reopeningTimeZero = (blinkFits(k).rightZero - blinkFits(k).maxFrame)./srate;
-        thisBlinkAmp = blink(blinkFits(k).leftZero:blinkFits(k).rightZero);
+        thisBlinkAmp = signal(blinkFits(k).leftZero:blinkFits(k).rightZero);
         ampThreshhold = shutAmpFraction*blinkFits(k).maxValue;
         startShut = find(thisBlinkAmp >= ampThreshhold, 1, 'first');
         endShut = find(thisBlinkAmp(startShut+1:end) < ampThreshhold, 1, 'first');
@@ -102,7 +102,7 @@ for k = 1:numberBlinks
         end
         
         %% Time base shut
-        thisBlinkAmp = blink(blinkFits(k).leftBase:blinkFits(k).rightBase);
+        thisBlinkAmp = signal(blinkFits(k).leftBase:blinkFits(k).rightBase);
         ampThreshhold = shutAmpFraction*blinkFits(k).maxValue;
         startShut = find(thisBlinkAmp >= ampThreshhold, 1, 'first');
         endShut = find(thisBlinkAmp(startShut+1:end) < ampThreshhold, 1, 'first');
@@ -116,7 +116,7 @@ for k = 1:numberBlinks
                              blinkFits(k).leftXIntercept)./srate;
         blinkProps(k).reopeningTimeTent = (blinkFits(k).rightXIntercept - ...
                              blinkFits(k).xIntersect)./srate;
-        thisBlinkAmp = blink(round(blinkFits(k).leftXIntercept): ...
+        thisBlinkAmp = signal(round(blinkFits(k).leftXIntercept): ...
                              round(blinkFits(k).rightXIntercept));
         ampThreshhold = shutAmpFraction*blinkFits(k).maxValue;
         startShut = find(thisBlinkAmp >= ampThreshhold, 1, 'first');

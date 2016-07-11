@@ -4,11 +4,11 @@
 pop_editoptions('option_single', false, 'option_savetwofiles', false);
 
 %% BCIT Examples
-type = 'ChannelUnref';
-%type = 'EOGUnref';
+%type = 'ChannelUnref';
+type = 'EOGUnrefNew';
 collectionType = 'FILES';
 experiment = 'BCITLevel0';
-blinkDir = 'O:\ARL_Data\BCITBlinks';
+blinkDir = 'O:\ARL_Data\BCITBlinksNew';
 %blinkDir = 'K:\BCITBlinks';
 %experiment = 'Experiment X2 Traffic Complexity';
 % experiment = 'Experiment X6 Speed Control';
@@ -21,7 +21,7 @@ blinkDir = 'O:\ARL_Data\BCITBlinks';
 
 %% Load the blinks data
 blinkFile = [experiment 'BlinksNew' type '.mat'];
-load([blinkDir filesep blinkFile]);
+%load([blinkDir filesep blinkFile]);
 load([blinkDir filesep experiment 'SubjectMap.mat'])
 
 %% Construct a file map
@@ -93,14 +93,14 @@ for k = 1:numberFiles
     end
     replicateMap(blinks(k).uniqueName) = theValue; 
     blinks(k).type = blinksOld(k).type;
-    blinks(k).componentIndices = blinksOld(k).componentIndices;
-    blinks(k).blinkComponents = blinksOld(k).blinkComponents;
-    blinks(k).blinkInfo = blinksOld(k).blinkInfo;
+    blinks(k).signalIndices = blinksOld(k).signalIndices;
+    blinks(k).candidateSignals = blinksOld(k).candidateSignals;
+    blinks(k).signalInfo = blinksOld(k).signalInfo;
     blinks(k).blinkPositions = blinksOld(k).blinkPositions;
     blinks(k).numberBlinks = blinksOld(k).numberBlinks;
     blinks(k).goodBlinks = blinksOld(k).goodBlinks;
     blinks(k).blinkAmpRatio = blinksOld(k).blinkAmpRatio;
-    blinks(k).usedComponent = blinksOld(k).usedComponent;
+    blinks(k).usedSignal = blinksOld(k).usedSignal;
     blinks(k).status = blinksOld(k).status;
 end
 

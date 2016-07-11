@@ -3,7 +3,7 @@ function badBlinkMask = getBadBlinks(blinkFits, blinkProperties, corrThreshold)
 %  Parameters:
 %     blinkFits             blink fit structure for a dataset
 %     blinkProperties
-%     corrThreshold        (optional) correlation threshold for bad blink
+%     corrThreshold         correlation threshold for bad blink
 %     goodMask              mask indicating which blinks are good
 %
 % Currently this function uses a good linear fit on upshot and downshot.

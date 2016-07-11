@@ -25,27 +25,75 @@
 pop_editoptions('option_single', false, 'option_savetwofiles', false);
 
 %% Set type of calculation (channels)
-reference = [];
-channelList32 = {'FP1', 'FP2', 'F3', 'Fz', 'F4'};
-channelList64 = {'Fpz', 'Fp1', 'Fp2', 'AF7', 'AF3', 'AFz', 'AF4', 'AF8'};
-channelList256 = {'E12', 'E13', 'E14', 'E11', 'E10', 'E9', 'E28', 'E27', 'E26'};
-byType = '';
-%% Set type of calculation (EOG)
 % reference = [];
-% channelList32 = {'HEOL', 'HEOR', 'VEOU', 'VEOL'};
-% channelList64 = {'EXG1', 'EXG2', 'EXG3', 'EXG4', 'EXG5', 'EXG6'};
-% channelList256 = {'EXG1', 'EXG2', 'EXG3', 'EXG4', 'EXG5', 'EXG6', 'EXG7', 'EXG8'};
-% byType = 'EOG';
+% channelList32 = {'FP1', 'FP2', 'F3', 'Fz', 'F4'};
+% channelList64 = {'Fpz', 'Fp1', 'Fp2', 'AF7', 'AF3', 'AFz', 'AF4', 'AF8'};
+% channelList256 = {'E12', 'E13', 'E14', 'E11', 'E10', 'E9', 'E28', 'E27', 'E26'};
+% byType = '';
+%% Set type of calculation (EOG)
+reference = [];
+channelList32 = {'HEOL', 'HEOR', 'VEOU', 'VEOL'};
+channelList64 = {'EXG1', 'EXG2', 'EXG3', 'EXG4', 'EXG5', 'EXG6'};
+channelList256 = {'EXG1', 'EXG2', 'EXG3', 'EXG4', 'EXG5', 'EXG6', 'EXG7', 'EXG8'};
+byType = [];
 
-%% Shooter
-organizationType = 'Shooter';
-%type = 'ChannelUnref';
-type = 'EOGUnref';
+% %% VEP
+% organizationType = 'VEP';
+% type = 'ChannelUnref';
+% undoReference = false;
+% collectionType = 'FILES';  
+% experiment = 'VEP';
+% pathName = 'E:\CTADATA\VEP_BIOSIMI';
+% outDir = 'O:\ARL_Data\VEP\VEPBlinks';
+
+%% BCIT
+organizationType = 'BCIT';
+type = 'EOGUnrefNew';
 undoReference = false;
-collectionType = 'FILES2';    %Shooter organized is subdirectories by subject
-experiment = 'Shooter';
-pathName = 'E:\CTADATA\Shooter\Level0';
-outDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
+collectionType = 'FILES';
+baseDir = 'E:\CTADATA\BCIT\level_0';
+outDir = 'O:\ARL_Data\BCITBlinksNew';
+experiment = 'BCITLevel0';
+% experiment = 'Experiment X2 Traffic Complexity';
+% experiment = 'Experiment X6 Speed Control';
+% experiment = 'X3 Baseline Guard Duty';
+% experiment = 'X4 Advanced Guard Duty';
+% experiment = 'X1 Baseline RSVP';
+% experiment = 'Experiment XC Calibration Driving';
+% experiment = 'Experiment XB Baseline Driving';
+% experiment = 'X2 RSVP Expertise';
+pathName = baseDir;
+%% Dreams
+% organizationType = 'Dreams';
+% %type = 'ChannelUnref';
+% type = 'EOGMast';
+% undoReference = false;
+% collectionType = 'FILES';
+% experiment = 'Dreams';
+% pathName = 'E:\CTADATA\WholeNightDreams\data\level0';
+% outDir = 'E:\CTADATA\WholeNightDreams\data\blinks';
+% %byType = 'EEG';
+%byType = 'EOG';
+%% Shooter
+% organizationType = 'Shooter';
+% %type = 'ChannelUnrefA';
+% type = 'EOGUnrefB';
+% undoReference = false;
+% collectionType = 'FILES2';    %Shooter organized is subdirectories by subject
+% experiment = 'Shooter';
+% pathName = 'E:\CTADATA\Shooter\Level0';
+% outDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
+
+%% NCTU
+% organizationType = 'NCTU';
+% collectionType = 'ESSLEVEL2';
+% type = 'ChannelA';
+% undoReference = false;
+% baseDir = 'O:\ARL_Data\NCTU\NCTU_Robust_1Hz';
+% levelDerivedFile = 'studyLevel2_description.xml';
+% outDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
+% experiment = 'NCTU_LK';
+% pathName = [baseDir filesep levelDerivedFile];
 
 %% Get a list of the EEG files -- remainder of the code needs list of .set files
 files  = getFileList(collectionType, pathName);
@@ -76,10 +124,8 @@ for k = 1:length(files)
             channelList = channelList32;
         end
 
-        [blinkComponents, blinkInfo, componentIndices] = ...
-                   getChannelBlinkComponents(EEG, channelList);       
-        blinks(k) = extractBlinks(blinkComponents, EEG.srate, ...
-                                  componentIndices, blinkInfo);
+        [candidateSignals, blinkInfo] = getChannelCandidates(EEG, channelList);       
+        blinks(k) = extractBlinks(candidateSignals, EEG.srate, blinkInfo);
         blinks(k).status = 'success';
     catch Mex
         blinks(k).status = ['failure:' Mex.message];
@@ -96,5 +142,5 @@ for k = 1:length(files)
     blinks(k).startTime = startTime;
 end
 
-%% Save the blinks and blink map
+%% Save the blinks 
 save ([outDir filesep blinkFile], 'blinks', '-v7.3');

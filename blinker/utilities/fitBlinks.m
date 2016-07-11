@@ -1,47 +1,17 @@
-function blinkFits = fitBlinks(blinkComponent, blinkPositions, baseLevel)
-% Fit polynomial of specified degree to blinks in blink.
+function blinkFits = fitBlinks(candidateSignal, blinkPositions, baseLevel)
+% Fit a tent to a blink
 %
 %  Parameters:
-%      blink       IC or channel time course of blinks to be fitted
-%      baseLevel   Base level of the blinks (usually 0)
+%      candidateSignal    IC or channel time course of blinks to be fitted
+%      blinkPositions     array of start and end frames of candidate blinks
+%      baseLevel          base level of the blinks (usually 0)
 %
 %  Returns:
-%      blinkFits  - a structure with the following information
+%      blinkFits         a structure with fit information 
+%                        (See createFitStructure for definition)
 %
-%   number
-%   type 
-%   maxFrame           frame number of the maximum
-%   maxValue           value of the blink maximum
-%   maxPosVelFrame     
-%   maxNegVelFrame 
-%   leftBase
-%   rightBase 
-%   leftBaseHalfHeight
-%   rightBaseHalfHeight
-%   leftZeroHalfHeight
-%   rightZeroHalfHeight
-%   leftSlope
-%   rightSlope
-%   leftOuter
-%   rightOuter
-%   leftZero        first baseLevel crossing or minimum between blinks on left 
-%   rightZero       first baseLevel crossing or minimum between blinks on right 
-%   leftRange
-%   rightRange
-%   leftPCoef
-%   leftSCoef
-%   leftMuCoef
-%   leftR2
-%   rightPCoef
-%   rightSCoef
-%   rightMuCoef
-%   rightR2
-%   xIntersect
-%   yIntersect
-%   leftXIntercept
-%   rightXIntercept
 %
-if isempty(blinkComponent) || isempty(blinkPositions) || sum(isnan(blinkPositions(:)) ~= 0)
+if isempty(candidateSignal) || isempty(blinkPositions) || sum(isnan(blinkPositions(:)) ~= 0)
     blinkFits = [];
     return;
 end
@@ -53,19 +23,19 @@ maxFrames = zeros(1, length(startBlinks));
 maxValues = zeros(1, length(startBlinks));
 for k = 1:length(startBlinks);
     blinkRange = startBlinks(k):endBlinks(k);
-    [maxValues(k), maxInd] = max(blinkComponent(blinkRange));
+    [maxValues(k), maxInd] = max(candidateSignal(blinkRange));
     maxFrames(k) = blinkRange(maxInd);
 end
 
 %% Calculate the fits
 baseFraction = 0.1;   % Fraction from top and bottom
 outerStarts = [1, maxFrames(1:end-1)];
-outerEnds = [maxFrames(2:end), length(blinkComponent)];
+outerEnds = [maxFrames(2:end), length(candidateSignal)];
 blinkFits(length(maxFrames)) = createFitStructure();
 for k = 1:length(maxFrames)
     blinkFits(k) = blinkFits(length(maxFrames));  %#ok<*AGROW>
 end
-blinkVelocity = diff(blinkComponent);
+blinkVelocity = diff(candidateSignal);
 for k = 1:length(maxFrames)
     % Find the zero crossing or the minimum between blinks
     try
@@ -76,25 +46,25 @@ for k = 1:length(maxFrames)
         blinkFits(k).rightOuter = outerEnds(k);
         %% Compute the left and right inner (0 crossing)
         theRange = outerStarts(k):maxFrames(k);
-        [~, minIndex] = min(blinkComponent(theRange));
+        [~, minIndex] = min(candidateSignal(theRange));
         minFrame = theRange(minIndex);
         theRange = minFrame:maxFrames(k);
-        sInd = find(blinkComponent(theRange) <= baseLevel, 1, 'last');
+        sInd = find(candidateSignal(theRange) <= baseLevel, 1, 'last');
         if ~isempty(sInd)
             blinkFits(k).leftZero = theRange(sInd);
         else % Take the smallest value before in the interval
-            [~, sInd] = min(blinkComponent(theRange));
+            [~, sInd] = min(candidateSignal(theRange));
             blinkFits(k).leftZero = theRange(sInd);
         end
         theRange = maxFrames(k):outerEnds(k);
-        [~, minIndex] = min(blinkComponent(theRange));
+        [~, minIndex] = min(candidateSignal(theRange));
         minFrame = theRange(minIndex);
         theRange = maxFrames(k):minFrame;
-        sInd = find(blinkComponent(theRange)  <= baseLevel, 1, 'first');
+        sInd = find(candidateSignal(theRange)  <= baseLevel, 1, 'first');
         if ~isempty(sInd)
             blinkFits(k).rightZero = theRange(sInd);
         else % Take the smallest value before in the interval
-            [~, sInd] = min(blinkComponent(theRange));
+            [~, sInd] = min(candidateSignal(theRange));
             blinkFits(k).rightZero = theRange(sInd);
         end
         
@@ -117,7 +87,7 @@ for k = 1:length(maxFrames)
         blinkFits(k).leftBase =  maxPosVelFrame - leftBaseIndex;
         
         rightBase = maxNegVelFrame:...
-            (min(blinkFits(k).rightOuter, length(blinkComponent) - 1));
+            (min(blinkFits(k).rightOuter, length(candidateSignal) - 1));
         rightBaseVelocity = blinkVelocity(rightBase);
         rightBaseIndex = find(rightBaseVelocity >= 0, 1, 'first');
         if isempty(rightBaseIndex)
@@ -129,58 +99,58 @@ for k = 1:length(maxFrames)
         
         %% Compute the left and right half-height frames from base
         leftHalfBase = blinkFits(k).leftBase:blinkFits(k).maxFrame;
-        blinkHalfHeight = blinkComponent(maxFrames(k)) - ...
-            0.5*(blinkComponent(maxFrames(k)) - blinkComponent(blinkFits(k).leftBase));
+        blinkHalfHeight = candidateSignal(maxFrames(k)) - ...
+            0.5*(candidateSignal(maxFrames(k)) - candidateSignal(blinkFits(k).leftBase));
         blinkFits(k).leftBaseHalfHeight = blinkFits(k).leftBase + ...
-            find(blinkComponent(leftHalfBase) >= blinkHalfHeight, 1, 'first');
+            find(candidateSignal(leftHalfBase) >= blinkHalfHeight, 1, 'first');
         if isempty(blinkFits(k).leftBaseHalfHeight)
             blinkFits(k).leftBaseHalfHeight = nan;
         end
         rightHalfBase = blinkFits(k).maxFrame:blinkFits(k).rightOuter;
         blinkFits(k).rightBaseHalfHeight = min(blinkFits(k).rightOuter, ...
             blinkFits(k).maxFrame - 1 + ...
-            find(blinkComponent(rightHalfBase) <= blinkHalfHeight, 1, 'first'));
+            find(candidateSignal(rightHalfBase) <= blinkHalfHeight, 1, 'first'));
         if isempty(blinkFits(k).rightBaseHalfHeight)
             blinkFits(k).rightBaseHalfHeight = nan;
         end
         
         %% Compute the left and right half-height frames from zero
         leftHalfBase = blinkFits(k).leftZero:blinkFits(k).maxFrame;
-        blinkHalfHeight = 0.5*blinkComponent(maxFrames(k));
+        blinkHalfHeight = 0.5*candidateSignal(maxFrames(k));
         blinkFits(k).leftZeroHalfHeight = blinkFits(k).leftZero + ...
-            find(blinkComponent(leftHalfBase) >= blinkHalfHeight, 1, 'first');
+            find(candidateSignal(leftHalfBase) >= blinkHalfHeight, 1, 'first');
         if isempty(blinkFits(k).leftZeroHalfHeight)
             blinkFits(k).leftZeroHalfHeight = nan;
         end
         rightHalfBase = blinkFits(k).maxFrame:blinkFits(k).rightZero;
         blinkFits(k).rightZeroHalfHeight = min(blinkFits(k).rightOuter, ...
             blinkFits(k).maxFrame - 1 + ...
-            find(blinkComponent(rightHalfBase) <= blinkHalfHeight, 1, 'first'));
+            find(candidateSignal(rightHalfBase) <= blinkHalfHeight, 1, 'first'));
         if isempty(blinkFits(k).rightZeroHalfHeight)
             blinkFits(k).rightZeroHalfHeight = nan;
         end
         
         %% Compute fit ranges
-        blinkHeight = blinkComponent(maxFrames(k)) - blinkComponent(blinkFits(k).leftZero);
-        blinkTop = blinkComponent(maxFrames(k)) - baseFraction*blinkHeight;
-        blinkBottom = blinkComponent(blinkFits(k).leftZero) + baseFraction*blinkHeight;
+        blinkHeight = candidateSignal(maxFrames(k)) - candidateSignal(blinkFits(k).leftZero);
+        blinkTop = candidateSignal(maxFrames(k)) - baseFraction*blinkHeight;
+        blinkBottom = candidateSignal(blinkFits(k).leftZero) + baseFraction*blinkHeight;
         blinkRange = blinkFits(k).leftZero:maxFrames(k);
-        blinkTopPoint = find(blinkComponent(blinkRange) < blinkTop, 1, 'last');
-        blinkBottomPoint = find(blinkComponent(blinkRange) > blinkBottom, 1, 'first');
+        blinkTopPoint = find(candidateSignal(blinkRange) < blinkTop, 1, 'last');
+        blinkBottomPoint = find(candidateSignal(blinkRange) > blinkBottom, 1, 'first');
         blinkFits(k).leftRange = ...
             [blinkRange(blinkBottomPoint), blinkRange(blinkTopPoint)];
         
         blinkRange = maxFrames(k):blinkFits(k).rightZero;
-        blinkTopPoint = find(blinkComponent(blinkRange) < blinkTop, 1, 'first');
-        blinkBottomPoint = find(blinkComponent(blinkRange) > blinkBottom, 1, 'last');
+        blinkTopPoint = find(candidateSignal(blinkRange) < blinkTop, 1, 'first');
+        blinkBottomPoint = find(candidateSignal(blinkRange) > blinkBottom, 1, 'last');
         blinkFits(k).rightRange = [blinkRange(blinkTopPoint), blinkRange(blinkBottomPoint)];
         xLeft = (blinkFits(k).leftRange(1):blinkFits(k).leftRange(2))';
         xRight = (blinkFits(k).rightRange(1):blinkFits(k).rightRange(2))';
         
         %% Below and above for types     
         if length(xLeft) > 1 && length(xRight) > 1
-            yRight = blinkComponent(xRight)';
-            yLeft = blinkComponent(xLeft)';
+            yRight = candidateSignal(xRight)';
+            yLeft = candidateSignal(xLeft)';
             [p, S, mu] = polyfit(xLeft, yLeft, 1);
             blinkFits(k).leftPCoef = p;
             blinkFits(k).leftSCoef = S;

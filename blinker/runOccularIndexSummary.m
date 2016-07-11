@@ -7,21 +7,37 @@
 % type = 'Channel';
 
 %% BCIT Examples
-% experiment = 'BCITLevel0';
-% blinkDir = 'O:\ARL_Data\BCITBlinks';
-% type = 'ChannelUnref';
+experiment = 'BCITLevel0';
+blinkDir = 'O:\ARL_Data\BCITBlinks';
+type = 'EOGUnref';
+excludeTasks = {};
 %% BCI2000 blinks
 % type = 'Channel';
 % experiment = 'BCI2000';
 % blinkDir = 'O:\ARL_Data\BCI2000\BCI2000Blinks';
-%% Shooter blinks
-experiment = 'Shooter';
-%blinkDir = 'K:\CTAData\Shooter\ShooterBlinks';
-blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
-type = 'EOGUnref';
-%type = 'ChannelUnref';
-excludeTasks = {'EO', 'EC'};
 
+%% Shooter blinks
+% experiment = 'Shooter';
+% %blinkDir = 'K:\CTAData\Shooter\ShooterBlinks';
+% blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
+% type = 'EOGUnref';
+% %type = 'ChannelUnref';
+% excludeTasks = {'EO', 'EC'};
+
+% %% VEP
+% type = 'ChannelUnref';
+% experiment = 'VEP';
+% blinkDir = 'O:\ARL_Data\VEP\VEPBlinks';
+% excludeTasks = {};
+
+% %% Dreams
+% organizationType = 'Dreams';
+% type = 'EOGMast';
+% experiment = 'Dreams';
+% blinkDir = 'E:\CTADATA\WholeNightDreams\data\blinks';
+% %byType = 'EEG';
+% byType = 'EOG';
+% excludeTasks = {};
 %% Read in the blink data for this collection
 blinkFile = [experiment 'BlinksNew' type '.mat'];
 blinkPropertiesFile = [experiment 'BlinksNewProperties' type '.mat'];
