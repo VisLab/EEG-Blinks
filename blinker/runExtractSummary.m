@@ -5,10 +5,10 @@
 
 %% Consolidate BCIT statistics
 %type = 'ChannelUnref';
-type = 'EOGUnref';
-experiment = 'BCITLevel0';
-blinkDir = 'O:\ARL_Data\BCITBlinks';
-excludeTasks ={};
+% type = 'EOGUnref';
+% experiment = 'BCITLevel0';
+% blinkDir = 'O:\ARL_Data\BCITBlinks';
+% excludeTasks ={};
 %blinkDir = 'K:\BCITBlinks';
 %experiment = 'Experiment X2 Traffic Complexity';
 % experiment = 'Experiment X6 Speed Control';
@@ -33,12 +33,16 @@ excludeTasks ={};
 % blinkDir = 'E:\CTAData\LSIE_UM_Blinks';
 
 %% Shooter
-% type = 'ChannelUnref';
-% %type = 'EOGUnref';
-% collectionType = 'FILES2';
-% experiment = 'Shooter';
-% blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
-% excludeTasks = {'EC', 'EO'};
+%type = 'ChannelUnref';
+typeBlinks = 'EOGUnrefNewBoth';
+typeBlinkProperties = 'EOGUnrefNewBoth';
+typeBlinkSummary = 'EOGUnrefNewBoth';
+% typeBlinkProperties = 'EOGUnrefNewBothCombined';
+% typeBlinkSummary = 'EOGUnrefNewBothCombined';
+collectionType = 'FILES2';
+experiment = 'Shooter';
+blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNew';
+excludeTasks = {'EC', 'EO'};
 
 %% BCI2000
 % type = 'Channel';
@@ -47,9 +51,9 @@ excludeTasks ={};
 % excludeTasks = {'EyesOpen', 'EyesClosed'};
 
 %% Set up the files for the collection
-blinkFile = [experiment 'BlinksNew' type '.mat'];
-blinkPropertiesFile = [experiment 'BlinksNewProperties' type '.mat'];
-blinkSummaryFile = [experiment 'BlinksNewSummary' type '.mat'];
+blinkFile = [experiment 'BlinksNew' typeBlinks '.mat'];
+blinkPropertiesFile = [experiment 'BlinksNewProperties' typeBlinkProperties '.mat'];
+blinkSummaryFile = [experiment 'BlinksNewSummary' typeBlinkSummary '.mat'];
     
 %% Read in the blink data for this collection
 load([blinkDir filesep blinkFile]);
@@ -59,25 +63,31 @@ load([blinkDir filesep blinkPropertiesFile]);
 dataStarts = zeros(length(blinks), 1);
 dataEnds = zeros(length(blinks), 1);
 dataNames = cell(length(blinks), 1);
+usedSignal = cellfun(@double, {blinks.usedSignal});
 totalBlinks = 0;
+totalBlinksBadDatasets = 0;
+excludeTasks = lower(excludeTasks);
 datasetMask = false(length(blinks), 1);
 for n = 1:length(blinks)
     dataNames{n} = blinks(n).fileName;
-    if isempty(blinks(n).usedComponent) || isnan(blinks(n).usedComponent)
+    if isempty(usedSignal(n)) || isnan(usedSignal(n))
        warning('%d: [%s] does not have blinks\n', n, blinks(n).fileName);
        continue; 
-    elseif strcmpi(excludeTasks, blinks(n).task)
+    elseif sum(strcmpi(excludeTasks, blinks(n).task))
        continue;
     end
-    blinkIndex = find(blinks(n).componentIndices == blinks(n).usedComponent, ...
-                    1, 'first');
-    blinkPositions = blinks(n).blinkPositions{blinkIndex};
+    blinkIndex = find(blinks(n).signalIndices == abs(usedSignal(n)), 1, 'first');
+   
     dataStarts(n) = totalBlinks + 1;
-    dataEnds(n) = dataStarts(n) + size(blinkPositions, 2) - 1;
-    totalBlinks = totalBlinks + size(blinkPositions, 2);
-    datasetMask(n) = 1;
+    dataEnds(n) = dataStarts(n) + length(blinkFits{n}) - 1;
+    totalBlinks = totalBlinks + length(blinkFits{n});
+    if usedSignal < 0
+        totalBlinksBadDatasets = totalBlinksBadDatasets + length(blinkFits{n});
+    end
+    datasetMask(n) = true;
 end
-fprintf('Experiment %s has %d blinks\n', experiment, totalBlinks);
+fprintf('Experiment %s has %d blinks and %d blinks from bad datasets\n', ...
+         experiment, totalBlinks, totalBlinksBadDatasets);
 
 %% Remove the datasets that are excluded or failed in blink detection
 blinks = blinks(datasetMask);
@@ -85,7 +95,7 @@ blinkFits = blinkFits(datasetMask);
 blinkProperties = blinkProperties(datasetMask);
 dataStarts = dataStarts(datasetMask);
 dataEnds = dataEnds(datasetMask);
-
+usedSignal = usedSignal(datasetMask);
 %% Plot the statistics
 [dataHeaders, d] = getSummaryHeaders();
 bData = zeros(totalBlinks, length(dataHeaders));
@@ -152,4 +162,4 @@ blinkSummary.dataStarts = dataStarts;
 blinkSummary.dataEnds = dataEnds;
 
 %% Save the data
-save([blinkDir filesep blinkSummaryFile], 'blinkSummary', '-v7.3');
+save([blinkDir filesep blinkSummaryFile], 'blinkSummary', 'datasetMask', '-v7.3');

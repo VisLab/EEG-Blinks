@@ -1,9 +1,9 @@
 %% BCIT counts
-experiment = 'BCITLevel0';
-blinkDir = 'O:\ARL_Data\BCITBlinks';
-type = 'EOGUnrefNew';
-excludedTasks = {};
-VEOGChannels = [67, 68, 259, 260];
+% experiment = 'BCITLevel0';
+% blinkDir = 'O:\ARL_Data\BCITBlinksNew';
+% type = 'EOGUnrefNew';
+% %type = 'ChannelUnrefNewBoth';
+% excludedTasks = {};
 
 %% Shooter examples
 % blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
@@ -14,7 +14,7 @@ VEOGChannels = [67, 68, 259, 260];
 % VEOGChannels = [5, 6];
 %% Read in the blink data for this collection
 blinkFile = [experiment 'BlinksNew' type '.mat'];
-%load([blinkDir filesep blinkFile]);
+load([blinkDir filesep blinkFile]);
 
 %% Find the excluded tasks
 excludedMask = false(1, length(blinks));
@@ -98,3 +98,25 @@ fprintf('Total seconds: %d\n', totalSeconds);
 totalMinutes = totalSeconds/60;
 fprintf('Minutes: %g\n', totalMinutes);
 fprintf('Blinks/minute: %g\n', totalBlinks/totalMinutes);
+
+%% Now check to see that there is agreement between the measures
+failedFirst = 0;
+failedSecond = 0;
+for k = 1:length(blinks)
+    if isnan(blinks(k).cutoff)
+        failedFirst = failedFirst + 1;
+        continue;
+    end
+    indices = blinks(k).signalIndices;
+    [maxGood, maxIndex] = max(blinks(k).goodBlinks);
+    if indices(maxIndex) ~= blinks(k).usedSignal
+        failedSecond = failedSecond + 1;
+        fprintf('%d(used %d) %s:\n', k, blinks(k).usedSignal, blinks(k).fileName);
+        for j = 1:length(indices)
+            fprintf('   %d:[All=%d Good=%d BAMPR=%g, GRat=%g]\n', ...
+                indices(j), blinks(k).numberBlinks(j), ...
+                blinks(k).goodBlinks(j), blinks(k).blinkAmpRatios(j), ...
+                blinks(k).goodRatios(j));
+        end
+    end
+end    

@@ -1,4 +1,4 @@
-function [occularValues, goodBlinkMask] = getOccularIndex( ...
+function [occularValues, goodBlinkMask] = getOccularIndexNew( ...
           dBlinks, dBlinkProperties, dBlinkFits, type, correlationThreshold)
 % Extract the occular index of a particular type
 %
@@ -29,14 +29,14 @@ switch type
         values = cellfun(@double, {dBlinkProperties.durationHalfBase});
     case 'blinksPerMin'
         numberMinutes = size(dBlinks.candidateSignals, 2)/(dBlinks.srate * 60);
-        goodBlinks = length(dBlinkFits(goodMask))./numberMinutes;
+        goodBlinks = length(dBlinkFits(goodBlinkMask))./numberMinutes;
         allBlinks = length(dBlinkFits)./numberMinutes;
         
     otherwise
         values = NaN;
 end
 if ~strcmpi(type, 'blinksPerMin')
-    goodValues = values(goodMask(:));
+    goodValues = values(goodBlinkMask(:));
     occularValues = ...
         [nanmean(values), nanstd(values), nanmean(goodValues), nanstd(goodValues)];
     

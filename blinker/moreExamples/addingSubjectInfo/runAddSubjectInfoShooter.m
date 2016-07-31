@@ -2,10 +2,10 @@
 %blinkDir = 'K:\CTAData\Shooter\ShooterBlinks';
 %infoDir = 'K:\CTAData\Shooter\AdditionalDocumentation';
 infoDir = 'E:\CTADATA\Shooter\AdditionalDocumentation';
-blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
+blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNew';
 experiment = 'Shooter';
-%type = 'EOGUnrefA';
-type = 'ChannelUnrefA';
+type = 'EOGUnrefNewBoth';
+%type = 'ChannelUnrefA';
 %% Load the blinks data
 blinkFile = [experiment 'BlinksNew' type '.mat'];
 load([blinkDir filesep blinkFile]);

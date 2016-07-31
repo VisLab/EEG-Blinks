@@ -1,6 +1,6 @@
 %% Directories
-baseDir = 'E:\CTADATA\Michigan\EEG_data_for_blink_detection2';
-outDir = 'E:\CTADATA\Michigan\EEG_data_for_blink_detection2_out';
+baseDir = 'E:\CTADATA\Michigan\EEG_data_for_blink_detection3';
+outDir = 'E:\CTADATA\Michigan\EEG_data_for_blink_detection3_out';
 
 
 %% Get the directories

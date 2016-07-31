@@ -1,12 +1,9 @@
 %% NCTU - get the files and subjects
 organizationType = 'BCI2000';
-type = 'Channel';
-undoReference = false;
-collectionType = 'FILES';
+type = 'ChannelMastRef';
 experiment = 'BCI2000';
-pathName = 'O:\ARL_Data\BCI2000\BCI2000Robust_1Hz_Unfiltered';
-blinkDir = 'O:\ARL_Data\BCI2000\BCI2000Blinks';
-metadataRoot = 'E:\CTA_DATA\BCI2000';
+blinkDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNew';
+metadataRoot = 'E:\CTADATA\BCI2000';
 
 %% Load the blinks data and the metadata
 blinkFile = [experiment 'BlinksNew' type '.mat'];

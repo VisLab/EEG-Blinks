@@ -1,5 +1,5 @@
-function [blinkProps, blinkFits] = ...
-                       extractBlinkProperties(signal, blinkPositions, srate)
+function [blinkProps, blinkFits] = extractBlinkProperties(signal, ...
+                   blinkPositions, srate, specifiedMedian, specifiedStd)
 % Return a structure with blink properties for individual blinks
 %
 % Parameters:
@@ -19,19 +19,31 @@ function [blinkProps, blinkFits] = ...
 %% Initial parameters
 shutAmpFraction = 0.9;
 baseLevel = 0;
-numberBlinks = size(blinkPositions, 2);
 
-%% Initialize the blinkProps structure
-blinkProps(numberBlinks) = createPropertiesStructure();
-for k = 1:numberBlinks
-    blinkProps(k) = createPropertiesStructure();
-end
-
+correlationThreshold = 0.9;
 %% Compute the fits
 blinkFits = fitBlinks(signal, blinkPositions, baseLevel);
 if isempty(blinkFits)
+    blinkProps = '';
     return;
 end
+goodBlinkMask = getGoodBlinkMask(blinkFits, correlationThreshold, ...
+                                     specifiedMedian, specifiedStd);
+blinkFits = blinkFits(goodBlinkMask);
+if isempty(blinkFits)
+    blinkProps = '';
+    return;
+end
+numberBlinks = length(blinkFits);
+
+%% Initialize the blinkProps structure
+clear blink
+blinkProps(numberBlinks) = createPropertiesStructure();
+for k = 1:numberBlinks
+    blinkProps(k) = createPropertiesStructure(); %#ok<*AGROW>
+end
+
+%% Compute the fits
 blinkVelocity = diff(signal);
 peaks = cell2mat({blinkFits.maxFrame});
 peaks = [peaks length(signal)];

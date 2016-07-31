@@ -1,9 +1,11 @@
 %% NCTU - get the files and subjects
 collectionType = 'ESSLEVEL2';
-blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
+blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks_New';
 experiment = 'NCTU_LK';
 %type = 'IC';
-type = 'Channel';
+%type = 'Channel';
+type = 'ChannelMastNewBoth';
+
 %% Load the blinks data
 blinkFile = [experiment 'BlinksNew' type '.mat'];
 load([blinkDir filesep blinkFile]);

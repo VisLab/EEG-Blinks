@@ -1,4 +1,4 @@
-function blinks = extractBlinks(signals, srate, signalInfo, stdThreshold)
+function  = extractDistributions(blinks, srate)
 % Extract a blinks structure from an array of time series
 %
 % Parameters:
@@ -40,14 +40,18 @@ for k = 1:length(signalIndices)
   blinkPositions{k} = getBlinkPositions(signals(k, :), srate, stdThreshold);
   numberBlinks(k) = size(blinkPositions{k}, 2);
 end
+
 blinks.blinkPositions = blinkPositions;
 blinks.numberBlinks = numberBlinks;
 goodBlinks = zeros(length(signalIndices), 1);
 blinkAmpRatios = zeros(length(signalIndices), 1);
 cutoff = zeros(length(signalIndices), 1);
+cutoffRatios = zeros(length(signalIndices), 1);
+minusCutoffRatios = zeros(length(signalIndices), 1);
 bothCutoffRatios = zeros(length(signalIndices), 1);
 bestMedian = zeros(length(signalIndices), 1);
 bestRobustStd = zeros(length(signalIndices), 1);
+ratioDirections = nan(length(signalIndices), 1);
 for k = 1:length(signalIndices)
     try
       blinkFits = fitBlinks(blinks.candidateSignals(k, :), ...
@@ -97,6 +101,14 @@ for k = 1:length(signalIndices)
         cutoff(k) = (bestMedian(k)*worstRobustStd + ...
                      worstMedian*bestRobustStd(k))/...
                     (bestRobustStd(k) + worstRobustStd);
+        all = sum(allValues >= cutoff(k));
+        if all ~= 0
+            cutoffRatios(k) = sum(goodValues >= cutoff(k))/all;
+        end
+        all = sum(allValues <= cutoff(k));
+        if all ~= 0
+            minusCutoffRatios(k) = sum(goodValues <= cutoff(k))/all;
+        end
         all = sum(allValues <= bestMedian(k) + 2*bestRobustStd(k) & ...
                   allValues >= bestMedian(k) - 2*bestRobustStd(k));
         if all ~= 0
@@ -113,7 +125,7 @@ blinks.blinkAmpRatios = blinkAmpRatios;
 %% Reduce based on amplitude
 goodIndices = blinkAmpRatios >= blinkLowerAmpThreshold & ...
               blinkAmpRatios <= blinkUpperAmpThreshold;
-if sum(goodIndices) == 0 || isempty(goodIndices)
+if sum(goodIndices) == 0
    blinks.usedSignal = nan;
    blinks.status = ['failure: ' blinks.status ...
                     '[Blink amplitude too low -- may be noise]'];
@@ -131,33 +143,41 @@ blinks.bestMedian = bestMedian(goodIndices);
 blinks.bestRobustStd = bestRobustStd(goodIndices);
 
 %% Now calculate the ratios of good blinks to all blinks
-cutoffRatios = bothCutoffRatios(goodIndices);
+ratioDirections = ones(size(cutoffRatios));
+minusIndices =  cutoffRatios < minusCutoffRatios;
+ratioDirections(minusIndices) = -1;
+cutoffRatios(minusIndices) = minusCutoffRatios(minusIndices);
+bothIndices = cutoffRatios < bothCutoffRatios;
+ratioDirections(bothIndices) = 0;
+cutoffRatios(bothIndices) = bothCutoffRatios(bothIndices);
+
+ratioDirections = ratioDirections(goodIndices);
+blinks.ratioDirections = ratioDirections;
+cutoffRatios = cutoffRatios(goodIndices);
 blinks.goodRatios = cutoffRatios;
 
-%% Find the ones that meet the threshold
-usedSign = 1;
-candidateIndices = blinks.signalIndices;
-candidates = blinks.goodBlinks;
-goodCandidates = candidates > minGoodBlinks;
-if sum(goodCandidates) == 0 
-   blinks.status = ['failure: ' blinks.status ...
-                    '[fewer than ' num2str(minGoodBlinks) ' were found]'];
-   blinks.usedSignal = NaN;
+if isempty(cutoffRatios)
+   blinks.usedSignal = nan;
+   blinks.status = ['failure: ' blinks.status '[Amplitude ratio out of range]'];
    return;
 end
-candidateIndices = candidateIndices(goodCandidates);
-cutoffRatios = cutoffRatios(goodCandidates);
-candidates = candidates(goodCandidates);
+%% Find the ones that meet the threshold
 ratioIndices = cutoffRatios >= cutoffRatioThreshold;
 if sum(ratioIndices) == 0
-   usedSign = -1;
+   blinks.usedSignal = nan;
    blinks.status = ['failure: ' blinks.status '[Good ratio too low]'];
-else
-    candidates = candidates(ratioIndices);
-    candidateIndices = candidateIndices(ratioIndices);
+   return;
 end
-[~, maxIndex ] = max(candidates);
-if usedSign == 1
+signalIndices = blinks.signalIndices;
+goodBlinks = blinks.goodBlinks;
+candidates = goodBlinks(ratioIndices);
+candidateIndices = signalIndices(ratioIndices);
+[maxGood, maxIndex ] = max(candidates);
+if maxGood < minGoodBlinks
+    blinks.usedSignal = nan;
+    blinks.status = ['failure: ' blinks.status ...
+                    '[fewer than ' num2str(minGoodBlinks) ' were found]'];
+else
+    blinks.usedSignal = candidateIndices(maxIndex);
     blinks.status = ['success: ' blinks.status];
 end
-blinks.usedSignal = usedSign*candidateIndices(maxIndex);

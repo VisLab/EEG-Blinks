@@ -16,48 +16,49 @@ pop_editoptions('option_single', false, 'option_savetwofiles', false);
 % blinkStatsFiles = 'LSIEStatsOut.mat';
 
 %% BCIT Examples
-collectionType = 'FILES';
-experiment = 'BCITLevel0';
-%type = 'ChannelUnref';
-%type = 'EOGUnrefNew';
-type = 'EOGUnrefNew';
-%type = 'IC';
-blinkDir = 'O:\ARL_Data\BCITBlinksNew';
-%blinkDir = 'K:\BCITBlinks';
-% experiment = 'Experiment X2 Traffic Complexity';
-% experiment = 'Experiment X6 Speed Control';
-% experiment = 'X3 Baseline Guard Duty';
-% experiment = 'X4 Advanced Guard Duty';
-% experiment = 'X1 Baseline RSVP';
-% experiment = 'Experiment XC Calibration Driving';
-% experiment = 'Experiment XB Baseline Driving';
-% experiment = 'X2 RSVP Expertise';
-
+% organizationType = 'BCIT';
+% collectionType = 'FILES';
+% experiment = 'BCITLevel0';
+% %type = 'ChannelUnrefNewBoth';
+% type = 'EOGUnrefNewBoth';
+% blinkDir = 'O:\ARL_Data\BCITBlinksNew';
+% blinkDir = 'K:\BCITBlinks';
+% % experiment = 'Experiment X2 Traffic Complexity';
+% % experiment = 'Experiment X6 Speed Control';
+% % experiment = 'X3 Baseline Guard Duty';
+% % experiment = 'X4 Advanced Guard Duty';
+% % experiment = 'X1 Baseline RSVP';
+% % experiment = 'Experiment XC Calibration Driving';
+% % experiment = 'Experiment XB Baseline Driving';
+% % experiment = 'X2 RSVP Expertise';
+% 
 
 %% NCTU
-% blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
+% blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks_New';
 % experiment = 'NCTU_LK';
-% %type = 'IC';
-% type = 'Channel';
+% % %type = 'IC';
+% % type = 'ChannelMastNew';
+% type = 'ChannelMastNewBoth';
 
 %% Shooter
-%type = 'ChannelUnref';
-% type = 'EOGUnref';
-% experiment = 'Shooter';
-% blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
+% %type = 'ChannelUnrefNewBoth';
+type = 'EOGUnrefNewBothCombined';
+experiment = 'Shooter';
+blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNew';
 
 %% BCI2000
-% type = 'Channel';
+% type = 'ChannelMastRef';
 % experiment = 'BCI2000';
-% blinkDir = 'O:\ARL_Data\BCI2000\BCI2000Blinks';
+% blinkDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNew';
+% metadataRoot = 'E:\CTADATA\BCI2000';
 
-% %% UMICH LSIE
+%% UMICH LSIE
 % organizationType = 'UM';
 % type = 'ChannelUnref';
 % undoReference = false;
 % collectionType = 'FILES';
 % experiment = 'LSIE_UM';
-% blinkDir = 'E:\CTADATA\Michigan\EEG_blinks2';
+% blinkDir = 'E:\CTADATA\Michigan\EEG_blinks3';
 
 %% Dreams
 % organizationType = 'Dreams';
@@ -83,7 +84,7 @@ blinkFits = cell(1, length(blinks));
 blinkProperties = cell(1, length(blinks));
 
 %% Fit the blinks
-for n = 1:length(blinks)
+for n = 35%1:length(blinks)
     fprintf('Dataset %d:\n', n);
     dBlinks = blinks(n);
     if isempty(dBlinks.usedSignal) || isnan(dBlinks.usedSignal)
@@ -92,12 +93,13 @@ for n = 1:length(blinks)
         blinkFits{n} = NaN;
         continue;
     end
-    blinkIndex = find(dBlinks.signalIndices == dBlinks.usedSignal, ...
+    blinkIndex = find(dBlinks.signalIndices == abs(dBlinks.usedSignal), ...
         1, 'first');
     [blinkProperties{n}, blinkFits{n}] = extractBlinkProperties( ...
         dBlinks.candidateSignals(blinkIndex, :), ...
-        dBlinks.blinkPositions{blinkIndex}, dBlinks.srate);
+        dBlinks.blinkPositions{blinkIndex}, dBlinks.srate, ...
+        dBlinks.bestMedian(blinkIndex), dBlinks.bestRobustStd(blinkIndex));
 end
 
 %% Save the property structures in a file
-save([blinkDir filesep blinkPropertiesFile], 'blinkFits', 'blinkProperties', '-v7.3');
+%save([blinkDir filesep blinkPropertiesFile], 'blinkFits', 'blinkProperties', '-v7.3');

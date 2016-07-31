@@ -1,7 +1,7 @@
 %% Computes blink totals for a given list of tasks.  Successful datasets
 % match the task and have a 
 pop_editoptions('option_single', false, 'option_savetwofiles', false);
-
+doSignalCounts = true;
 %% VEP setup
 % experiment = 'vep';
 % blinkDir = 'O:\ARL_Data\VEP\VEPBlinks';
@@ -18,15 +18,21 @@ pop_editoptions('option_single', false, 'option_savetwofiles', false);
 %% BCIT Examples
 % collectionType = 'FILES';
 % experiment = 'BCITLevel0';
-% blinkDir = 'O:\ARL_Data\BCITBlinks';
+% blinkDir = 'O:\ARL_Data\BCITBlinksNew';
+% %type = 'EOGUnrefNew';
+% type = 'ChannelUnrefNewBoth';
+% taskList = {'T2X1', 'T2X2', 'T2X3', 'T2X4', 'T2X6', 'T2X7', 'T2X8', ...
+%             'T3X1', 'T3X2', 'T3X3', 'T3X4', 'XB', 'XC'};
+% closedTask = '';
+% openTask = '';
+% 
+% type = 'ChannelUnref';
 
-type = 'ChannelUnref';
-taskList = {'X1', 'X2', 'X3', 'X4', 'X6', 'X7', 'X8', 'XB', 'XC'};
-experiment = 'BCITLevel0';
-blinkDir = 'O:\ARL_Data\BCITBlinks';
-doChannelCounts = true;
-closedTask = '';
-openTask = '';
+% experiment = 'BCITLevel0';
+% blinkDir = 'O:\ARL_Data\BCITBlinks';
+% doChannelCounts = true;
+% closedTask = '';
+% openTask = '';
 % %type = 'EOG';
 % type = 'IC';
 % blinkDir = 'O:\ARL_Data\BCITBlinks';
@@ -56,12 +62,13 @@ openTask = '';
 % experiment = 'VEP';
 
 %% NCTU
-% type = 'Channel';
+% type = 'ChannelMastNew';
 % taskList = {'motion', 'motionless'};
-% blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
+% blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks_New';
 % experiment = 'NCTU_LK';
 % doChannelCounts = true;
-
+% closedTask = '';
+% openTask = '';
 % %% UMICH LSIE
 % %type = 'Channel';
 % type = 'IC';
@@ -70,11 +77,11 @@ openTask = '';
 % blinkDir = 'E:\CTAData\LSIE_UM_Blinks';
 
 %% Shooter
-% type = 'ChannelUnref';
+% type = 'EOGUnrefNew';
 % taskList = {'ARIT', 'SEF2', 'SEF4', 'SEO2', 'SEO4', ...
 %     'DEF2', 'DEF4', 'DEO2', 'DEO4'};
 % experiment = 'Shooter';
-% blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
+% blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNew';
 % doChannelCounts = true;
 % closedTask = 'EC';
 % openTask = 'EO';
@@ -93,7 +100,7 @@ blinkTotals = struct('experiment', [], 'datasets', [], 'subjects', [],...
                      'successful', [], 'successfulHours', [], ...
                      'totalBlinks', [], 'blinksMin', [], 'totalGood', [], ...
                      'goodBlinksMin', []); 
-channelCounts = struct();
+signalCounts = struct();
 taskDatasets = 0;
 totalMinutes = 0;
 taskMinutes = 0;
@@ -110,32 +117,34 @@ blinkTotals.subjects = unique({blinks.subjectID});
 for n = 1:length(blinks)
     fprintf('Dataset %d:\n', n);
     dBlinks = blinks(n);
-    thisSize = size(dBlinks.blinkComponents, 2)./(dBlinks.srate * 60);
-    totalMinutes = totalMinutes + thisSize;
+    thisSize = size(dBlinks.candidateSignals, 2)./(dBlinks.srate * 60);
+
     matchTask = intersect(taskList, lower(dBlinks.task));
     if isempty(matchTask)
         continue;
     end
+    totalMinutes = totalMinutes + thisSize;
     taskDatasets = taskDatasets + 1;
-    taskMinutes = taskMinutes + thisSize;    
-    if isempty(dBlinks.usedComponent) || isnan(dBlinks.usedComponent)
+    if isempty(dBlinks.usedSignal) || isnan(dBlinks.usedSignal)
         unsuccessful = unsuccessful + 1;
         continue;
     end
+    
+    taskMinutes = taskMinutes + thisSize;    
     successful = successful + 1;
     successfulMinutes = successfulMinutes + thisSize;
-    thisPos = find(dBlinks.componentIndices == dBlinks.usedComponent, 1, 'first');
+    thisPos = find(dBlinks.signalIndices == dBlinks.usedSignal, 1, 'first');
     totalBlinks = totalBlinks + dBlinks.numberBlinks(thisPos);
     goodBlinks = goodBlinks + dBlinks.goodBlinks(thisPos);
-    if doChannelCounts == true
-        channelIndices = dBlinks.blinkInfo.channelIndices;
-        channelLabels = dBlinks.blinkInfo.channelLabels;
-        thisPos = find(channelIndices == dBlinks.usedComponent, 1, 'first');
-        thisLabel = lower(channelLabels{thisPos});
-        if ~isfield(channelCounts, thisLabel)
-            channelCounts.(thisLabel) = 0;
+    if doSignalCounts == true
+        signalIndices = dBlinks.signalInfo.signalIndices;
+        signalLabels = dBlinks.signalInfo.signalLabels;
+        thisPos = find(signalIndices == dBlinks.usedSignal, 1, 'first');
+        thisLabel = lower(signalLabels{thisPos});
+        if ~isfield(signalCounts, thisLabel)
+            signalCounts.(thisLabel) = 0;
         end
-        channelCounts.(thisLabel) = channelCounts.(thisLabel) + 1;
+        signalCounts.(thisLabel) = signalCounts.(thisLabel) + 1;
     end
 end
 
@@ -155,17 +164,17 @@ if ~isempty(closedTask)
     allTasks = {blinks.task};
     taskMask = strcmpi(allTasks, closedTask);
     closedBlinks = blinks(taskMask);
-    usedComponents = cell2mat({closedBlinks.usedComponent});
-    closedCounts = zeros(length(usedComponents), 2);
-    for k = 1:length(usedComponents)
-        used = closedBlinks(k).usedComponent;
+    usedSignals = cell2mat({closedBlinks.usedSignal});
+    closedCounts = zeros(length(usedSignals), 2);
+    for k = 1:length(usedSignals)
+        used = closedBlinks(k).usedSignal;
         if isempty(used) || isnan(used)
             continue;
         end
-        thisPos = find(closedBlinks(k).componentIndices == used, 1, 'first');
+        thisPos = find(closedBlinks(k).signalIndices == used, 1, 'first');
         closedCounts(k, 1) = closedBlinks(k).numberBlinks(thisPos);
         closedCounts(k, 2) = closedBlinks(k).goodBlinks(thisPos);
-        numMinutes = size(closedBlinks(k).blinkComponents, 2)./...
+        numMinutes = size(closedBlinks(k).signalCandidates, 2)./...
                          (closedBlinks(k).srate * 60);
         closedCounts(k, :) = closedCounts(k, :)/numMinutes;
     end
@@ -177,17 +186,18 @@ if ~isempty(openTask)
     allTasks = {blinks.task};
     taskMask = strcmpi(allTasks, openTask);
     openBlinks = blinks(taskMask);
-    usedComponents = cell2mat({openBlinks.usedComponent});
-    openCounts = zeros(length(usedComponents), 2);
-    for k = 1:length(usedComponents)
-        used = openBlinks(k).usedComponent;
+    usedSignals = {openBlinks.usedSignal};
+    usedSignals = cellfun(@double, usedSignals);
+    openCounts = zeros(length(usedSignals), 2);
+    for k = 1:length(usedSignals)
+        used = openBlinks(k).usedSignal;
         if isempty(used) || isnan(used)
             continue;
         end
-        thisPos = find(openBlinks(k).componentIndices == used, 1, 'first');
+        thisPos = find(openBlinks(k).signalIndices == used, 1, 'first');
         openCounts(k, 1) = openBlinks(k).numberBlinks(thisPos);
         openCounts(k, 2) = openBlinks(k).goodBlinks(thisPos);
-        numMinutes = size(openBlinks(k).blinkComponents, 2)./...
+        numMinutes = size(openBlinks(k).candidateSignals, 2)./...
                          (openBlinks(k).srate * 60);
         openCounts(k, :) = openCounts(k, :)/numMinutes;
     end
@@ -195,4 +205,4 @@ else
     openCounts = [];
 end
 %% Save the property structures in a file
-save([blinkDir filesep blinkTotalsFile], 'blinkTotals', 'channelCounts', '-v7.3');
+save([blinkDir filesep blinkTotalsFile], 'blinkTotals', 'signalCounts', '-v7.3');

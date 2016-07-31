@@ -10,7 +10,7 @@ function badBlinkMask = getBadBlinks(blinkFits, blinkProperties, corrThreshold)
 % If the correlationThreshold is zero, all successfully fitted blinks
 
 if nargin < 3
-  corrThreshold = 0.95;
+  corrThreshold = 0.90;
 end
 
 leftR2 = {blinkFits.leftR2};

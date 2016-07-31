@@ -5,16 +5,16 @@ correlationThresholdMiddle = 0.95;
 dumpWeb = true;
 maxAmp = 600;
 %% BCIT Examples
-experiment = 'BCITLevel0';
-blinkDir = 'O:\ARL_Data\BCITBlinksNew';
-type = 'EOGUnrefNewReplaced';
-typeOld = 'EOGUnrefNew';
+% experiment = 'BCITLevel0';
+% blinkDir = 'O:\ARL_Data\BCITBlinksNew';
+% type = 'EOGUnrefNewReplaced';
+% typeOld = 'EOGUnrefNew';
 
 %% Shooter Examples
-% experiment = 'Shooter';
-% blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
-% type = 'EOGUnref';
-% type = 'ChannelUnref';
+experiment = 'Shooter';
+blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNew';
+type = 'EOGUnrefNew';
+%type = 'ChannelUnref';
 
 %% NCTU blinks
 % blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
@@ -40,11 +40,11 @@ typeOld = 'EOGUnrefNew';
 % blinkFitsOld = blinkFits;
 % blinkPropertiesOld = blinkProperties;
 % 
-% %%
-% blinkFile = [experiment 'BlinksNew' type '.mat'];
-% blinkPropertiesFile = [experiment 'BlinksNewProperties' type '.mat'];
-% load([blinkDir filesep blinkFile]);
-% load([blinkDir filesep blinkPropertiesFile]);
+%% Load the files
+blinkFile = [experiment 'BlinksNew' type '.mat'];
+blinkPropertiesFile = [experiment 'BlinksNewProperties' type '.mat'];
+load([blinkDir filesep blinkFile]);
+load([blinkDir filesep blinkPropertiesFile]);
 
 %% Open the index file
 indexFile = [experiment type 'maxFrameDist.html'];

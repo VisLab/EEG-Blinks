@@ -4,8 +4,8 @@
 pop_editoptions('option_single', false, 'option_savetwofiles', false);
 
 %% BCIT Examples
-%type = 'ChannelUnref';
-type = 'EOGUnrefNew';
+%type = 'ChannelUnrefNewBoth';
+type = 'EOGUnrefNewBoth';
 collectionType = 'FILES';
 experiment = 'BCITLevel0';
 blinkDir = 'O:\ARL_Data\BCITBlinksNew';
@@ -21,7 +21,7 @@ blinkDir = 'O:\ARL_Data\BCITBlinksNew';
 
 %% Load the blinks data
 blinkFile = [experiment 'BlinksNew' type '.mat'];
-%load([blinkDir filesep blinkFile]);
+load([blinkDir filesep blinkFile]);
 load([blinkDir filesep experiment 'SubjectMap.mat'])
 
 %% Construct a file map
@@ -60,20 +60,15 @@ taskMap('T2X8') = 'X8 Mind Wandering Driving';
 %% Replicate handling map
 replicateMap = containers.Map('KeyType', 'char', 'ValueType', 'any');
 %% Set up the temporary blinks file
-blinksOld = blinks;
-clear blinks;
-numberFiles = length(blinksOld);
+numberFiles = length(blinks);
 %% Create the new structure
-blinks(numberFiles) = createBlinksStructure();
 for k = 1:numberFiles
-    blinks(k).fileName = blinksOld(k).fileName;
-    blinks(k).srate = blinksOld(k).srate;
-    [thePath, theName, theExt] = fileparts(blinksOld(k).fileName);
+    [thePath, theName, theExt] = fileparts(blinks(k).fileName);
     if ~isKey(fileMap, theName)
         warning('%d: %s is not in the subject map', k, theName);
     else
         theValue = fileMap(theName);
-        blinks(k).subjectID = theValue.subject;
+        blinks(k).subjectID = theValue.subject; %#ok<*SAGROW>
         blinks(k).startTime = theValue.startTime;
     end
     pieces = strsplit(theName, '_');
@@ -87,21 +82,11 @@ for k = 1:numberFiles
     blinks(k).uniqueName = [blinks(k).subjectID '_' blinks(k).task];
     if isKey(replicateMap, blinks(k).uniqueName)
         theValue = replicateMap(blinks(k).uniqueName);
-        theValue(end + 1) = k; %#ok<SAGROW>
+        theValue(end + 1) = k; 
     else
         theValue = k;
     end
     replicateMap(blinks(k).uniqueName) = theValue; 
-    blinks(k).type = blinksOld(k).type;
-    blinks(k).signalIndices = blinksOld(k).signalIndices;
-    blinks(k).candidateSignals = blinksOld(k).candidateSignals;
-    blinks(k).signalInfo = blinksOld(k).signalInfo;
-    blinks(k).blinkPositions = blinksOld(k).blinkPositions;
-    blinks(k).numberBlinks = blinksOld(k).numberBlinks;
-    blinks(k).goodBlinks = blinksOld(k).goodBlinks;
-    blinks(k).blinkAmpRatio = blinksOld(k).blinkAmpRatio;
-    blinks(k).usedSignal = blinksOld(k).usedSignal;
-    blinks(k).status = blinksOld(k).status;
 end
 
 %% Now add the replicate markers to the unique tags
