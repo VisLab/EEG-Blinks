@@ -3,41 +3,31 @@
 %% Code for dataset 1
 pause on;
 n = 1;
-blinkFiles = cell(2, 1);
-blinkFits = cell(2, 1);
-blinkProperties = cell(2, 1);
-blinkTraces = zeros(2, 1014784);
-load('O:\ARL_Data\BCITBlinkOutput\data\BCITLevel0DatasetBlinksEOGUnrefS2023_XC_R1.mat');
+blinkFiles = cell(1, 1);
+blinkFits = cell(1, 1);
+blinkProperties = cell(1, 1);
+blinkTraces = zeros(1, 1014784);
+load('O:\ARL_Data\BCITBlinkOutputNew\data\BCITLevel0DatasetBlinksEOGUnrefNewBothS2023_XC_R1.mat');
 blinkFiles{1} = dBlinks;
 blinkFits{1} = dFits{1};
 blinkProperties{1} = dProperties{1};
-blinkTypes{1} = 'EOGUnref';
-componentIndices = blinkFiles{1}(1).componentIndices;
-used = blinkFiles{1}(1).usedComponent;
-used = find(componentIndices == used, 1, 'first');
-components = blinkFiles{1}(1).blinkComponents;
-blinkTraces(1, :) = components(used, :);
-load('O:\ARL_Data\BCITBlinkOutput\data\BCITLevel0DatasetBlinksChannelUnrefS2023_XC_R1.mat');
-blinkFiles{2} = dBlinks;
-blinkFits{2} = dFits{1};
-blinkProperties{2} = dProperties{1};
-blinkTypes{2} = 'ChannelUnref';
-componentIndices = blinkFiles{2}(1).componentIndices;
-used = blinkFiles{2}(1).usedComponent;
-used = find(componentIndices == used, 1, 'first');
-components = blinkFiles{2}(1).blinkComponents;
-blinkTraces(2, :) = components(used, :);
+blinkTypes{1} = 'EOGUnrefNewBoth';
+signalIndices = blinkFiles{1}(1).signalIndices;
+used = blinkFiles{1}(1).usedSignal;
+used = find(signalIndices == abs(used), 1, 'first');
+signals = blinkFiles{1}(1).candidateSignals;
+blinkTraces(1, :) = signals(used, :);
 dBlinks = blinkFiles{1};
 dProperties = blinkProperties{1};
 dFits = blinkFits{1};
 dataName = blinkFiles{1}(1).fileName;
 [~, dataName] = fileparts(dataName);
-thisOutputDir = 'O:\ARL_Data\BCITBlinkOutput\output\BCITLevel0DatasetARL_BCIT_T2_M067_S2023_XC_C0_R1_EEG_1';
+thisOutputDir = 'O:\ARL_Data\BCITBlinkOutputNew\output\BCITLevel0DatasetARL_BCIT_T2_M067_S2023_XC_C0_R1_EEG_1';
 if ~exist(thisOutputDir, 'dir')
    mkdir(thisOutputDir);
 end
 startBatch = 1;
-endBatch = 189;
+endBatch = 155;
 
 n = 1; %#ok<NASGU>
 scriptName = 'plotBlinkScript';

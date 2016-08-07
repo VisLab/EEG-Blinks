@@ -5,9 +5,14 @@
 
 %% Consolidate BCIT statistics
 %type = 'ChannelUnref';
-% type = 'EOGUnref';
+% typeBlinks = 'EOGUnrefNewBoth';
+% typeBlinkProperties = 'EOGUnrefNewBoth';
+% typeBlinkSummary = 'EOGUnrefNewBoth';
+% typeBlinks = 'ChannelUnrefNewBoth';
+% typeBlinkProperties = 'ChannelUnrefNewBoth';
+% typeBlinkSummary = 'ChannelUnrefNewBoth';
 % experiment = 'BCITLevel0';
-% blinkDir = 'O:\ARL_Data\BCITBlinks';
+% blinkDir = 'O:\ARL_Data\BCITBlinksNew';
 % excludeTasks ={};
 %blinkDir = 'K:\BCITBlinks';
 %experiment = 'Experiment X2 Traffic Complexity';
@@ -20,10 +25,12 @@
 % experiment = 'X2 RSVP Expertise';
 
 %% NCTU
-% type = 'Channel';
-% blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
+% blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks_New';
 % experiment = 'NCTU_LK';
 % excludeTasks = {};
+% typeBlinks = 'ChannelMastNewBoth';
+% typeBlinkProperties = 'ChannelMastNewBoth';
+% typeBlinkSummary = 'ChannelMastNewBoth';
 
 % %% UMICH LSIE
 % %type = 'Channel';
@@ -34,26 +41,34 @@
 
 %% Shooter
 %type = 'ChannelUnref';
-typeBlinks = 'EOGUnrefNewBoth';
-typeBlinkProperties = 'EOGUnrefNewBoth';
-typeBlinkSummary = 'EOGUnrefNewBoth';
+% typeBlinks = 'EOGUnrefNewBoth';
+% typeBlinkProperties = 'EOGUnrefNewBoth';
+% typeBlinkSummary = 'EOGUnrefNewBoth';
 % typeBlinkProperties = 'EOGUnrefNewBothCombined';
 % typeBlinkSummary = 'EOGUnrefNewBothCombined';
 collectionType = 'FILES2';
 experiment = 'Shooter';
 blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNew';
 excludeTasks = {'EC', 'EO'};
+typeBlinks = 'EOGUnrefNewBothCombined';
+typeBlinkProperties = 'EOGUnrefNewBothCombined';
+typeBlinkSummary = 'EOGUnrefNewBothCombined';
 
 %% BCI2000
-% type = 'Channel';
+% typeBlinks = 'ChannelMastNewBothCombined';
+% typeBlinkProperties = 'ChannelMastNewBothCombined';
+% typeBlinkSummary = 'ChannelMastNewBothCombined';
+% typeBlinks = 'ChannelMastNewBoth';
+% typeBlinkProperties = 'ChannelMastNewBoth';
+% typeBlinkSummary = 'ChannelMastNewBoth';
 % experiment = 'BCI2000';
-% blinkDir = 'O:\ARL_Data\BCI2000\BCI2000Blinks';
+% blinkDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNew';
 % excludeTasks = {'EyesOpen', 'EyesClosed'};
 
 %% Set up the files for the collection
 blinkFile = [experiment 'BlinksNew' typeBlinks '.mat'];
-blinkPropertiesFile = [experiment 'BlinksNewProperties' typeBlinkProperties '.mat'];
-blinkSummaryFile = [experiment 'BlinksNewSummary' typeBlinkSummary '.mat'];
+blinkPropertiesFile = [experiment 'BlinksNew' typeBlinkProperties 'Properties.mat'];
+blinkSummaryFile = [experiment 'BlinksNew' typeBlinkSummary 'Summary.mat'];
     
 %% Read in the blink data for this collection
 load([blinkDir filesep blinkFile]);
@@ -73,7 +88,7 @@ for n = 1:length(blinks)
     if isempty(usedSignal(n)) || isnan(usedSignal(n))
        warning('%d: [%s] does not have blinks\n', n, blinks(n).fileName);
        continue; 
-    elseif sum(strcmpi(excludeTasks, blinks(n).task))
+    elseif sum(strcmpi(excludeTasks, blinks(n).task)) > 0
        continue;
     end
     blinkIndex = find(blinks(n).signalIndices == abs(usedSignal(n)), 1, 'first');
@@ -153,13 +168,15 @@ end
 
 %% Create the blink structure
 blinkSummary = ...
-    struct('collection', [], 'fileNames', [], 'headers', [], 'data', [], 'dataStarts', []);
+    struct('collection', [], 'fileNames', [], 'datasetMask', [], ...
+           'headers', [], 'data', [], 'dataStarts', []);
 blinkSummary.collection = experiment;
 blinkSummary.fileNames = dataNames;
+blinkSummary.datasetMask = datasetMask;
 blinkSummary.headers = dataHeaders;
 blinkSummary.data = bData;
 blinkSummary.dataStarts = dataStarts;
 blinkSummary.dataEnds = dataEnds;
 
 %% Save the data
-save([blinkDir filesep blinkSummaryFile], 'blinkSummary', 'datasetMask', '-v7.3');
+save([blinkDir filesep blinkSummaryFile], 'blinkSummary', '-v7.3');

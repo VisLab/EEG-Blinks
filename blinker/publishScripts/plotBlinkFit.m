@@ -2,7 +2,6 @@ function  plotBlinkFit(dataName, srate, blinkTraces, traceNames, ...
                         blinkFit, blinkProperties, preLimit, postLimit)
     %% Extend for plotting
     corrThreshold = 0.98;
-    ampThreshold = 0.35;
     badString = '';
     traceColors = jet(max(size(blinkTraces, 1), 3));
     traceColors = [0.8, 0.8, 0.8; 0.6, 0.6, 0.6; 0, 0, 0; traceColors(1:end-2,:)];
@@ -22,18 +21,11 @@ function  plotBlinkFit(dataName, srate, blinkTraces, traceNames, ...
     if blinkFit.rightBase < blinkFit.rightZero
        badString = [badString ' [R-F]'];
     end
-%     if blinkStat.leftPeakBelow > 0.1 || ...
-%             blinkStat.leftPeakBelow < -ampThreshold*blinkStat.blinkPeak
-%         badString = [badString ' [L-A]'];
+
+%     if blinkProperties.peakTimeTent > blinkProperties.peakTimeBlink || ...
+%        blinkProperties.peakMaxTent < blinkProperties.peakMaxBlink
+%        badString = [badString ' [P-S]'];
 %     end
-%     if blinkStat.rightPeakBelow > 0.1 || ...
-%             blinkStat.rightPeakBelow < -ampThreshold*blinkStat.blinkPeak
-%         badString = [badString ' [R-A]'];
-%     end
-    if blinkProperties.peakTimeTent > blinkProperties.peakTimeBlink || ...
-       blinkProperties.peakMaxTent < blinkProperties.peakMaxBlink
-       badString = [badString ' [P-S]'];
-    end
     figure('Color', [1, 1, 1])
     hold on
     legendString = {};
@@ -91,8 +83,6 @@ function  plotBlinkFit(dataName, srate, blinkTraces, traceNames, ...
         fprintf('Error: Could not do the half-height line: %s\n', myException.message);
     end
     %% Show the point where the below water portion reaches threshold 
-%     plot((blinkFit.leftBelow - 1)/srate, 0, 'x', 'MarkerSize', 10)
-%     plot((blinkFit.rightBelow - 1)/srate, 0, 'x', 'MarkerSize', 10)
     labelColor = [0, 0, 0];
     if ~isempty(badString)
         labelColor = [1, 0, 0];

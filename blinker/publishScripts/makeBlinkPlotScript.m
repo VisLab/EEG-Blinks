@@ -24,29 +24,27 @@ end
 blinksMain = blinkFiles{1};
 for n = 1:length(blinksMain)
     dBlinks = blinkFiles{1}(n);
-    if isnan(dBlinks.usedComponent)
+    if isnan(dBlinks.usedSignal)
         continue;
     end
-    blinkIndices = dBlinks.componentIndices;
-    used = find(blinkIndices == dBlinks.usedComponent, 1, 'first');
-    blinkPositions = dBlinks.blinkPositions{used};
-    numberBlinks = size(blinkPositions, 2);
+    blinkIndices = dBlinks.signalIndices;
+    used = find(blinkIndices == abs(dBlinks.usedSignal), 1, 'first');
+    numberBlinks = length(dFits{1});
     numberBatches = max(1, floor(numberBlinks/batchSize));
     adjustedBatchSize = ceil(numberBlinks/numberBatches);
     startBatch = 1;
     for j = 1:numberBatches
         endBatch = min(numberBlinks, startBatch + adjustedBatchSize - 1);
-        traceLength = size(dBlinks.blinkComponents, 2);
+        traceLength = size(dBlinks.candidateSignals, 2);
         
         fprintf(fid, '\n\n%%%% Code for dataset %g\n', n);
         fprintf(fid, 'pause on;\n');
         fprintf(fid, 'n = %d;\n', n);
-        %fprintf(fid, 'blinkDir = ''%s'';\n', blinkDir');
-        %fprintf(fid, 'experiment = ''%s'';\n', experiment);
+       
         fprintf(fid, 'blinkFiles = cell(%d, 1);\n', length(blinkTypes));
         fprintf(fid, 'blinkFits = cell(%d, 1);\n', length(blinkTypes));
         fprintf(fid, 'blinkProperties = cell(%d, 1);\n', length(blinkTypes));
-%         fprintf(fid, 'blinkTypes = cell(%d, 1);\n', length(blinkTypes));
+
         fprintf(fid,  'blinkTraces = zeros(%d, %d);\n', ...
                       length(blinkTypes), traceLength);
         for t = 1:length(blinkTypes)
@@ -55,11 +53,11 @@ for n = 1:length(blinksMain)
             fprintf(fid, 'blinkFits{%d} = dFits{1};\n', t);
             fprintf(fid, 'blinkProperties{%d} = dProperties{1};\n', t);
             fprintf(fid, 'blinkTypes{%d} = ''%s'';\n', t, blinkTypes{t});
-            fprintf(fid, 'componentIndices = blinkFiles{%d}(%d).componentIndices;\n', t, n);
-            fprintf(fid, 'used = blinkFiles{%d}(%d).usedComponent;\n', t, n);
-            fprintf(fid, 'used = find(componentIndices == used, 1, ''first'');\n');
-            fprintf(fid, 'components = blinkFiles{%d}(%d).blinkComponents;\n', t, n);
-            fprintf(fid, 'blinkTraces(%d, :) = components(used, :);\n', t);
+            fprintf(fid, 'signalIndices = blinkFiles{%d}(%d).signalIndices;\n', t, n);
+            fprintf(fid, 'used = blinkFiles{%d}(%d).usedSignal;\n', t, n);
+            fprintf(fid, 'used = find(signalIndices == abs(used), 1, ''first'');\n');
+            fprintf(fid, 'signals = blinkFiles{%d}(%d).candidateSignals;\n', t, n);
+            fprintf(fid, 'blinkTraces(%d, :) = signals(used, :);\n', t);
         end
         fprintf(fid, 'dBlinks = blinkFiles{1};\n');
         fprintf(fid, 'dProperties = blinkProperties{1};\n');
@@ -89,7 +87,6 @@ for n = 1:length(blinksMain)
             fprintf(fid, 'close all;\n');
             fprintf(fid, 'clear all;\n');
             fprintf(fid, 'fclose all;\n');
-            %fprintf(fid, 'pause\n');
         else
             fprintf(fid, 'plotBlinkScript;\n');
             fprintf(fid, 'pause\n');

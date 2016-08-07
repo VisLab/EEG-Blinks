@@ -43,11 +43,10 @@ excludedTasks = {'EC', 'EO'};
 
 %% BCI2000
 % organizationType = 'BCI2000';
-% type = 'ChannelMastRef';
+% type = 'ChannelMastNewBoth';
 % experiment = 'BCI2000';
 % outDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNew';
 % excludedTasks = {'EyesOpen', 'EyesClosed'};
-
 %% Load the blink file
 blinkFile = [experiment 'BlinksNew' type '.mat'];
 load([outDir filesep blinkFile]);
@@ -260,7 +259,7 @@ for k = 35%1:length(blinks)
     end 
     blinks(k).usedSignal = rmap.usedSign*availableIndices(myPos);
 end   
-%%
+%% Save the combined file
 combinedFile = [experiment 'BlinksNew' type 'Combined.mat'];
 save ([outDir filesep combinedFile], 'blinks', '-v7.3');
 

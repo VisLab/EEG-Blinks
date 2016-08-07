@@ -1,8 +1,11 @@
 % Calculate the anovan on the shooter blinks
 %% Shooter blinks
 experiment = 'Shooter';
-blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
-type = 'EOGUnref';
+blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNew';
+typeBlinks = 'EOGUnrefNewBothCombined';
+typeBlinkProperties = 'EOGUnrefNewBothCombined';
+typeBlinkSummary = 'EOGUnrefNewBothCombined';
+typeBlinkOccular = 'EOGUnrefNewBothCombined';
 taskTypes = {'SEF2', 'SEF4', 'SEO2', 'SEO4', ...
              'DEF2', 'DEF4', 'DEO2', 'DEO4', 'ARIT', ...
              'EC', 'EO'};
@@ -47,9 +50,9 @@ theVersion = 'SingleVSDualArit';
 % theVersion = '4Separate';
 
 %% Load the files
-blinkFile = [experiment 'BlinksNew' type '.mat'];
-blinkPropertiesFile = [experiment 'BlinksNewProperties' type '.mat'];
-occularFile = [experiment 'BlinksNewOccular' type '.mat'];
+blinkFile = [experiment 'BlinksNew' typeBlinks '.mat'];
+blinkPropertiesFile = [experiment 'BlinksNew' typeBlinkProperties 'Properties.mat'];
+occularFile = [experiment 'BlinksNew' typeBlinkOccular 'Occular.mat'];
 load([blinkDir filesep blinkFile]);
 load([blinkDir filesep blinkPropertiesFile]);
 load([blinkDir filesep occularFile]);
@@ -57,7 +60,8 @@ load([blinkDir filesep occularFile]);
 %% Set up the groups
 subjects = {blinks.subjectID};
 tasks = {blinks.task};
-componentValid = ~isnan(cell2mat({blinks.usedComponent}));
+used = cellfun(@double, {blinks.usedSignal});
+componentValid = ~isnan(used);
 taskTimes = cell2mat({blinks.startTime});
 
 %% Compute the order variables

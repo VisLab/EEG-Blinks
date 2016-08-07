@@ -19,8 +19,9 @@ pop_editoptions('option_single', false, 'option_savetwofiles', false);
 % organizationType = 'BCIT';
 % collectionType = 'FILES';
 % experiment = 'BCITLevel0';
-% %type = 'ChannelUnrefNewBoth';
-% type = 'EOGUnrefNewBoth';
+% typeBlinks = 'ChannelUnrefNewBoth';
+% typeBlinkProperties = 'ChannelUnrefNewBoth';
+% %type = 'EOGUnrefNewBoth';
 % blinkDir = 'O:\ARL_Data\BCITBlinksNew';
 % blinkDir = 'K:\BCITBlinks';
 % % experiment = 'Experiment X2 Traffic Complexity';
@@ -38,16 +39,22 @@ pop_editoptions('option_single', false, 'option_savetwofiles', false);
 % experiment = 'NCTU_LK';
 % % %type = 'IC';
 % % type = 'ChannelMastNew';
-% type = 'ChannelMastNewBoth';
+% typeBlinks = 'ChannelMastNewBoth';
+% typeBlinkProperties = 'ChannelMastNewBoth';
 
 %% Shooter
-% %type = 'ChannelUnrefNewBoth';
-type = 'EOGUnrefNewBothCombined';
+%type = 'ChannelUnrefNewBoth';
+typeBlinks = 'EOGUnrefNewBothCombined';
+typeBlinkProperties = 'EOGUnrefNewBothCombined';
 experiment = 'Shooter';
 blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNew';
 
 %% BCI2000
 % type = 'ChannelMastRef';
+% typeBlinks = 'ChannelMastNewBothCombined';
+% typeBlinkProperties = 'ChannelMastNewBothCombined';
+% typeBlinks = 'ChannelMastNewBoth';
+% typeBlinkProperties = 'ChannelMastNewBoth';
 % experiment = 'BCI2000';
 % blinkDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNew';
 % metadataRoot = 'E:\CTADATA\BCI2000';
@@ -72,8 +79,8 @@ blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNew';
 % byType = 'EOG';
 
 %% Update file names with the experiment
-blinkFile = [experiment 'BlinksNew' type '.mat'];
-blinkPropertiesFile = [experiment 'BlinksNewProperties' type '.mat'];
+blinkFile = [experiment 'BlinksNew' typeBlinks '.mat'];
+blinkPropertiesFile = [experiment 'BlinksNew' typeBlinkProperties 'Properties.mat'];
 
 %% Set the base level
 baseLevel = 0;
@@ -84,7 +91,7 @@ blinkFits = cell(1, length(blinks));
 blinkProperties = cell(1, length(blinks));
 
 %% Fit the blinks
-for n = 35%1:length(blinks)
+for n = 1:length(blinks)
     fprintf('Dataset %d:\n', n);
     dBlinks = blinks(n);
     if isempty(dBlinks.usedSignal) || isnan(dBlinks.usedSignal)
@@ -102,4 +109,4 @@ for n = 35%1:length(blinks)
 end
 
 %% Save the property structures in a file
-%save([blinkDir filesep blinkPropertiesFile], 'blinkFits', 'blinkProperties', '-v7.3');
+save([blinkDir filesep blinkPropertiesFile], 'blinkFits', 'blinkProperties', '-v7.3');

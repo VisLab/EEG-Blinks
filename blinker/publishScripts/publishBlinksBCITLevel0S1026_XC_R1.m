@@ -6,8 +6,8 @@ n = 1;
 blinkFiles = cell(1, 1);
 blinkFits = cell(1, 1);
 blinkProperties = cell(1, 1);
-blinkTraces = zeros(1, 2844672);
-load('O:\ARL_Data\BCITBlinkOutputNew\data\BCITLevel0DatasetBlinksEOGUnrefNewBothS2018_XB_R1.mat');
+blinkTraces = zeros(1, 2064384);
+load('O:\ARL_Data\BCITBlinkOutputNew\data\BCITLevel0DatasetBlinksEOGUnrefNewBothS1026_XC_R1.mat');
 blinkFiles{1} = dBlinks;
 blinkFits{1} = dFits{1};
 blinkProperties{1} = dProperties{1};
@@ -22,12 +22,12 @@ dProperties = blinkProperties{1};
 dFits = blinkFits{1};
 dataName = blinkFiles{1}(1).fileName;
 [~, dataName] = fileparts(dataName);
-thisOutputDir = 'O:\ARL_Data\BCITBlinkOutputNew\output\BCITLevel0DatasetARL_BCIT_T2_M053_S2018_XB_CD_R2_EEG_1';
+thisOutputDir = 'O:\ARL_Data\BCITBlinkOutputNew\output\BCITLevel0DatasetARL_BCIT_T1_M051_S1026_XC_C0_R1_EEG_1';
 if ~exist(thisOutputDir, 'dir')
    mkdir(thisOutputDir);
 end
 startBatch = 1;
-endBatch = 115;
+endBatch = 106;
 
 n = 1; %#ok<NASGU>
 scriptName = 'plotBlinkScript';
@@ -48,8 +48,8 @@ n = 1;
 blinkFiles = cell(1, 1);
 blinkFits = cell(1, 1);
 blinkProperties = cell(1, 1);
-blinkTraces = zeros(1, 2844672);
-load('O:\ARL_Data\BCITBlinkOutputNew\data\BCITLevel0DatasetBlinksEOGUnrefNewBothS2018_XB_R1.mat');
+blinkTraces = zeros(1, 2064384);
+load('O:\ARL_Data\BCITBlinkOutputNew\data\BCITLevel0DatasetBlinksEOGUnrefNewBothS1026_XC_R1.mat');
 blinkFiles{1} = dBlinks;
 blinkFits{1} = dFits{1};
 blinkProperties{1} = dProperties{1};
@@ -64,12 +64,12 @@ dProperties = blinkProperties{1};
 dFits = blinkFits{1};
 dataName = blinkFiles{1}(1).fileName;
 [~, dataName] = fileparts(dataName);
-thisOutputDir = 'O:\ARL_Data\BCITBlinkOutputNew\output\BCITLevel0DatasetARL_BCIT_T2_M053_S2018_XB_CD_R2_EEG_1';
+thisOutputDir = 'O:\ARL_Data\BCITBlinkOutputNew\output\BCITLevel0DatasetARL_BCIT_T1_M051_S1026_XC_C0_R1_EEG_1';
 if ~exist(thisOutputDir, 'dir')
    mkdir(thisOutputDir);
 end
-startBatch = 116;
-endBatch = 230;
+startBatch = 107;
+endBatch = 212;
 
 n = 1; %#ok<NASGU>
 scriptName = 'plotBlinkScript';
@@ -90,8 +90,8 @@ n = 1;
 blinkFiles = cell(1, 1);
 blinkFits = cell(1, 1);
 blinkProperties = cell(1, 1);
-blinkTraces = zeros(1, 2844672);
-load('O:\ARL_Data\BCITBlinkOutputNew\data\BCITLevel0DatasetBlinksEOGUnrefNewBothS2018_XB_R1.mat');
+blinkTraces = zeros(1, 2064384);
+load('O:\ARL_Data\BCITBlinkOutputNew\data\BCITLevel0DatasetBlinksEOGUnrefNewBothS1026_XC_R1.mat');
 blinkFiles{1} = dBlinks;
 blinkFits{1} = dFits{1};
 blinkProperties{1} = dProperties{1};
@@ -106,12 +106,12 @@ dProperties = blinkProperties{1};
 dFits = blinkFits{1};
 dataName = blinkFiles{1}(1).fileName;
 [~, dataName] = fileparts(dataName);
-thisOutputDir = 'O:\ARL_Data\BCITBlinkOutputNew\output\BCITLevel0DatasetARL_BCIT_T2_M053_S2018_XB_CD_R2_EEG_1';
+thisOutputDir = 'O:\ARL_Data\BCITBlinkOutputNew\output\BCITLevel0DatasetARL_BCIT_T1_M051_S1026_XC_C0_R1_EEG_1';
 if ~exist(thisOutputDir, 'dir')
    mkdir(thisOutputDir);
 end
-startBatch = 231;
-endBatch = 345;
+startBatch = 213;
+endBatch = 318;
 
 n = 1; %#ok<NASGU>
 scriptName = 'plotBlinkScript';
@@ -132,8 +132,8 @@ n = 1;
 blinkFiles = cell(1, 1);
 blinkFits = cell(1, 1);
 blinkProperties = cell(1, 1);
-blinkTraces = zeros(1, 2844672);
-load('O:\ARL_Data\BCITBlinkOutputNew\data\BCITLevel0DatasetBlinksEOGUnrefNewBothS2018_XB_R1.mat');
+blinkTraces = zeros(1, 2064384);
+load('O:\ARL_Data\BCITBlinkOutputNew\data\BCITLevel0DatasetBlinksEOGUnrefNewBothS1026_XC_R1.mat');
 blinkFiles{1} = dBlinks;
 blinkFits{1} = dFits{1};
 blinkProperties{1} = dProperties{1};
@@ -148,12 +148,12 @@ dProperties = blinkProperties{1};
 dFits = blinkFits{1};
 dataName = blinkFiles{1}(1).fileName;
 [~, dataName] = fileparts(dataName);
-thisOutputDir = 'O:\ARL_Data\BCITBlinkOutputNew\output\BCITLevel0DatasetARL_BCIT_T2_M053_S2018_XB_CD_R2_EEG_1';
+thisOutputDir = 'O:\ARL_Data\BCITBlinkOutputNew\output\BCITLevel0DatasetARL_BCIT_T1_M051_S1026_XC_C0_R1_EEG_1';
 if ~exist(thisOutputDir, 'dir')
    mkdir(thisOutputDir);
 end
-startBatch = 346;
-endBatch = 460;
+startBatch = 319;
+endBatch = 422;
 
 n = 1; %#ok<NASGU>
 scriptName = 'plotBlinkScript';

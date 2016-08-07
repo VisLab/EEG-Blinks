@@ -10,7 +10,7 @@ numberThresholds = 50;
 %% BCIT Examples
 experiment = 'BCITLevel0';
 blinkDir = 'O:\ARL_Data\BCITBlinksNew';
-type = 'EOGUnrefNew';
+type = 'EOGUnrefNewBoth';
 
 %% Shooter Examples
 % experiment = 'Shooter';

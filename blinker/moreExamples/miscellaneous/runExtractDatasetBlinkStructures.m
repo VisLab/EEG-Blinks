@@ -7,10 +7,12 @@
 % type = 'Channel';
 % excludeTasks = {};
 %% BCIT Examples
-datasetList = [89, 102, 73, 92, 97, 116, 134, 60, 58];
-datasetNames = {'T2_M053_S2018_XB', 'T2_M067_S2023_XC', 'T2_M037_S2013_XC', ...
-'T2_M056_S2019_X2', 'T2_M061_S2021_XC' 'T2_M082_S2028_XC', ...
-'T2_M100_S2034_X6', 'T2_M023_S2008_XB', 'T2_M021_S2007_X2'};
+% datasetList = [89, 102, 73, 92, 97, 116, 134, 60, 58];
+% datasetNames = {'T2_M053_S2018_XB', 'T2_M067_S2023_XC', 'T2_M037_S2013_XC', ...
+% 'T2_M056_S2019_X2', 'T2_M061_S2021_XC' 'T2_M082_S2028_XC', ...
+% 'T2_M100_S2034_X6', 'T2_M023_S2008_XB', 'T2_M021_S2007_X2'};
+datasetList = [42];
+datasetNames = {'T1_M051_S2026_XC'};
 % datasetList = [51, 52, 63, 81, 87, 130];
 % datasetList = [89, 102, 159, 160];  
 % datasetNames = {'T2_M053_S2018_XB', 'T2_M067_S2023_XC',  ...
@@ -24,14 +26,16 @@ datasetNames = {'T2_M053_S2018_XB', 'T2_M067_S2023_XC', 'T2_M037_S2013_XC', ...
 %% BCIT other examples
 experiment = 'BCITLevel0';
 blinkDir = 'O:\ARL_Data\BCITBlinksNew';
-type = 'EOGUnrefNewBoth';
+typeBlinks = 'EOGUnrefNewBoth';
+typeBlinkProperties = 'EOGUnrefNewBoth';
+typeDataset = 'EOGUnrefNewBoth';
 %type = 'ChannelUnref';
 outputDir = 'O:\ARL_Data\BCITBlinkOutputNew\data';
 
 %% Read in the blink data for this collection
-blinkFile = [experiment 'BlinksNew' type '.mat'];
+blinkFile = [experiment 'BlinksNew' typeBlinks '.mat'];
 %load([blinkDir filesep blinkFile]);
-blinkPropertiesFile = [experiment 'BlinksNewProperties' type '.mat'];
+blinkPropertiesFile = [experiment 'BlinksNew' typeBlinkProperties 'Properties.mat'];
 %load([blinkDir filesep blinkPropertiesFile]);
 
 %% Save the extracted blink datasets
@@ -41,7 +45,7 @@ for k = 1:length(datasetList)
     dFits = blinkFits(thisNum);
     dProperties = blinkProperties(thisNum);
     uniqueName = dBlinks.uniqueName;
-    theName = [experiment 'DatasetBlinks' type uniqueName '.mat'];
+    theName = [experiment 'DatasetBlinks' typeDataset uniqueName '.mat'];
     outName = [outputDir filesep theName];
     save(outName, 'dBlinks', 'dFits', 'dProperties', '-v7.3');
 end

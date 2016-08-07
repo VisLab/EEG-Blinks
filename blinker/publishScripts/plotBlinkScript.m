@@ -10,11 +10,10 @@
 %  
 %% Set up the counts for plotting
 baseLevel = 0;
-usedComponent = dBlinks.usedComponent;
-used = find(dBlinks.componentIndices == usedComponent, 1, 'first');
-blinkPositions = dBlinks.blinkPositions{used};
-startBlinks = blinkPositions(1, :);
-endBlinks = blinkPositions(2, :);
+usedSignal = abs(dBlinks.usedSignal);
+used = find(dBlinks.signalIndices == usedSignal, 1, 'first');
+startBlinks = cellfun(@double, {dFits.leftZero});
+endBlinks = cellfun(@double, {dFits.rightZero});
 
 extendSeconds = 0.5;   % Maximum seconds to extend on either side of blink
 extendFrames = round(extendSeconds*dBlinks.srate);

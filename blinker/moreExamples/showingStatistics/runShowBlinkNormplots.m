@@ -9,28 +9,43 @@ experiments(numExp) = struct('experiment', [], 'blinkDir', [], ...
                              'durationZ', [], ...
                              'pAVRZ', [], 'nAVRZ', []);
 
+% experiments(1).experiment = 'BCITLevel0';
+% experiments(1).blinkDir = 'O:\ARL_Data\BCITBlinksNew';
+% experiments(1).type = 'ChannelUnrefNewBoth';
+% experiments(1).excludeTasks = {};
+% experiments(2).experiment = 'BCI2000';
+% experiments(2).blinkDir = 'O:\ARL_Data\BCI2000\BCI2000Blinks';
+% experiments(2).type = 'Channel';
+% experiments(2).excludeTasks = {'EyesOpen', 'EyesClosed'};
+% experiments(3).experiment = 'NCTU_LK';
+% experiments(3).blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
+% experiments(3).type = 'Channel';
+% experiments(3).excludeTasks = {};
+% experiments(4).experiment = 'Shooter';
+% experiments(4).blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
+% experiments(4).type = 'ChannelUnref';
+% experiments(4).excludeTasks = {'EC', 'EO'};
 experiments(1).experiment = 'BCITLevel0';
-experiments(1).blinkDir = 'O:\ARL_Data\BCITBlinks';
-experiments(1).type = 'ChannelUnref';
+experiments(1).blinkDir = 'O:\ARL_Data\BCITBlinksNew';
+experiments(1).type = 'ChannelUnrefNewBoth';
 experiments(1).excludeTasks = {};
 experiments(2).experiment = 'BCI2000';
-experiments(2).blinkDir = 'O:\ARL_Data\BCI2000\BCI2000Blinks';
-experiments(2).type = 'Channel';
+experiments(2).blinkDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNew';
+experiments(2).type = 'ChannelMastNewBothCombined';
 experiments(2).excludeTasks = {'EyesOpen', 'EyesClosed'};
 experiments(3).experiment = 'NCTU_LK';
-experiments(3).blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
-experiments(3).type = 'Channel';
+experiments(3).blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks_New';
+experiments(3).type = 'ChannelMastNewBoth';
 experiments(3).excludeTasks = {};
 experiments(4).experiment = 'Shooter';
-experiments(4).blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinks';
-experiments(4).type = 'ChannelUnref';
+experiments(4).blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNew';
+experiments(4).type = 'ChannelUnrefNewBothCombined';
 experiments(4).excludeTasks = {'EC', 'EO'};
-
 %% Read in the occular indices for these collections
 expOIndices = cell(numExp, 1);
 for k = 1:numExp
-   blinkIndicesFile = [experiments(k).experiment 'BlinksNewOccular' ...
-                       experiments(k).type '.mat'];
+   blinkIndicesFile = [experiments(k).experiment 'BlinksNew' ...
+                       experiments(k).type 'Occular.mat'];
    load([experiments(k).blinkDir filesep blinkIndicesFile]);
    experiments(k).occular = occularIndices;
 end

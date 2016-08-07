@@ -18,10 +18,8 @@ function [isUpright, eyeFOM] = checkPolarity(scalpmapObj, component, noseDir)
             frontHemisphereAve = nanmean(nanmean((map(halfRows:rows,:))));
             rearHemisphereAve = nanmean(nanmean((map(1:halfRows,:))));                           
         case '-X'
-            frontHemisphereAve = nansum(map(1:halfRows,:));
-            frontHemisphereAve = mean(frontHemisphereAve);    
-            rearHemisphereAve = nansum(map(halfRows:rows,:));
-            rearHemisphereAve = mean(rearHemisphereAve);
+            frontHemisphereAve = nanmean(nanmean(map(1:halfRows,:)));
+            rearHemisphereAve = nanmean(nanmean(map(halfRows:rows,:)));
         case '+Y'
         otherwise
             

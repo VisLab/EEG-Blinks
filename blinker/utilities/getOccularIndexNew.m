@@ -10,8 +10,9 @@ goodBlinkMask = NaN;
 if isempty(dBlinks.usedSignal) || isnan(dBlinks.usedSignal)
     return;
 end
-
-goodBlinkMask = getGoodBlinkMask(dBlinkFits, correlationThreshold);
+pos = find(dBlinks.signalIndices == abs(dBlinks.usedSignal), 1, 'first');
+goodBlinkMask = getGoodBlinkMask(dBlinkFits, correlationThreshold, ...
+                     dBlinks.bestMedian(pos), dBlinks.bestRobustStd(pos));
 switch type
     case 'pAVRZ'
         values = cellfun(@double, {dBlinkProperties.posAmpVelRatioZero});

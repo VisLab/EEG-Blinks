@@ -31,12 +31,16 @@ experiment = 'BCITLevel0';
 % datasetNames = {'T2_M055_S2019_X2', 'T2_M082_S2028_XC', 'T2_M100_S2034_X6'};
 %datasetNames = {'S2019_T2X2_R1'};
 %datasetNames = {'S2028_XC_R1'};
-datasetNames = {'S2034_T2X6_R1'};
+%datasetNames = {'S2034_T2X6_R1'};
+% datasetNames = {'S2007_T2X2_R1', 'S2008_XB_R1', 'S2013_XC_R1', ...
+%                 'S2018_XB_R1', 'S2019_T2X2_R1', 'S2021_XC_R1', ...
+%                 'S2023_XC_R1', 'S2028_XC_R1', 'S2034_T2X6_R1'};
+datasetNames = {'S1026_XC_R1'};
 %% BCIT other examples
-blinkTypes = {'EOGUnref', 'ChannelUnref'};
-blinkDir = 'O:\ARL_Data\BCITBlinkOutput\data';
+blinkTypes = {'EOGUnrefNewBoth'};
+blinkDir = 'O:\ARL_Data\BCITBlinkOutputNew\data';
 scriptDir = 'D:\Research\Blinks\BlinkDetectionCurrent\EEG-Blinks\blinker\publishScripts';
-outputDir = 'O:\ARL_Data\BCITBlinkOutput\output';
+outputDir = 'O:\ARL_Data\BCITBlinkOutputNew\output';
 
 for k = 1:length(datasetNames)
    makeBlinkPlotScript(experiment, datasetNames{k}, blinkTypes, ...

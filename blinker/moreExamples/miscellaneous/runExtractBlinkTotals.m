@@ -47,16 +47,16 @@ doSignalCounts = true;
 % experiment = 'X2 RSVP Expertise';
 
 %% BCI2000
-% type = 'Channel';
-% taskList = { ...
-%          'RealLRFist', 'ImagLRFist', 'RealFistFeet', 'ImagFistFeet', ...
-%          'RealLRFist', 'ImagLRFist', 'RealFistFeet', 'ImagFistFeet', ...
-%          'RealLRFist', 'ImagLRFist', 'RealFistFeet', 'ImagFistFeet'};
-% closedTask = 'EyesClosed';
-% openTask = 'EyesOpen';
-% experiment = 'BCI2000';
-% blinkDir = 'O:\ARL_Data\BCI2000\BCI2000Blinks';
-% doChannelCounts = true;
+type = 'Channel';
+taskList = { ...
+         'RealLRFist', 'ImagLRFist', 'RealFistFeet', 'ImagFistFeet', ...
+         'RealLRFist', 'ImagLRFist', 'RealFistFeet', 'ImagFistFeet', ...
+         'RealLRFist', 'ImagLRFist', 'RealFistFeet', 'ImagFistFeet'};
+closedTask = 'EyesClosed';
+openTask = 'EyesOpen';
+experiment = 'BCI2000';
+blinkDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNew';
+doChannelCounts = true;
 %% VEP
 % blinkDir = 'O:\ARL_Data\VEP\VEPBlinks';
 % experiment = 'VEP';
