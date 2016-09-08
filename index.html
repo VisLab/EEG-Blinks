@@ -22,8 +22,14 @@
       <h1>
 <a id="introduction-to-the-blinker-pipeline" class="anchor" href="#introduction-to-the-blinker-pipeline" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction to the BLINKER pipeline</h1>
 
-<p>BLINKER and associated tools are an automated pipeline for detecting BLINKS in EEG and calculating
-various properties of these blinks. pipeline is a standardized early-stage EEG processing pipeline that focuses on the identification of bad channels and the calculation of a robust average reference. PREP also has an extensive reporting facility. It is designed to be run in a completely automated way. The major sections of this document are:</p>
+<p>BLINKER and associated tools are an automated pipeline for detecting eye blinks in EEG and calculating
+various properties of these blinks. BLINKER takes as input an arbitrary number of signals, which can
+include ordinary EEG channels, EOG channels and independent components (IC), determines which signals
+have acceptable blinks and determining the optimal signal for determining blinks. 
+BLINKER also has facilities for merging blinks calculating from different 
+source signals and for plotting individual blinks to facilitate manual evaluation and synchronization
+of EEG with video and eye tracking. BLINKER is designed to be run in a completely automated way. 
+The major sections of this document are:</p>
 
 <ul>
 <li>Introduction (requirements, citing, installation)</li>
@@ -35,7 +41,8 @@ various properties of these blinks. pipeline is a standardized early-stage EEG p
 <h3>
 <a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h3>
 
-<p>The BLINKER pipeline relies on the MATLAB Signal Processing toolbox and EEGLAB, a freely-available MATLAB toolbox for processing EEG. EEGLAB is available from  <a href="http://scn.ucsd.edu/eeglab">http://scn.ucsd.edu/eeglab</a>. BLINKER assumes that the EEG data is provided as an EEGLAB EEG structure and that channel locations are provided in the EEG.chanlocs structure.</p>
+<p>The BLINKER pipeline relies on the MATLAB Signal Processing toolbox, the MATLAB Statistics toolbox and EEGLAB, a freely-available MATLAB toolbox for processing EEG. EEGLAB is available from  <a href="http://scn.ucsd.edu/eeglab">http://scn.ucsd.edu/eeglab</a>. Various high-level BLINKER wrapper functions assume that the EEG data is provided as an EEGLAB EEG structure and that channel locations are provided in the EEG.chanlocs structure. However, low-level processing functions work directly
+on signals.</p>
 
 <h3>
 <a id="citing-the-blinker" class="anchor" href="#citing-the-blinker" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Citing the BLINKER</h3>
