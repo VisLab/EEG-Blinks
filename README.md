@@ -1,7 +1,6 @@
 # EEG-Blinks
 Tools for analyzing eye blinks from EEG data
 
-
 Contains tools for the BLINKER pipeline for automatically extracting blinks and related
 ocular indices from EEG. You can find user documention at: 
    http://vislab.github.io/EEG-Blinks/   
