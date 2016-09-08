@@ -1,51 +1,45 @@
-function goodBlinkMask = getGoodBlinkMask(blinkFits, correlationThreshold, ...
-                                     specifiedMedian, specifiedStd)
-% Mask with good blinks based on correlations.
+function [goodBlinkMask, specifiedMedian, specifiedStd] = ...
+      getGoodBlinkMask(blinkFits, specifiedMedian, specifiedStd, zThresholds)
+% Calculates a mask for the good blinks based on amplitude and correlation
 %
 %  Parameters:
 %     blinkFits             blink fit structure for a dataset
-%     correlationThreshold  correlation threshold for bad blink
-%     specifiedMedian       optional
-%     specifiedStd          optional  (both median and std must be given)
-%     goodBlinkMask         mask indicating which blinks are good
+%     correlationThresholds correlation thresholds for binning distribution
+%     zScoreThresholds      specified z scores
+%     specifiedMedian       calculated if not specified
+%     specifiedStd          calculated if not specified
+%     goodBlinkMask         (output) mask indicating which blinks are good
 %
-% Currently this function uses a good linear fit on upshot and downshot.
-% It also incorporates and amplitude criteria -- using only blinks that are
-% within roughly two standard deviations of the amplitudes of "best"
-% blinks.
+% This function uses a good linear fit on upshot and downshot.
+% It also incorporates an amplitude criteria -- using only blinks that are
+% within roughly specifiedZ deviations of the amplitudes of the median 
+% "best" blinks. A layered approach is used so different correlations can
+% have different robust z-scores.
 
-topCorrelation = 0.98;
 goodBlinkMask = [];
 if isempty(blinkFits)
     return;
+elseif nargin < 4
+    zThresholds = [0.90, 2; 0.98, 5];
+end
+    
+%% Extract the correlations and max value
+leftR2 = cellfun(@double, {blinkFits.leftR2});
+rightR2 = cellfun(@double, {blinkFits.rightR2});
+maxValues = cellfun(@double, {blinkFits.maxValue});
+indicesNaN = isnan(leftR2) | isnan(rightR2) | isnan(maxValues);
+
+goodBlinkMask = getMask(zThresholds(1, 1), zThresholds(1, 2));
+for k = 2:size(zThresholds, 1)
+    goodBlinkMask = goodBlinkMask | ...
+             getMask(zThresholds(k, 1), zThresholds(k, 2));
 end
 
-%% Extract the blink fit values that are needed
-leftR2 = {blinkFits.leftR2};
-rightR2 = {blinkFits.rightR2};
-maxValues = {blinkFits.maxValue};
-
-indicesNaN = cellfun(@isnan, leftR2) | cellfun(@isnan, rightR2) ...
-               | cellfun(@isnan, maxValues);
-leftR2 = cellfun(@double, leftR2);
-rightR2 = cellfun(@double, rightR2);
-maxValues = cellfun(@double, maxValues);
-
-if nargin < 4   % Must calculate valid range from the data
-    topMask =  ~indicesNaN & leftR2 >= topCorrelation & rightR2 >= topCorrelation;
-    topValues = maxValues(topMask);
-    if isempty(topValues)
-        return;
-    end
-   
-    topMedian = median(topValues);
-    topRobustStd = 1.4826*mad(topValues, 1);
-else
-    topMedian = specifiedMedian;
-    topRobustStd = specifiedStd;
-end
-goodBlinkMask = ~indicesNaN & ...
+    function mask = getMask(correlationThreshold, zScoreThreshold)
+        mask = ~indicesNaN & ...
            leftR2 >= correlationThreshold & ...
            rightR2 >= correlationThreshold & ...
-           maxValues >= topMedian - 2*topRobustStd & ...
-           maxValues <= topMedian + 2*topRobustStd;
+           maxValues >= max(0, specifiedMedian - zScoreThreshold*specifiedStd) & ...
+           maxValues <= specifiedMedian + zScoreThreshold*specifiedStd;
+    end
+end

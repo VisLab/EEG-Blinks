@@ -56,11 +56,10 @@ end
 blinkPositions = blinkPositions(:,1:numBlinks);
 
 %% Now remove blinks that aren't separated 
-positionMask = true(numBlinks, 1);
+positionMask = true(numberBlinks, 1);
 startBlinks = blinkPositions(1, :);
 endBlinks = blinkPositions(2, :);
 x = (startBlinks(2:end) - endBlinks(1:end-1))/srate;
 y = find(x <= 0.05);
 positionMask(y) = false;
-positionMask(y+1) = false;
-blinkPositions = blinkPositions(:, positionMask);
+positionMask(y+2

@@ -2,11 +2,11 @@
 % Requires the blinks data structure to have been computed.
 
 %% BCIT counts
-experiment = 'BCITLevel0';
-blinkDir = 'O:\ARL_Data\BCITBlinksNew';
-typeBlinks = 'EOGUnrefNewBoth';
-%typeBlinks = 'ChannelUnrefNewBoth';
-excludeTasks = {};
+% experiment = 'BCITLevel0';
+% blinkDir = 'O:\ARL_Data\BCITBlinksNew';
+% typeBlinks = 'EOGUnrefNewBoth';
+% %typeBlinks = 'ChannelUnrefNewBoth';
+% excludeTasks = {};
 
 %% BCI2000 counts
 % experiment = 'BCI2000';
@@ -15,12 +15,12 @@ excludeTasks = {};
 % typeBlinks = 'ChannelMastNewBothCombined';
 
 %% NCTU counts
-% blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks_New';
-% experiment = 'NCTU_LK';
-% typeBlinks = 'ChannelMastNewBoth';
-% excludeTasks = {};
+blinkDir = 'O:\ARL_Data\NCTU\NCTUBlinksNewRefactored';
+experiment = 'NCTU_LK';
+typeBlinks = 'AllMastNewBoth';
+excludeTasks = {};
 %% Shooter examples
-% blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNew';
+% blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRevised';
 % experiment = 'Shooter';
 % %typeBlinks = 'ChannelUnrefNewBothCombined';
 % typeBlinks = 'EOGUnrefNewBothCombined';
@@ -44,8 +44,7 @@ for k = 1:length(blinks)
 end
 
 %% Analyze the blinks 
-usedSignals = {blinks.usedSignal};
-usedSignals = cellfun(@double, usedSignals);
+usedSignals = cellfun(@double, {blinks.usedSignal});
 nanComponents = isnan(usedSignals) & ~excludeMask;
 numDatasets = length(blinks);
 numActual = sum(~excludeMask);
@@ -75,14 +74,21 @@ fprintf('Percentage of good datasets: %g\n', ...
 datasetBase = 1:length(usedSignals);
 mapGood = containers.Map('KeyType', 'char', 'ValueType', 'any');
 mapMarginal = containers.Map('KeyType', 'char', 'ValueType', 'any');
+totalBlinksMarginal = 0;
+totalBlinksGood = 0;
+goodBlinksMarginal = 0;
+goodBlinksGood = 0;
+totalSecondsGood = 0;
+totalSecondsMarginal = 0;
 for k = 1:length(blinks)
     if isnan(usedSignals(k)) || excludeMask(k)
         continue;
     end
-    indices = blinks(k).signalInfo.signalIndices;
-    labels = blinks(k).signalInfo.signalLabels;
-    pos = find(indices == abs(usedSignals(k)), 1, 'first');
-    theLabel = lower(labels{pos});
+    sData = blinks(k).signalData;
+    signalNumbers = cellfun(@double, {sData.signalNumber});
+    pos = find(signalNumbers == abs(usedSignals(k)), 1, 'first');
+    theLabel = lower(sData(pos).signalLabel);
+    seconds = length(sData(pos).signal)/blinks(k).srate;
     if usedSignals(k) < 0 
         if isKey(mapMarginal, theLabel)
             theCount = mapMarginal(theLabel);
@@ -91,6 +97,9 @@ for k = 1:length(blinks)
         end
         theCount = theCount + 1;
         mapMarginal(theLabel) = theCount;
+        totalBlinksMarginal = totalBlinksMarginal + sData(pos).numberBlinks;
+        goodBlinksMarginal = goodBlinksMarginal + sData(pos).numberGoodBlinks;
+        totalSecondsMarginal = totalSecondsMarginal + seconds;
     else
         if isKey(mapGood, theLabel)
             theCount = mapGood(theLabel);
@@ -99,7 +108,13 @@ for k = 1:length(blinks)
         end
         theCount = theCount + 1;
         mapGood(theLabel) = theCount;
-    end    
+        totalBlinksGood = totalBlinksGood + sData(pos).numberBlinks;
+        goodBlinksGood = goodBlinksGood + sData(pos).numberGoodBlinks;
+        totalSecondsGood = totalSecondsGood + seconds;
+    end
+    maxGood = max(cellfun(@double, {sData.goodRatio}));
+    fprintf('%d: channel %s (%d) good ratio %g (max good ratio %g)\n', ...
+        k, theLabel, usedSignals(k), sData(pos).goodRatio, maxGood);
 end          
 
 %% Now output the counts
@@ -113,35 +128,6 @@ fprintf('\nChannel counts for the marginal datasets\n');
 marginalKeys = keys(mapMarginal);
 for k = 1:length(marginalKeys)
     fprintf('%s: %d\n', marginalKeys{k}, mapMarginal(marginalKeys{k}));
-end
-
-
-%% Now compute total number of blinks, number of good blinks and overall blink rate
-totalBlinksMarginal = 0;
-totalBlinksGood = 0;
-goodBlinksMarginal = 0;
-goodBlinksGood = 0;
-totalSecondsGood = 0;
-totalSecondsMarginal = 0;
-for k = 1:numDatasets
-    if excludeMask(k) || isnan(blinks(k).usedSignal)
-        continue;
-    end
-    thisComponent = blinks(k).usedSignal;
-    theseComponents = blinks(k).signalIndices;
-    thisIndex = find(theseComponents == abs(thisComponent));
-    numberBlinks = blinks(k).numberBlinks(thisIndex);
-    goodBlinks = blinks(k).goodBlinks(thisIndex);
-    seconds = length(blinks(k).candidateSignals(1, :))/blinks(k).srate;
-    if thisComponent > 0
-        totalBlinksGood = totalBlinksGood + numberBlinks;
-        goodBlinksGood = goodBlinksGood + goodBlinks;
-        totalSecondsGood = totalSecondsGood + seconds;
-    else
-        totalBlinksMarginal = totalBlinksMarginal + numberBlinks;
-        goodBlinksMarginal = goodBlinksMarginal + goodBlinks;
-        totalSecondsMarginal = totalSecondsMarginal + seconds;
-    end
 end
 
 %% Print total values

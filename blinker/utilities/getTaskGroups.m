@@ -1,5 +1,5 @@
 function taskGroups = getTaskGroups(taskList, taskTypes)
-% Group tasks into specified groups by type
+% Group tasks into specified groups by type  (needed for ANOVA)
 %
 %  Parameters:
 %     taskList     n x 1 cell array of task names

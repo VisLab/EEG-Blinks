@@ -43,6 +43,7 @@ function [blinkProps, blinkFits] = extractBlinkProperties(signalData, params)
     peaksPosVelBase(end) = length(signalData.signal);
     for k = 1:numberBlinks
         try
+            blinkProps(k).number = k;
             %% Blink durations
             blinkProps(k).durationBase = (blinkFits(k).rightBase - ...
                 blinkFits(k).leftBase)./srate;
@@ -153,16 +154,15 @@ function [blinkProps, blinkFits] = extractBlinkProperties(signalData, params)
     
     %% Now apply the final restriction on pAVR to reduce the eye movements
     pAVRs = cellfun(@double, {blinkProps.posAmpVelRatioZero});
-    frameMax = cell2mat({blinkFits.maxValue});
     pMask = pAVRs < params.pAVRThreshold & ...
-            frameMax < signalData.bestMedian - signalData.bestRobustStd;
+            peaks < signalData.bestMedian - signalData.bestRobustStd;
     blinkProps(pMask) = [];
-    blinkFits(pMask) = [];
+    blink
    
 
     function s = createPropertiesStructure()
 
-    s = struct(...
+    s = struct('number', nan, ...
         'durationBase', nan, ...
         'durationZero', nan, ...
         'durationTent', nan,  ...

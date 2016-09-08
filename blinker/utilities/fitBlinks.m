@@ -1,17 +1,16 @@
-function blinkFits = fitBlinks(candidateSignal, blinkPositions, baseLevel)
-% Fit a tent to a blink
+function blinkFits = fitBlinks(candidateSignal, blinkPositions)
+% Fit a tent to potential blinks and calculate various shape parameters
 %
 %  Parameters:
 %      candidateSignal    IC or channel time course of blinks to be fitted
-%      blinkPositions     array of start and end frames of candidate blinks
-%      baseLevel          base level of the blinks (usually 0)
+%      blinkPositions     2 x n array of start and end frames of candidate blinks
 %
 %  Returns:
 %      blinkFits         a structure with fit information 
 %                        (See createFitStructure for definition)
 %
-%
-if isempty(candidateSignal) || isempty(blinkPositions) || sum(isnan(blinkPositions(:)) ~= 0)
+if isempty(candidateSignal) || isempty(blinkPositions) ||...
+          sum(isnan(blinkPositions(:)) ~= 0)
     blinkFits = [];
     return;
 end
@@ -49,7 +48,7 @@ for k = 1:length(maxFrames)
         [~, minIndex] = min(candidateSignal(theRange));
         minFrame = theRange(minIndex);
         theRange = minFrame:maxFrames(k);
-        sInd = find(candidateSignal(theRange) <= baseLevel, 1, 'last');
+        sInd = find(candidateSignal(theRange) <= 0, 1, 'last');
         if ~isempty(sInd)
             blinkFits(k).leftZero = theRange(sInd);
         else % Take the smallest value before in the interval
@@ -60,7 +59,7 @@ for k = 1:length(maxFrames)
         [~, minIndex] = min(candidateSignal(theRange));
         minFrame = theRange(minIndex);
         theRange = maxFrames(k):minFrame;
-        sInd = find(candidateSignal(theRange)  <= baseLevel, 1, 'first');
+        sInd = find(candidateSignal(theRange) <= 0, 1, 'first');
         if ~isempty(sInd)
             blinkFits(k).rightZero = theRange(sInd);
         else % Take the smallest value before in the interval
@@ -68,7 +67,7 @@ for k = 1:length(maxFrames)
             blinkFits(k).rightZero = theRange(sInd);
         end
         
-       %% Compute the place of maximum positive and negative velocities
+        %% Compute the place of maximum positive and negative velocities
         upStroke = blinkFits(k).leftZero:blinkFits(k).maxFrame;
         [~, maxPosVelFrame] = max(blinkVelocity(upStroke));
         maxPosVelFrame = maxPosVelFrame + upStroke(1) - 1;
@@ -95,7 +94,7 @@ for k = 1:length(maxFrames)
         end
         blinkFits(k).rightBase =  maxNegVelFrame + rightBaseIndex;
         
-    
+        
         
         %% Compute the left and right half-height frames from base
         leftHalfBase = blinkFits(k).leftBase:blinkFits(k).maxFrame;
@@ -147,27 +146,20 @@ for k = 1:length(maxFrames)
         xLeft = (blinkFits(k).leftRange(1):blinkFits(k).leftRange(2))';
         xRight = (blinkFits(k).rightRange(1):blinkFits(k).rightRange(2))';
         
-        %% Below and above for types     
+        %% Below and above for types
         if length(xLeft) > 1 && length(xRight) > 1
             yRight = candidateSignal(xRight)';
             yLeft = candidateSignal(xLeft)';
-            [p, S, mu] = polyfit(xLeft, yLeft, 1);
-            blinkFits(k).leftPCoef = p;
-            blinkFits(k).leftSCoef = S;
-            blinkFits(k).leftMuCoef = mu;
-            yPred = polyval(p, xLeft, S, mu);
+            [pLeft, SLeft, muLeft] = polyfit(xLeft, yLeft, 1);
+            yPred = polyval(pLeft, xLeft, SLeft, muLeft);
             blinkFits(k).leftR2 = corr(yLeft, yPred);
             
-            [p, S, mu] = polyfit(xRight, yRight, 1);
-            blinkFits(k).rightPCoef = p;
-            blinkFits(k).rightSCoef = S;
-            blinkFits(k).rightMuCoef = mu;
-            yPred = polyval(p, xRight, S, mu);
+            [pRight, SRight, muRight] = polyfit(xRight, yRight, 1);
+            yPred = polyval(pRight, xRight, SRight, muRight);
             blinkFits(k).rightR2 = corr(yRight, yPred);
             [blinkFits(k).xIntersect, blinkFits(k).yIntersect, ...
                 blinkFits(k).leftXIntercept, blinkFits(k).rightXIntercept] = ...
-                getIntersection(blinkFits(k).leftPCoef, blinkFits(k).rightPCoef, ...
-                blinkFits(k).leftMuCoef, blinkFits(k).rightMuCoef);
+                getIntersection(pLeft, pRight, muLeft, muRight);
             if (blinkFits(k).xIntersect == blinkFits(k).leftXIntercept) || ...
                     (blinkFits(k).xIntersect == blinkFits(k).rightXIntercept)
                 continue;
@@ -175,10 +167,73 @@ for k = 1:length(maxFrames)
             blinkFits(k).leftSlope = blinkFits(k).yIntersect./ ...
                 (blinkFits(k).xIntersect - blinkFits(k).leftXIntercept);
             blinkFits(k).rightSlope = blinkFits(k).yIntersect./ ...
-                (blinkFits(k).xIntersect - blinkFits(k).rightXIntercept);            
+                (blinkFits(k).xIntersect - blinkFits(k).rightXIntercept);
+            blinkFits(k).averLeftVelocity = pLeft(1)./muLeft(2);
+            blinkFits(k).averRightVelocity = pRight(1)./muRight(2);
         end
     catch mex %#ok<NASGU>
         fprintf('Failed to fit blink %d\n', k);
     end
 end
 
+    function [xIntersect, yIntersect, xIntercept1, xIntercept2] = getIntersection(p, q, u, v)
+        % Return intersection of two lines given by fits p and q centered at u and v
+        %
+        %  Parameters:
+        %      p   first linear fit:  y = p(1)*x + p(2)
+        %      q   second linear fit:  y = q(1)*x + q(2)
+        %      u   u(1) mean of first, u(2) std of first
+        %      v   v(1) mean of first, v(2) std of first
+        %
+        if p(1) == 0
+            xIntercept1 = NaN;
+        else
+            xIntercept1 = (p(1)*u(1) - p(2)*u(2))./p(1);
+        end
+        if q(1) == 0
+            xIntercept2 = NaN;
+        else
+            xIntercept2 = (q(1)*v(1) - q(2)*v(2))./q(1);
+        end
+        if p(1) == p(2)
+            xIntersect = NaN;
+            yIntersect = NaN;
+        else
+            denom = p(1)*v(2) - q(1)*u(2);
+            numer =  u(1)*p(1)*v(2) - v(1)*q(1)*u(2) ...
+                + q(2)*v(2)*u(2) - p(2)*u(2)*v(2);
+            xIntersect = numer./denom;
+            yIntersect = p(1)*(xIntersect - u(1))./u(2) + p(2);
+        end
+    end
+
+    function s = createFitStructure()
+    %% Create a structure for the fits    
+        s = struct( ...
+            'number', nan, ...
+            'maxFrame', nan, ... % Frame number of the maximum
+            'maxValue', nan, ... % value of the blink maximum
+            'leftOuter', nan, ... %
+            'rightOuter', nan, ... %
+            'leftZero', nan, ... % first baseLevel crossing or minimum between blinks on left
+            'rightZero', nan, ... % first baseLevel crossing or minimum between blinks on
+            'leftBase', nan, ... %
+            'rightBase', nan, ... %
+            'leftBaseHalfHeight', nan, ... %
+            'rightBaseHalfHeight', nan, ... %
+            'leftZeroHalfHeight', nan, ... %
+            'rightZeroHalfHeight', nan, ... %
+            'leftRange', nan, ... %
+            'rightRange', nan, ... %
+            'leftSlope', nan, ... %
+            'rightSlope', nan, ... %
+            'averLeftVelocity', nan, ...
+            'averRightVelocity', nan, ...
+            'leftR2', nan, ... %
+            'rightR2', nan, ... %
+            'xIntersect', nan, ... %
+            'yIntersect', nan, ... %
+            'leftXIntercept', nan, ... %
+            'rightXIntercept', nan);
+    end
+end

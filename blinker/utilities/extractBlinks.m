@@ -1,163 +1,180 @@
-function blinks = extractBlinks(signals, srate, signalInfo, stdThreshold)
-% Extract a blinks structure from an array of time series
+function [blinks, params] = extractBlinks(candidateSignals, signalType, params)
+% Extract blinks structure from array of time series -- assumes params checked
 %
 % Parameters:
-%     signals           channels(ICs) x time array of potential signals
-%     srate             sampling rate for the signal
-%     signalInfo        structure with details about the signals
-%     stdThreshold      threshold for extracting initial blinks
+%     candidateSignals  array of selected signals: numSignals x numFrames
+%                       should be filtered (usually from 1 to 20 Hz)
+%     params            parameter structure with all defaults filled in
+%          
 %
 %  Output:
 %     blinks             a blink structure 
+%     params             parameter structure with all values filled in.
 %
-% The function band-pass filters prior to analysis. The signals can be
-% EEG channels, 
-
-%% Defaults           
-correlationThreshold = 0.90;
-correlationThresholdTop = 0.98;
-correlationThresholdBottom = 0.90; 
-blinkLowerAmpThreshold = 3;  % Blink amplitudes to rest should be >= 3
-blinkUpperAmpThreshold = 50; % Limit upper bound of amplitudes
-cutoffRatioThreshold = 0.7;  % Test this
-zeroLevel = 0;               % The base level of the blink (usually 0)
-minGoodBlinks = 10;          % Minumum number of blinks to work;
+% This is the low level blink extraction function, which is usually not
+% called directly. Most of the time, you will want to call the wrapper 
+% extractBlinksEEG to set up the calls using an EEGLAB EEG structure.
+%
 %% Set the blinks structure
 blinks  = createBlinksStructure();
-blinks.srate = srate;
+blinks.srate = params.srate;
 blinks.status = ''; 
-%% Set the blink information in the blinks structure
-blinks.candidateSignals = signals;
-blinks.signalInfo = signalInfo;
-signalIndices = signalInfo.signalIndices;
-blinks.signalIndices = signalIndices;
 
-%% Compute raw blinks
-blinkPositions = cell(length(signalIndices), 1);
-numberBlinks = zeros(length(signalIndices), 1);
-
-for k = 1:length(signalIndices)
-  blinkPositions{k} = getBlinkPositions(signals(k, :), srate, stdThreshold);
-  numberBlinks(k) = size(blinkPositions{k}, 2);
+%% Preallocate the signal data structure and find the blink positions
+signalData(length(params.signalNumbers)) = createSignalDataStructure();
+for k = 1:length(params.signalNumbers)
+    signalData(k) = createSignalDataStructure();
+    signalData(k).signalType = signalType;
+    signalData(k).signalNumber = params.signalNumbers(k);
+    signalData(k).signalLabel = params.signalLabels{k};
+    signalData(k).signal = candidateSignals(k, :);
+    signalData(k).blinkPositions = getBlinkPositions(signalData(k).signal, ...
+        params.srate, params.stdThreshold);
+    signalData(k).numberBlinks = size(signalData(k).blinkPositions, 2);
 end
-blinks.blinkPositions = blinkPositions;
-blinks.numberBlinks = numberBlinks;
-goodBlinks = zeros(length(signalIndices), 1);
-blinkAmpRatios = zeros(length(signalIndices), 1);
-cutoff = zeros(length(signalIndices), 1);
-bothCutoffRatios = zeros(length(signalIndices), 1);
-bestMedian = zeros(length(signalIndices), 1);
-bestRobustStd = zeros(length(signalIndices), 1);
-for k = 1:length(signalIndices)
+
+%% Process each signal
+for k = 1:length(params.signalNumbers)
     try
-      blinkFits = fitBlinks(blinks.candidateSignals(k, :), ...
-                               blinks.blinkPositions{k}, zeroLevel);
-      if isempty(blinkFits)
-          continue;
-      end
-      goodMask = getGoodBlinkMask(blinkFits, correlationThreshold);
-      goodBlinks(k) = sum(goodMask);
-     %% Calculate an amplitude criterion (frames in blink to those out)
-      leftZero = {blinkFits.leftZero};
-      rightZero = {blinkFits.rightZero};
-      badIndices = cellfun(@isnan, leftZero) | ...
-                   cellfun(@isnan, rightZero)| ...
-                   cellfun(@isempty, leftZero) | ...
-                   cellfun(@isempty, rightZero);
-      leftZero = cell2mat(leftZero(~badIndices));
-      rightZero = cell2mat(rightZero(~badIndices));
-      blinkMask = false(1, length(blinks.candidateSignals(k, :)));
-      for j = 1:length(leftZero)
-          if rightZero(j) > leftZero(j)
-              blinkMask(leftZero(j):rightZero(j)) = true;
-          end
-      end
-      outsideBlink = blinks.candidateSignals(k, :) > 0 & ~blinkMask;
-      insideBlink =  blinks.candidateSignals(k, :) > 0 & blinkMask;
-      blinkAmpRatios(k) = mean(blinks.candidateSignals(k, insideBlink))./ ...
-                         mean(blinks.candidateSignals(k, outsideBlink));
-                     
-      %% Now calculate the cutoff ratios
-        maxValues = {blinkFits.maxValue};
-        indicesNaN = cellfun(@isnan, maxValues);
-        maxValues = cellfun(@double, maxValues);
-        goodMaskTop = getGoodBlinkMask(blinkFits, correlationThresholdTop);
-        goodMaskBottom = getGoodBlinkMask(blinkFits, correlationThresholdBottom);
-        if isempty(goodMaskTop) || isempty(goodMaskBottom)
+        blinkFits = fitBlinks(signalData(k).signal, signalData(k).blinkPositions);
+        if isempty(blinkFits)
             continue;
         end
-               bestValues = maxValues(goodMaskTop & ~indicesNaN);
-        worstValues = maxValues(~goodMaskBottom & ~indicesNaN);
-        goodValues = maxValues(goodMaskBottom & ~indicesNaN);
-        allValues = maxValues(~indicesNaN);
-        bestMedian(k) = nanmedian(bestValues);
-        bestRobustStd(k) = 1.4826*mad(bestValues, 1);
+        
+        %% Calculate an amplitude criterion (frames in blink to those out)
+        leftZero = cellfun(@double, {blinkFits.leftZero});
+        rightZero = cellfun(@double, {blinkFits.rightZero});
+        maxValues = cellfun(@double, {blinkFits.maxValue});
+        leftR2 = cellfun(@double, {blinkFits.leftR2});
+        rightR2 = cellfun(@double, {blinkFits.rightR2});
+        badIndices = isnan(leftZero) | isnan(rightZero) | isnan(maxValues) | ...
+            isnan(leftR2) | isnan(rightR2);
+        leftZero = leftZero(~badIndices);
+        rightZero = rightZero(~badIndices);
+        maxValues = maxValues(~badIndices);
+        leftR2 = leftR2(~badIndices);
+        rightR2 = rightR2(~badIndices);
+        blinkMask = false(1, length(signalData(k).signal));
+        for j = 1:length(leftZero)
+            if rightZero(j) > leftZero(j)
+                blinkMask(leftZero(j):rightZero(j)) = true;
+            end
+        end
+        outsideBlink = signalData(k).signal > 0 & ~blinkMask;
+        insideBlink =  signalData(k).signal > 0 & blinkMask;
+        signalData(k).blinkAmpRatio = ...
+            mean(signalData(k).signal(insideBlink))./ ...
+            mean(signalData(k).signal(outsideBlink));
+        
+        %% Now calculate the cutoff ratios -- use default for the values
+        goodMaskTop = leftR2 >= params.correlationThresholdTop & ...
+            rightR2 >= params.correlationThresholdTop;
+        goodMaskBottom = leftR2 >= params.correlationThresholdBottom & ...
+            rightR2 >= params.correlationThresholdBottom;
+        if sum(goodMaskTop) < 2 
+            continue;
+        end
+        bestValues = maxValues(goodMaskTop);
+        worstValues = maxValues(~goodMaskBottom);
+        goodValues = maxValues(goodMaskBottom);
+        allValues = maxValues;
+        signalData(k).bestMedian = nanmedian(bestValues);
+        signalData(k).bestRobustStd = 1.4826*mad(bestValues, 1);
         worstMedian = nanmedian(worstValues);
         worstRobustStd = 1.4826*mad(worstValues, 1);
-        cutoff(k) = (bestMedian(k)*worstRobustStd + ...
-                     worstMedian*bestRobustStd(k))/...
-                    (bestRobustStd(k) + worstRobustStd);
-        all = sum(allValues <= bestMedian(k) + 2*bestRobustStd(k) & ...
-                  allValues >= bestMedian(k) - 2*bestRobustStd(k));
+        signalData(k).cutoff = (signalData(k).bestMedian*worstRobustStd + ...
+            worstMedian*signalData(k).bestRobustStd)/...
+            (signalData(k).bestRobustStd + worstRobustStd);
+        all = sum(allValues <= signalData(k).bestMedian + ...
+            2*signalData(k).bestRobustStd & ...
+            allValues >= signalData(k).bestMedian - ...
+            2*signalData(k).bestRobustStd);
         if all ~= 0
-           bothCutoffRatios(k) = sum(goodValues <= bestMedian(k) + 2*bestRobustStd(k) & ...
-                     goodValues >= bestMedian(k) - 2*bestRobustStd(k))/all;
+            signalData(k).goodRatio = ...
+                sum(goodValues <= signalData(k).bestMedian + ...
+                2*signalData(k).bestRobustStd & ...
+                goodValues >= signalData(k).bestMedian - ...
+                2*signalData(k).bestRobustStd)/all;
         end
+        signalData(k).numberGoodBlinks = sum(goodMaskBottom);
     catch Mex
         fprintf('Failed at component: %d %s\n', k, Mex.message);
     end
 end
-blinks.goodBlinks = goodBlinks;
-blinks.blinkAmpRatios = blinkAmpRatios;
 
-%% Reduce based on amplitude
-goodIndices = blinkAmpRatios >= blinkLowerAmpThreshold & ...
-              blinkAmpRatios <= blinkUpperAmpThreshold;
+%% Reduce the number of candidate signals based on the blink amp ratios
+blinkAmpRatios = cellfun(@double, {signalData.blinkAmpRatio});
+goodIndices = blinkAmpRatios >= params.blinkAmpRange(1) & ...
+              blinkAmpRatios <= params.blinkAmpRange(2);
 if sum(goodIndices) == 0 || isempty(goodIndices)
-   blinks.usedSignal = nan;
-   blinks.status = ['failure: ' blinks.status ...
-                    '[Blink amplitude too low -- may be noise]'];
-   return;
+    blinks.usedSignal = nan;
+    blinks.status = ['failure: ' blinks.status ...
+        '[Blink amplitude too low -- may be noise]'];
+    return;
 end
-blinks.signalIndices = blinks.signalIndices(goodIndices);
-blinks.candidateSignals = blinks.candidateSignals(goodIndices, :);
-blinks.blinkPositions = blinks.blinkPositions(goodIndices);
-blinks.numberBlinks = blinks.numberBlinks(goodIndices);
-blinks.goodBlinks = blinks.goodBlinks(goodIndices);
-blinks.blinkAmpRatios = blinks.blinkAmpRatios(goodIndices);
-blinks.cutoff = cutoff(goodIndices);
+signalData = signalData(goodIndices);
 
-blinks.bestMedian = bestMedian(goodIndices);
-blinks.bestRobustStd = bestRobustStd(goodIndices);
-
-%% Now calculate the ratios of good blinks to all blinks
-cutoffRatios = bothCutoffRatios(goodIndices);
-blinks.goodRatios = cutoffRatios;
-
-%% Find the ones that meet the threshold
+%% Find the ones that meet the minimum good blink threshold
 usedSign = 1;
-candidateIndices = blinks.signalIndices;
-candidates = blinks.goodBlinks;
-goodCandidates = candidates > minGoodBlinks;
-if sum(goodCandidates) == 0 
-   blinks.status = ['failure: ' blinks.status ...
-                    '[fewer than ' num2str(minGoodBlinks) ' were found]'];
-   blinks.usedSignal = NaN;
-   return;
+candidates = cellfun(@double, {signalData.numberGoodBlinks});
+goodCandidates = candidates > params.minGoodBlinks;
+if sum(goodCandidates) == 0
+    blinks.status = ['failure: ' blinks.status ...
+        '[fewer than ' num2str(params.minGoodBlinks) ' were found]'];
+    blinks.usedSignal = NaN;
+    return;
 end
-candidateIndices = candidateIndices(goodCandidates);
-cutoffRatios = cutoffRatios(goodCandidates);
-candidates = candidates(goodCandidates);
-ratioIndices = cutoffRatios >= cutoffRatioThreshold;
+signalData = signalData(goodCandidates);
+
+%% Now see if any candidates meet the good blink ratio criteria
+goodRatios = cellfun(@double, {signalData.goodRatio});
+ratioIndices = goodRatios >= params.goodRatioThreshold;
+testData = signalData;
 if sum(ratioIndices) == 0
-   usedSign = -1;
-   blinks.status = ['failure: ' blinks.status '[Good ratio too low]'];
-else
-    candidates = candidates(ratioIndices);
-    candidateIndices = candidateIndices(ratioIndices);
+    usedSign = -1;
+    blinks.status = ['failure: ' blinks.status '[Good ratio too low]'];
+elseif ~params.keepSignals
+    testData = testData(ratioIndices);
 end
-[~, maxIndex ] = max(candidates);
+
+%% Now pick the one with the maximum number of good blinks
+goodBlinks = cellfun(@double, {testData.numberGoodBlinks});
+[~, maxIndex ] = max(goodBlinks);
 if usedSign == 1
     blinks.status = ['success: ' blinks.status];
 end
-blinks.usedSignal = usedSign*candidateIndices(maxIndex);
+blinks.usedSignal = usedSign*testData(maxIndex).signalNumber;
+blinks.signalData = testData;
+
+    function s = createSignalDataStructure()
+        %% Create a structure for a signalData structure
+        s = struct( ...
+            'signalType', NaN, ...
+            'signalNumber', NaN, ...
+            'signalLabel', NaN, ...
+            'numberBlinks', NaN, ...
+            'numberGoodBlinks', NaN, ...
+            'blinkAmpRatio', NaN, ...
+            'cutoff', NaN, ...
+            'bestMedian', NaN, ...
+            'bestRobustStd', NaN, ...
+            'goodRatio', NaN, ...
+            'signal', NaN', ...
+            'blinkPositions', NaN ...
+            );
+    end
+
+    function s = createBlinksStructure()
+        % Return an empty blink structure
+        s  = struct('fileName', NaN, ...
+            'srate', NaN, ...
+            'subjectID', NaN, ...
+            'experiment', NaN, ...
+            'uniqueName', NaN, ...
+            'task', NaN, ...
+            'startTime', NaN, ...
+            'signalData', NaN, ...
+            'usedSignal', NaN, ...
+            'status', NaN);
+    end
+end

@@ -1,11 +1,10 @@
-% Show plots of the indicators in different groups
+% Show plots of the indicators in different groups for the shooter data
+% This script produced Figure 4
 %% Shooter blinks
 experiment = 'Shooter';
-blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNew';
-typeBlinks = 'ChannelUnrefNewBothCombined';
-typeBlinkProperties = 'ChannelUnrefNewBothCombined';
-typeBlinkSummary = 'ChannelUnrefNewBothCombined';
-typeBlinkOccular = 'ChannelUnrefNewBothCombined';
+blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
+summaryFileName = 'ShooterAllMastNewBothCombinedSummary.mat';
+aNovaFileName = 'ShooterAllMastNewBothCombinedANOVA.mat';
 taskTypes = {'SEF2', 'SEF4', 'SEO2', 'SEO4', ...
              'DEF2', 'DEF4', 'DEO2', 'DEO4', 'ARIT', ...
              'EC', 'EO'};
@@ -16,60 +15,25 @@ excludedGroups = 3;
 excludedTasks = {'EC', 'EO'};
 theVersion = 'SingleVSDualArit';
 
-%% NCTU
-% blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
-% experiment = 'NCTU_LK';
-% type = 'Channel';
-% taskTypes = {{'Motion'}; {'Motionless'}};
-% excludeGroup = 0;
-
-%% BCI2000
-% blinkDir = 'O:\ARL_Data\BCI2000\BCI2000Blinks';
-% experiment = 'BCI2000';
-% type = 'Channel';
-% taskTypes = {'RealLRFist', 'RealFistFeet', ...
-%              'ImagLRFist', 'ImagFistFeet', ...
-%              'EyesOpen', 'EyesClosed'};
-% taskGroupList = {{'RealLRFist', 'RealFistFeet'}; ...
-%                  {'ImagLRFist', 'ImagFistFeet'}; ...
-%                  {'EyesOpen', 'EyesClosed'}};
-% excludedGroups = 3;
-% theVersion = 'RealVsImag';
-% excludedTasks = {'EyesOpen', 'EyesClosed'};
-
-% blinkDir = 'O:\ARL_Data\BCI2000\BCI2000Blinks';
-% experiment = 'BCI2000';
-% type = 'Channel';
-% taskTypes = {'RealLRFist', 'RealFistFeet', ...
-%              'ImagLRFist', 'ImagFistFeet', ...
-%              'EyesOpen', 'EyesClosed'};
-% excludedTasks = {'EyesOpen', 'EyesClosed'};
-% taskGroupList = {{'RealLRFist'}; {'RealFistFeet'}; ...
-%                  {'ImagLRFist'}; {'ImagFistFeet'}; ...
-%                  {'EyesOpen', 'EyesClosed'}};
-% excludedGroups = 5;
-% theVersion = '4Separate';
-
-%% Load the files
-blinkFile = [experiment 'BlinksNew' typeBlinks '.mat'];
-blinkPropertiesFile = [experiment 'BlinksNew' typeBlinkProperties 'Properties.mat'];
-occularFile = [experiment 'BlinksNew' typeBlinkOccular 'Occular.mat'];
-load([blinkDir filesep blinkFile]);
-load([blinkDir filesep blinkPropertiesFile]);
-load([blinkDir filesep occularFile]);
+%% Load the summary file
+load([blinkDir filesep summaryFileName]);
 
 %% Set up the groups
-subjects = {blinks.subjectID};
-tasks = {blinks.task};
-used = cellfun(@double, {blinks.usedSignal});
+used = cellfun(@double, {blinkSummary.usedNumber});
 componentValid = ~isnan(used);
-taskTimes = cell2mat({blinks.startTime});
+
+%% Remove the Nan entries
+blinkSummary = blinkSummary(componentValid);
+subjects = {blinkSummary.subjectID};
+tasks = {blinkSummary.task};
+used = cellfun(@double, {blinkSummary.usedNumber});
+taskTimes = 1:length(blinkSummary);
 
 %% Compute the order variables
 uniqueSubjects = unique(subjects);
 taskOrder = zeros(size(subjects));
 taskGroups = getTaskGroups(tasks, taskGroupList);
-datasetIndex = 1:length(blinks);
+datasetIndex = 1:length(blinkSummary);
 for k = 1:length(uniqueSubjects)
     theseSubjects = strcmpi(subjects, uniqueSubjects{k});
     theseTimes = taskTimes(theseSubjects);
@@ -107,8 +71,15 @@ pValues = cell(length(indicatorType), numAnovaVariations);  % 6 variations of an
 for k = 1:length(indicatorType)
     fprintf('Indicator %d: %s\n', k, indicatorType{k});
     subjectInd = ['subject' indicatorType{k}];
-    indicatorBase = occularIndices.(indicatorType{k})(:, 1);
-    indicatorValid = ~isnan(indicatorBase) & componentValid' & ~tasksExcluded';
+    indicatorBase = nan(length(blinkSummary), 1);
+    for n = 1:length(indicatorBase)
+        value = blinkSummary(n).(indicatorType{k});
+         if ~isempty(value)
+             indicatorBase(n) = value(1);
+         end
+    end
+    %indicatorBase = occularIndices.(indicatorType{k})(:, 1);
+    indicatorValid = ~isnan(indicatorBase) & ~tasksExcluded';
     theseSubjects = subjects(indicatorValid);
     theseTasks = tasks(indicatorValid);
     theseGroups = taskGroups(indicatorValid);
@@ -132,8 +103,9 @@ for k = 1:length(indicatorType)
         'labels', {'No math', 'Math'}, 'colors', [0, 0, 0])
     ylabel(indicatorType{k})
     box on
-    ax = gca;
-    ax.YGrid = 'on';
+    set(gca, 'YGrid', 'on');
+%     ax = gca;
+%     ax.YGrid = 'on';
     set(gca, 'LineWidth', 1)
     title([indicatorType{k} ': grouped']);
     
@@ -144,8 +116,9 @@ for k = 1:length(indicatorType)
         'datalim', [0, 2.5])
     ylabel(indicatorType{k})
     box on
-        ax = gca;
-    ax.YGrid = 'on';
+    set(gca, 'YGrid', 'on');
+%         ax = gca;
+%     ax.YGrid = 'on';
     set(gca, 'LineWidth', 1)
     %set(gca, 'GridLineStyle', ':', 'XGrid', 'on', 'YGrid', 'off');
     title([indicatorType{k} ': grouped/DIV']);
@@ -156,8 +129,9 @@ for k = 1:length(indicatorType)
         'labels', {'No math', 'Math'}, 'colors', [0, 0, 0])
     ylabel(indicatorType{k})
     box on
-    ax = gca;
-    ax.YGrid = 'on';
+    set(gca, 'YGrid', 'on');
+%     ax = gca;
+%     ax.YGrid = 'on';
     set(gca, 'LineWidth', 1)
     title([indicatorType{k} ': grouped/SUB']);
     
@@ -170,8 +144,9 @@ for k = 1:length(indicatorType)
     xlabel('Subjects')
     box on
     set(gca, 'LineWidth', 1, 'YLim', [0, 30])
-    ax = gca;
-    ax.YGrid = 'on';
+    set(gca, 'YGrid', 'on');
+%     ax = gca;
+%     ax.YGrid = 'on';
     title([indicatorType{k}]);
     
     %%
@@ -182,9 +157,10 @@ for k = 1:length(indicatorType)
     ylabel([indicatorType{k} ': scaled'])
     xlabel('Subjects')
     box on
-    ax = gca;
-    ax.YGrid = 'on';
-    set(gca, 'LineWidth', 1, 'YLim', [0, 5])
+    set(gca, 'YGrid', 'on');
+%     ax = gca;
+%     ax.YGrid = 'on';
+    set(gca, 'LineWidth', 1, 'YLim', [0, 3])
     title([indicatorType{k} ': Subject Div']);
     
     %%
@@ -195,8 +171,9 @@ for k = 1:length(indicatorType)
     ylabel(indicatorType{k})
     xlabel('Subjects')
     box on
-    ax = gca;
-    ax.YGrid = 'on';
+    set(gca, 'YGrid', 'on');
+%     ax = gca;
+%     ax.YGrid = 'on';
     set(gca, 'LineWidth', 1)
     title([indicatorType{k} ': Subject Sub']);
     %%

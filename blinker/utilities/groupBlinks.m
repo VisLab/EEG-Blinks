@@ -1,12 +1,15 @@
-function [blinkGroups, usedTypes, sortedBlinks] = groupBlinks(sortedBlinks, frameThreshold)
+function [blinkGroups, usedTypes, sortedBlinks, signalData, srate] = ...
+                                groupBlinks(signalData, jitter, srate)
 % Return the groups
+frameThreshold = round(jitter*srate);
+sortedBlinks = getSortedMaxima(signalData);
 if isempty(sortedBlinks)
     blinkGroups = [];
     usedTypes = NaN;
     sortedBlinks = [];
     return;
 end
-usedTypes = unique(sortedBlinks(:, 3));
+usedTypes = unique(sortedBlinks(:, 4));  % Different signals
 numberTypes = length(usedTypes);
 blinkGroups = nan(size(sortedBlinks, 1), length(usedTypes));
 blinkDist = diff(sortedBlinks(:, 1));
@@ -19,25 +22,25 @@ while (notDone)
   if mValue > frameThreshold
       break;
   end
-  firstType = sortedBlinks(mInd(1), 3);
+  firstType = sortedBlinks(mInd(1), 4);
   firstType = find(usedTypes == firstType);
-  nextType = sortedBlinks(mInd(1) + 1, 3);
+  nextType = sortedBlinks(mInd(1) + 1, 4);
   nextType = find(usedTypes == nextType);
-  group1 = sortedBlinks(mInd(1), 4);
-  group2 = sortedBlinks(mInd(1) + 1, 4);
+  group1 = sortedBlinks(mInd(1), 5);
+  group2 = sortedBlinks(mInd(1) + 1, 5);
   if isnan(group1) && isnan(group2)
      thisGroup = thisGroup + 1;
-     sortedBlinks(mInd(1), 4) = thisGroup;
-     sortedBlinks(mInd(1) + 1, 4) = thisGroup;
+     sortedBlinks(mInd(1), 5) = thisGroup;
+     sortedBlinks(mInd(1) + 1, 5) = thisGroup;
      blinkGroups(thisGroup, firstType) = sortedBlinks(mInd(1), 2);
      blinkGroups(thisGroup, nextType) = sortedBlinks(mInd(1) + 1, 2);
  
   elseif ~isnan(group1) && isnan(blinkGroups(group1, nextType))
        % First is in a group that second should join
-        sortedBlinks(mInd(1) + 1, 4) = group1;
+        sortedBlinks(mInd(1) + 1, 5) = group1;
         blinkGroups(group1, nextType) = sortedBlinks(mInd(1) + 1, 2);
   elseif ~isnan(group2) && isnan(blinkGroups(group2, firstType))
-        sortedBlinks(mInd(1), 4) = group2;
+        sortedBlinks(mInd(1), 5) = group2;
         blinkGroups(group2, firstType) = sortedBlinks(mInd(1), 2);
   end
   blinkDist(mInd(1)) = inf;
@@ -49,7 +52,7 @@ blinkGroups = blinkGroups(1:thisGroup, :);
 %% Now put the ones that have been left out
 for k = 1:numberTypes
     thisType = usedTypes(k);
-    theseBlinks = sortedBlinks(:, 3) == thisType;
+    theseBlinks = sortedBlinks(:, 4) == thisType;
     theseBlinks = sortedBlinks(theseBlinks, 2);
     maxBlink = max(theseBlinks);
     thisGroup = unique(blinkGroups(:, k));
@@ -93,7 +96,7 @@ totalBlinks = size(sortedBlinks, 1);
 maps = cell(numberTypes, 1);
 for k = 1:length(maps)
    maps{k} = containers.Map('KeyType', 'double', 'ValueType', 'double');
-   blinkMask = sortedBlinks(:, 3) == usedTypes(k);
+   blinkMask = sortedBlinks(:, 4) == usedTypes(k);
    theseIndices = 1:totalBlinks;
    theseIndices = theseIndices(blinkMask);
    theseBlinks = sortedBlinks(blinkMask, :);
@@ -135,3 +138,46 @@ sortedBlinks(:, end) = gNums;
 
 %% Sort by the frame of the last item in the group.
 blinkGroups = sortrows(blinkGroups, size(blinkGroups, 2));
+sortedBlinks = [sortedBlinks, sortedBlinks(:, 1)/srate];
+end
+
+function sortedBlinks = getSortedMaxima(signalData)
+% Returns sorted array of blink maxima for a signalData structure
+
+%% Find total blinks and the individual blink maxima
+    totalBlinks = 0;
+    individualMaxima = cell(length(signalData), 1);
+    for n = 1:length(signalData)
+       individualMaxima{n} = ...
+           getBlinkMaxima(signalData(n).signal, signalData(n).blinkPositions);
+       totalBlinks = totalBlinks + length(individualMaxima{n});                       
+    end
+
+    %% Now create an array with all of the blink max frames from all versions
+    sortedBlinks = nan(totalBlinks, 5);
+    startBlinks = 1;
+    for n = 1:length(signalData)
+        bMaxs = individualMaxima{n};
+        signal = signalData(n).signal;
+        endBlinks = startBlinks + length(bMaxs) - 1;
+        sortedBlinks(startBlinks:endBlinks, 1) = bMaxs(:);
+        sortedBlinks(startBlinks:endBlinks, 2) = (1:length(bMaxs))';
+        sortedBlinks(startBlinks:endBlinks, 3) = signal(bMaxs(:));
+        sortedBlinks(startBlinks:endBlinks, 4) = n;
+        startBlinks = endBlinks + 1;
+    end
+
+    sortedBlinks = sortrows(sortedBlinks, 1:4);
+end
+
+function blinkMaxima = getBlinkMaxima(signal, blinkPositions)
+%% Returns array of frames at which blink maxima occur for specified positions
+    startBlinks = blinkPositions(1, :);
+    endBlinks = blinkPositions(2, :);
+    blinkMaxima = nan(1, length(startBlinks));
+    for n = 1:length(startBlinks);
+        blinkRange = startBlinks(n):endBlinks(n);
+        [~, maxInd] = max(signal(blinkRange));
+        blinkMaxima(n) = blinkRange(maxInd);
+    end
+end

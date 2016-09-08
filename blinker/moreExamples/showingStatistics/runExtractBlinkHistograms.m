@@ -1,96 +1,66 @@
-%% This calculates blink Histograms for the occular indicators
-%          
+%% Calculate ocular index histograms for a data collection.
+% The script assumes that a summary properties file has been computed
+% for the data 
 %% NCTU blinks
-% blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks_New';
-% experiment = 'NCTU_LK';
-% typeBlinks = 'ChannelMastNewBoth';
-% typeBlinkProperties = 'ChannelMastNewBoth';
-% typeBlinkHistograms = 'ChannelMastNewBoth';
-% excludeTasks = {};
+% propertiesDir = 'O:\ARL_Data\NCTU\NCTUBlinksNewRefactored';
+% propertiesFile = 'NCTU_LKAllMastNewBothProperties.mat';
+% histogramFile = 'NCTU_LKAllMastNewBothHistograms.mat';
 %% BCIT Examples
-% experiment = 'BCITLevel0';
-% blinkDir = 'O:\ARL_Data\BCITBlinksNew';
-% typeBlinks = 'ChannelUnrefNewBoth';
-% typeBlinkProperties = 'ChannelUnrefNewBoth';
-% typeBlinkHistograms = 'ChannelUnrefNewBoth';
-% excludeTasks = {};
-
-%% BCI2000 blinks
-% typeBlinks = 'ChannelMastNewBothCombined';
-% typeBlinkProperties = 'ChannelMastNewBothCombined';
-% typeBlinkHistograms = 'ChannelMastNewBothCombined';
-% experiment = 'BCI2000';
-% blinkDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNew';
-% excludeTasks = {'EyesOpen', 'EyesClosed'};
-
+% propertiesDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
+% propertiesFile = 'BCITLevel0AllUnrefNewBothBlinksProperties.mat';
+% histogramFile = 'BCITLevel0AllUnrefNewBothBlinksHistograms.mat';
+%% BCI2000 counts
+% propertiesFile = 'BCI2000AllMastNewBothCombinedProperties.mat';
+% propertiesDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';
+% histogramFile = 'BCI2000AllMastNewBothCombinedHistograms.mat';
 %% Shooter blinks
-experiment = 'Shooter';
-blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNew';
-% typeBlinks = 'ChannelUnrefNewBothCombined';
-% typeBlinkProperties = 'ChannelUnrefNewBothCombined';
-% typeBlinkHistograms = 'ChannelUnrefNewBothCombined';
-typeBlinks = 'EOGUnrefNewBothCombined';
-typeBlinkProperties = 'EOGUnrefNewBothCombined';
-typeBlinkHistograms = 'EOGUnrefNewBothCombined';
-excludeTasks = {'EC', 'EO'};
+propertiesDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
+propertiesFile = 'ShooterAllMastNewBothCombinedProperties.mat';
+histogramFile = 'ShooterAllMastNewBothCombinedHistograms.mat';
 
 %% Read in the blink data for this collection
-blinkFile = [experiment 'BlinksNew' typeBlinks '.mat'];
-blinkPropertiesFile = [experiment 'BlinksNew' typeBlinkProperties 'Properties.mat'];
-load([blinkDir filesep blinkFile]);
-load([blinkDir filesep blinkPropertiesFile]);
+load([propertiesDir filesep propertiesFile]);
 
-%% Histogram parameters
-blinksRateInterval = 3;  % Number of minutes to average blink rate
-items = {'blinksPerMin', [0, 30, 15]; ...
-         'pAVRZ',  [0, 10, 20]; ...
-         'nAVRZ',  [0, 15, 20]; ...
-         'durationZ', [0.05, 0.5, 30]; ...
-         'durationB',  [0.05, 0.5, 30]; ...
-         'durationT', [0.05, 0.5, 30]; ...
-         'durationHZ', [0.05, 0.35, 30]; ...
-         'durationHB', [0.05, 0.5, 30]};
-numItems = size(items, 1);     
-theStruct = struct('name', NaN, 'excludeTasks', [], 'numberDatasets', [], ...
+%% Remove the bad files
+bProperties(badFiles) = [];
+bNames(badFiles) = [];
+marginalMask(badFiles) = [];
+
+%% 
+theTypes = {'durationHalfBase', 'durationHalfZero', 'durationZero', ...
+            'durationBase', 'durationTent', 'posAmpVelRatioZero', ...
+            'negAmpVelRatioZero'};
+limits = [0.05, 0.5, 20; ... % half base duration
+          0.05, 0.35, 20; ... % half zero duration
+          0.05, 0.5, 20; ... % duration zero
+          0.05, 0.5, 20; ... % duration base
+          0.05, 0.5, 20; ... % duration tent
+          0, 10, 20; ...     % pAVR
+          0, 15, 20];        % nAVR
+%% Set up the structure
+numberTypes = length(theTypes);
+theHist(numberTypes) = struct('name', NaN, ...
                   'limits', NaN, 'binCounts', NaN, 'binCenters', NaN);
-for k = 1:numItems
-    thisStruct = theStruct();
-    thisStruct.name = items{k, 1};
-    thisStruct.limits = items{k, 2};
-    blinkHistograms.(items{k, 1}) = thisStruct;
+dataBlinks = cell(numberTypes, 1);
+for k = 1:numberTypes
+    theHist(k) = theHist(numberTypes);
+    theHist(k).name = theTypes{k};
+    theHist(k).limits = limits(k, :);
+    allValues = nan(totalBlinks, 1);
+    startInd = 1;
+    for n = 1:length(bProperties) 
+       theseProperties = bProperties{n};
+       values = cellfun(@double, {theseProperties.(theTypes{k})});
+       endInd = startInd + length(values) - 1;
+       allValues(startInd:endInd) = values;
+    end
+    dataBlinks{k} = allValues;
+    bins = linspace(limits(k, 1), limits(k, 2), limits(k, 3));
+    [binCounts, binCenters] = hist(allValues(:), bins);
+    theHist(k).binCounts = binCounts;
+    theHist(k).binCenters = binCenters;
 end
-%goodBlinkHistograms = blinkHistograms;
-
-
-%% Calculate the histograms across all of the tasks
-numberDatasets = 0;
-for n = 1:length(blinks)
-   if isempty(blinks(n).usedSignal) || isnan(blinks(n).usedSignal)
-       continue;
-   elseif strcmpi(excludeTasks, blinks(n).task)
-       continue;
-   end
-   numberDatasets = numberDatasets + 1;
-   maxTime = size(blinks(n).candidateSignals, 2)./blinks(n).srate;
-   for k = 1:numItems   
-      [binCounts, binCenters] = getOccularHistogram(blinkProperties{n}, ...
-                                 items{k, 1}, items{k, 2}, [], maxTime);
-      if isnan(blinkHistograms.(items{k}).binCounts)
-          blinkHistograms.(items{k}).binCounts = binCounts(:); %#ok<*SAGROW>
-          blinkHistograms.(items{k}).binCenters = binCenters(:);
-      else
-          blinkHistograms.(items{k}).binCounts = ...
-              blinkHistograms.(items{k}).binCounts + binCounts(:);
-      end
-   end
-end
-
-%% Add individual items
-for k = 1:numItems
-    blinkHistograms.(items{k, 1}).numberDatasets = numberDatasets;
-    blinkHistograms.(items{k, 1}).excludeTasks = excludeTasks;
-end
+blinkHistograms = theHist;
 
 %% Save the histogram file
-blinkHistFile = [experiment 'BlinksNew' typeBlinkHistograms 'Histograms.mat'];
-save([blinkDir filesep blinkHistFile], 'blinkHistograms',  '-v7.3');
+save([propertiesDir filesep histogramFile], 'blinkHistograms',  '-v7.3');
