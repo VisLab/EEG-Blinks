@@ -74,6 +74,217 @@ The BLINKER pipeline
 can be found under the EEGLAB Tools submenu:<br>
 <img src="https://raw.githubusercontent.com/VisLab/EEG-Clean-Tools/gh-pages/images/PrepFromEEGLAB.png" alt="BLINKER from EEGLAB">  </p>
 
+<h1>
+<a id="blinker-overview" class="anchor" href="#blinker-overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>BLINKER Overview</h1>
+
+<p>This section discusses the algorithm and the setting of the various parameters.</p>
+
+<h3>
+<a id="processing-steps" class="anchor" href="#processing-steps" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Processing steps</h3>
+
+<ol>
+<li>Extract potential blinks of each candidate signal.</li>
+<li>Calculate landmarks of potential blinks.</li>
+<li>Reject signals with low signal-to-noise (SNR) ratios.</li>
+<li>Calculate blink maximum amplitude distributions.</li>
+<li>Select the "best" candidate signal as the "used" signal.</li>
+<li>Calculate the blink properties and blink shapes for the "used" signal.</li>
+<li>Calculate the ocular indices for the "used" signal.</li>
+</ol>
+
+<h2>
+<a id="extract-potential-blinks-of-each-candidate-signal" class="anchor" href="#extract-potential-blinks-of-each-candidate-signal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Extract potential blinks of each candidate signal</h2>
+
+<h2>
+<a id="detrend-high-pass-filtering" class="anchor" href="#detrend-high-pass-filtering" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Detrend (high pass filtering)</h2>
+
+<p>High pass filtering of some sort is needed in order for many of the algorithms, including line noise removal and
+referencing to perform correctly. However, the exact cutoff may dramatically effect downstream algorithms. By default, 
+PREP uses a 1 Hz cutoff, but only temporarily filters, so that the final signal is not high-pass filtered. This
+allows you to defer the final choice of high pass cutoff for downstream processing to later. </p>
+
+<h3>
+<a id="calling-sequence-for-removing-trends" class="anchor" href="#calling-sequence-for-removing-trends" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Calling sequence for removing trends</h3>
+
+<p>The <code>removeTrend</code> function takes two structures in and produces two output structures. The <code>signal</code> structure
+includes a <code>.data</code> field and an <code>.srate</code> field. The <code>signal</code> structure is compatible with an EEGLAB EEG structure, but does not rely on any of the other EEGLAB fields. The <code>.data</code> field should be channels x frames. </p>
+
+<p>As with all functions in the pipeline, the algorithm parameters are passed in a structure:  </p>
+
+<blockquote>
+<p><code>[signal, detrendOut] = removeTrend(signal)</code><br>
+<code>[signal, detrendOut] = removeTrend(signal, detrendIn)</code>  </p>
+</blockquote>
+
+<p>The output structure contains all of the input structure fields plus additional fields including a string representation
+of the actual command used. Usually, the only field that a user might need to provide is <code>detrendChannels</code> if the <code>signal</code> structure contains extra channels that represent items other than EEG signals. </p>
+
+<p><strong>Example:</strong>  </p>
+
+<blockquote>
+<p><code>detrendIn = struct('detrendChannels', [1:32, 40:60], 'detrendCutoff', 0.5);</code>  </p>
+</blockquote>
+
+<h3>
+<a id="parameters-for-removing-the-trend" class="anchor" href="#parameters-for-removing-the-trend" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parameters for removing the trend</h3>
+
+<p>The following parameters appear as fields in the <code>detrendIn</code> structure:  </p>
+
+<p><strong><code>detrendChannels</code></strong><br>
+ A row vector specifying the channel numbers of the channels to remove the trend from.<br>
+By default, PREP uses all of the channels (<code>1:size(signal.data, 1)</code>). 
+If your signal has extraneous or unused channels, you should specify which channels to use.  </p>
+
+<p><strong><code>srate</code></strong>
+A positive scalar giving the sampling rate of the signal in Hz. 
+If an EEG structure is passed to <code>getBlinkerDefaults</code>, the default value is <code>EEG.srate</code>. 
+Otherwise, the default 1.</p>
+
+<p><strong><code>stdThreshold</code></strong><br>
+Number of robust standard deviations above the mean the signal for potential blinks.<br>
+[Scalar numeric positive (default is 1.5)]</p>
+
+<p><strong><code>subjectID</code></strong><br>
+String identifying the subject for the dataset. BLINKER uses this ID to combine short datasets from same session to get blink maxima distribution.
+[String (default is 'Subject1_Task1_Experiment1_Rep1’)]</p>
+
+<p><strong><code>uniqueName</code></strong>
+String uniquely identifying this dataset
+[String (default is 'Unknown')]</p>
+
+<p><strong><code>experiment</code></strong>
+String identifying the experiment
+[String (default is 'Experiment1')]</p>
+
+<p><strong><code>task</code></strong>
+Name of task performed in this dataset
+[String (default is 'Task1')]</p>
+
+<p><strong><code>startDate</code></strong>
+String giving the start date of dataset in dd-mmm-yyyy format
+[String (default is '01-Jan-2016')]</p>
+
+<p><strong><code>startTime</code></strong>
+String giving the start time in 24 hour hh:mm:ss format.<br>
+[String (default is '00:00:00')]</p>
+
+<p><strong><code>signalTypeIndicator</code></strong>
+String specifying the type of signals from which to extract blinks.
+[String with possible values are 'UseNumbers' or 'UseLabels' or 'UseICs' (default is 'UseNumbers')]</p>
+
+<p><strong><code>signalNumbers</code></strong>
+Vector of numbers of the channel numbers to try as potential signals if signalTypeIndicator is 'UseNumbers'. 
+[Row vector of positive integers less than the number of channels (default 1:number of channels)]</p>
+
+<p><strong><code>signalLabels</code></strong>
+Cell array of channel names to try as potential signals if signalTypeIndicator is 'UseLabels'. 
+[Row cell array of channel labels (default: {'fp1', 'f1', 'fp2', 'fz', 'fpz', 'f3', 'f4', 'f2'})]</p>
+
+<p><strong><code>excludeLabels</code></strong>
+Cell array of channel names of signal labels to exclude from consideration.
+[Row cell array of channel labels (default: {'exg5', 'exg6', 'exg7', 'exg8', 'vehicle position'})]</p>
+
+<p><strong><code>dumpBlinkerStructures</code></strong>
+Logical flag indicating whether to save all of the blinker structures in a file
+[Logical (default: true)]</p>
+
+<p><strong><code>showMaxDistribution</code></strong>
+Logical flag indicating whether to show a figure with a histogram of blink maxima. The
+default value is true.</p>
+
+<p><strong><code>dumpBlinkImages</code></strong>
+    getRules(false, {'logical'}, {}, ...
+    'If true, blinker dumps pictures of the individual blinks.'), ...</p>
+
+<p><strong><code>dumpBlinkPositions</code></strong>
+    getRules(false, {'logical'}, {}, ...
+    'If true, blinker dumps a text file of left zeros and maxima frames and times.'), ...</p>
+
+<p><strong><code>fileName</code></strong>
+A string giving the full path name of the input EEG file.</p>
+
+<p><strong><code>blinkerSaveFile</code></strong>
+Name of file for saving the structures of blink locations and properties     getRules([pwd theName '_blinks.mat'], {'char'}, ...
+    {}, ...
+    'Name of file for saving the structures of blink locations and properties'), ...</p>
+
+<p><strong><code>blinkerDumpDir</code></strong>
+    getRules([pwd filesep 'blinkDump'], {'char'}, {}, ...
+    'Name of directory in which to dump pictures of blinks.'), ...</p>
+
+<p><strong><code>lowCutoffHz</code></strong>
+     getRules(1, {'numeric'}, {'scalar', 'nonnegative'}, ...
+       'Lower edge of bandpass filter'), ...</p>
+
+<p><strong><code>highCutoffHz</code></strong>
+     getRules(20, {'numeric'}, {'scalar', 'positive'}, ...
+       'Upper edge of bandpass filter'),  ...
+<strong><code>minGoodBlinks</code></strong>
+     getRules(10, {'numeric'}, {'scalar', 'nonnegative'}, ...
+       'Minimum number of good blinks for signal to be a candidate'),  ...</p>
+
+<p><strong><code>blinkAmpRange</code></strong>
+     getRules([3, 50], {'numeric'}, {'row', 'positive', 'numel', 2}, ...
+     'Range of blink amplitude ratios allowed for candidate signals'),  ...</p>
+
+<p><strong><code>goodRatioThreshold</code></strong>
+     getRules(0.7, {'numeric'}, {'scalar', 'nonnegative', '&lt;=', 1}, ...
+       'Minimum number of good blinks for signal to be a candidate'),  ...</p>
+
+<p><strong><code>pAVRThreshold</code></strong>
+     getRules(3, {'numeric'}, {'scalar', 'positive'}, ...
+       'Minimum number of good blinks for signal to be a candidate'),  ...</p>
+
+<p><strong><code>correlationThresholdTop</code></strong>
+     getRules(0.98, {'numeric'}, {'scalar', 'nonnegative', '&lt;=', 1}, ...
+       'Correlation threshold for linear fits of best blinks'),  ...</p>
+
+<p><strong><code>correlationThresholdBottom</code></strong>
+     getRules(0.90, {'numeric'}, {'scalar', 'nonnegative', '&lt;=', 1}, ...
+       'Correlation threshold for linear fits of acceptable blinks'),  ...</p>
+
+<p><strong><code>correlationThresholdMiddle</code></strong>
+     getRules(0.95, {'numeric'}, {'scalar', 'nonnegative', '&lt;=', 1}, ...
+       'Correlation threshold middle range in displaying blink maxima'),  ...</p>
+
+<p><strong><code>keepSignals</code></strong>
+     getRules(false, {'logical'}, {}, ...
+       ['Keep signals that pass the blink amplitude ratio test' ...
+       ' regardless of good ratio (for combination)']),  ...  </p>
+
+<p><strong><code>shutAmpFraction</code></strong>
+      getRules(0.90, {'numeric'}, {'scalar', 'nonnegative', '&lt;=', 1}, ...
+       'Fraction of maximum amplitude to reach for time shut'),  ...</p>
+
+<p><strong><code>zThresholds</code></strong>
+     getRules([0.90, 2; 0.98, 5], {'numeric'}, {'positive', 'ncols', 2}, ...
+     'Rows contain correlation and max z-score threshold pairs for determining good blinks'), ...</p>
+
+<p><strong><code>ICSimilarityThreshold</code></strong>
+     getRules(0.85, {'numeric'}, {'nonnegative', '&lt;=', 1}, ...
+     'How similar and IC has to be to an eye IC to be a candidate'), ...</p>
+
+<p><strong><code>ICFOMThreshold</code></strong>
+Mean difference in IC scalp map amplitude of front versus rear hemispheres (used to select blink ICs)
+[Scalar numeric positive (default: 1)]</p>
+
+<p><strong><code>numberMaxBins</code></strong>
+Number of bins used to display histograms of blink maxima
+[Scalar numeric positive (default: 80)]      </p>
+
+<h3>
+<a id="calling-sequence-for-line-noise-removal" class="anchor" href="#calling-sequence-for-line-noise-removal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Calling sequence for line noise removal</h3>
+
+<p>The <code>cleanLineNoise</code> function takes two structures in and produces two output structures. The <code>signal</code> structure
+includes a <code>.data</code> field and an <code>.srate</code> field. The <code>signal</code> structure is compatible with an EEGLAB EEG structure, but does not rely on any of the other EEGLAB fields. The data field should be channels x frames. </p>
+
+<p>As with all functions in the pipeline, the algorithm parameters are passed in a structure.  </p>
+
+<blockquote>
+<p><code>[signal, lineNoiseOut] = cleanLineNoise(signal)</code><br>
+<code>[signal, lineNoiseOut] = cleanLineNoise(signal, lineNoiseIn)</code>  </p>
+</blockquote>
+
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/VisLab/EEG-Blinks">EEG-Blinks</a> is maintained by <a href="https://github.com/VisLab">VisLab</a>.</span>
 
