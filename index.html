@@ -22,17 +22,13 @@
       <h1>
 <a id="introduction-to-the-blinker-pipeline" class="anchor" href="#introduction-to-the-blinker-pipeline" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction to the BLINKER pipeline</h1>
 
-<p>BLINKER and associated tools are an automated pipeline for detecting eye blinks in EEG and calculating
-various properties of these blinks. BLINKER takes as input an arbitrary number of signals, which can
-include ordinary EEG channels, EOG channels and independent components (IC), determines which signals
-have acceptable blinks and determining the optimal signal for determining blinks. 
-BLINKER also has facilities for merging blinks calculating from different 
-source signals and for plotting individual blinks to facilitate manual evaluation and synchronization
-of EEG with video and eye tracking. BLINKER is designed to be run in a completely automated way. 
-The major sections of this document are:</p>
+<p>BLINKER and associated tools are an automated pipeline for detecting eye blinks in EEG and calculating various properties of these blinks. BLINKER takes as input an arbitrary number of signals, which can include ordinary EEG channels, EOG channels and independent components (IC), determines which signals have acceptable blinks and determining the optimal signal for determining blinks. BLINKER also has facilities for merging blinks calculating from different source signals and for plotting individual blinks to facilitate manual evaluation and synchronization of EEG with video and eye tracking. BLINKER is designed to be run in a completely automated way. </p>
+
+<p>The major sections of this document are:</p>
 
 <ul>
 <li>Introduction (requirements, citing, installation)</li>
+<li>Quick start (Simple examples of running BLINKER)</li>
 <li>Algorithm (steps, meaning of parameters for each step)</li>
 <li>Running as an EEGLAB plug-in</li>
 <li>Running as a script</li>
@@ -58,8 +54,7 @@ BLINKER: Large-scale automated analysis of ocular indices extracted from EEG  </
 <h3>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h3>
 
-<p>The BLINKER pipeline can be run in two ways --- as a standalone toolbox or as an EEGLAB plugin. To run in standalone mode, simply download the BLINKER code, found in the EEG-Blinks github repository and
-run the script runBlinkerPipeline after editing the locations of your input files.</p>
+<p>The BLINKER pipeline can be run in two ways --- as a standalone toolbox or as an EEGLAB plugin. To run in standalone mode, simply download the BLINKER code, found in the EEG-Blinks github repository, and add the <code>blinker</code> directory and all of its subdirectories to the MATLAB path.</p>
 
 <h1>
 <a id="blinker-as-an-eeglab-plugin" class="anchor" href="#blinker-as-an-eeglab-plugin" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>BLINKER as an EEGLAB plugin</h1>
@@ -69,8 +64,7 @@ run the script runBlinkerPipeline after editing the locations of your input file
 <h2>
 <a id="running-the-blinker-pipeline-from-eeglab" class="anchor" href="#running-the-blinker-pipeline-from-eeglab" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Running the BLINKER pipeline from EEGLAB</h2>
 
-<p>Load an EEG dataset to be processed using the Load dataset submenu under the File menu of EEGLAB.<br>
-The BLINKER pipeline 
+<p>Load an EEG dataset to be processed using the <code>Load dataset</code> submenu under the <code>File</code> menu of EEGLAB. The BLINKER pipeline 
 can be found under the EEGLAB Tools submenu:<br>
 <img src="https://raw.githubusercontent.com/VisLab/EEG-Clean-Tools/gh-pages/images/PrepFromEEGLAB.png" alt="BLINKER from EEGLAB">  </p>
 
