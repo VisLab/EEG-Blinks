@@ -1,7 +1,7 @@
 % eegplugin_blinker() - a wrapper to blinker pipeline
 % 
 % Usage:
-%   >> eegplugin_blinker(fig, try_strings, catch_strings);
+%   >> vers = eegplugin_blinker(fig, try_strings, catch_strings);
 %
 %   see also: pop_blinker, runBlinkerPipeline
 
@@ -21,18 +21,20 @@
 % along with this program; if not, write to the Free Software
 % Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-%function eegplugin_clean_rawdata(fig,try_strings,catch_strings)
+function vers = eegplugin_blinker(fig, trystrs, catchstrs) 
+
+vers = 'blinker1.0.0';
+
+%% Add subfolders
+tmp = which('getBlinkerDefaults');
+if isempty(tmp)
+    myPath = fileparts(which('pop_blinker'));
+    addpath(genpath(myPath));
+end;
 
 % create menu
-% toolsmenu = findobj(fig, 'tag', 'tools');
-% uimenu( toolsmenu, 'label', 'Clean continuous data using ASR', 'separator','on',...
-%    'callback', 'EEG = pop_clean_rawdata(EEG); [ALLEEG EEG CURRENTSET] = eeg_store(ALLEEG, EEG); eeglab redraw');
-
-% eegplugin_prepPipeline() - the PREP pipeline plugin
-function eegplugin_blinker(fig, trystrs, catchstrs) 
- 
-% create menu
-comprep = [trystrs.no_check '[EEG LASTCOM] = pop_blinker(EEG);' catchstrs.new_and_hist];
+comprep = [trystrs.no_check '[EEG LASTCOM] = pop_blinker(EEG);' ...
+           catchstrs.new_and_hist];
 menu = findobj(fig, 'tag', 'tools');
 uimenu( menu, 'Label', 'Run Blinker', 'callback', comprep, ...
     'separator', 'on');
