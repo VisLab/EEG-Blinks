@@ -113,7 +113,7 @@ function [EEG, com, blinks, blinkFits, blinkProperties, params] = ...
      blinkStatistics = getBlinkStatistics(blinks, blinkFits, blinkProperties, params);
      %% Calculate summary statistics
      if params.verbose
-         outputBlinkStatistics(1, blinkStatistics);
+         outputBlinkStatistics(blinkStatistics);
      end
      
      %% Saving the structures
