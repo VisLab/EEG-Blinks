@@ -115,13 +115,8 @@ function [EEG, com, blinks, blinkFits, blinkProperties, params] = ...
      if params.verbose
          outputBlinkStatistics(1, blinkStatistics);
      end
-     
-     %% Saving the structures
      try
          if params.dumpBlinkerStructures
-             if params.verbose
-                fprintf('Saving the blink structures ......\n');
-             end
              thePath = fileparts(params.blinkerSaveFile);
              if ~exist(thePath, 'dir')
                  mkdir(thePath);

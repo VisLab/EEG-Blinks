@@ -29,15 +29,7 @@
 % % [blinkProps, blinkFits] = extractBlinkProperties(signalData, params);
 
 %%
-% params = struct();
-% [EEG, com, blinks, blinkFits, blinkProperties, params] = ...
-%                                                  pop_blinker(EEG, params);
-
-%%
-% blinkStatistics = getBlinkStatistics(blinks, blinkFits, blinkProperties);
-% blinkStatistis.blinkFileName = 'temp';
-
-%%
-outputBlinkStatistics(1, blinkStatistics);
-
+params = struct();
+[EEG, com, blinks, blinkFits, blinkProperties, params] = ...
+                                                 pop_blinker(EEG, params);
  
