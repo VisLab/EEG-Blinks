@@ -7,16 +7,16 @@
 % summaryFile = 'NCTU_LKAllMastNewBothSummary.mat';
 
 %% Load the Shooter directory
-% summaryDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
-% summaryFile = 'ShooterAllMastNewBothCombinedSummary.mat';
+summaryDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
+summaryFile = 'ShooterAllMastNewBothCombinedSummary.mat';
 
 %% Load the BCIT directory
 % summaryDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
 % summaryFile = 'BCITLevel0AllUnrefNewBothBlinksSummary.mat';
 
 %% Load the BCI2000 directory
-summaryFile = 'BCI2000AllMastNewBothCombinedSummary.mat';
-summaryDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';
+% summaryFile = 'BCI2000AllMastNewBothCombinedSummary.mat';
+% summaryDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';
 
 %% Load the summary file
 load([summaryDir filesep summaryFile]);
@@ -64,26 +64,26 @@ end
 
 %% Display the count of nan datasets
 fprintf('Original number of datasets %d\n', length(blinkStatisticsSummary));
-srates = cellfun(@double, {blinkStatisticsSummary.srate});
+srates = cellfun(@double, {blinkSummary.srate});
 nanComponents = isnan(srates);
 fprintf('Number of NaN datasets: %g [percentage %g]\n', ...
-    sum(nanComponents),  100*sum(nanComponents)/length(blinkStatisticsSummary));
-blinkStatisticsSummary(nanComponents) = [];
-numDatasets = length(blinkStatisticsSummary);
+    sum(nanComponents),  100*sum(nanComponents)/length(blinkSummary));
+blinkSummary(nanComponents) = [];
+numDatasets = length(blinkSummary);
 fprintf('Total number of datasets %d\n', numDatasets);
-signalNumbers = cellfun(@double, {blinkStatisticsSummary.usedNumber});
+signalNumbers = cellfun(@double, {blinkSummary.usedNumber});
 nanComponents = isnan(signalNumbers);
 
 %% Display the count of marginal datasets
-marginalComponents = strcmpi({blinkStatisticsSummary.status}, 'marginal');
+marginalComponents = strcmpi({blinkSummary.status}, 'marginal');
 fprintf('Number of marginal datasets: %g [Percentage %g]\n', ...
     sum(marginalComponents), 100*sum(marginalComponents)/numDatasets);
 
 marginalIndices = find(marginalComponents);
 for k = 1:sum(marginalComponents)
     pos = marginalIndices(k);
-    fprintf('%d: %s (ratio %g) %s\n', pos, blinkStatisticsSummary(pos).usedLabel, ...
-        blinkStatisticsSummary(pos).goodRatio, blinkStatisticsSummary(pos).uniqueName);
+    fprintf('%d: %s (ratio %g) %s\n', pos, blinkSummary(pos).usedLabel, ...
+        blinkSummary(pos).goodRatio, blinkSummary(pos).uniqueName);
 end
 
 totalBlinksMarginal = 0;
@@ -92,18 +92,18 @@ goodBlinksMarginal = 0;
 goodBlinksGood = 0;
 totalSecondsGood = 0;
 totalSecondsMarginal = 0;
-for k = 1:length(blinkStatisticsSummary)
-    if isnan(blinkStatisticsSummary(k).usedNumber) 
+for k = 1:length(blinkSummary)
+    if isnan(blinkSummary(k).usedNumber) 
         continue;
     end
     if marginalComponents(k)
-        totalBlinksMarginal = totalBlinksMarginal + blinkStatisticsSummary(k).numberBlinks;
-        goodBlinksMarginal = goodBlinksMarginal + blinkStatisticsSummary(k).numberGoodBlinks;
-        totalSecondsMarginal = totalSecondsMarginal + blinkStatisticsSummary(k).seconds;
+        totalBlinksMarginal = totalBlinksMarginal + blinkSummary(k).numberBlinks;
+        goodBlinksMarginal = goodBlinksMarginal + blinkSummary(k).numberGoodBlinks;
+        totalSecondsMarginal = totalSecondsMarginal + blinkSummary(k).seconds;
     else
-        totalBlinksGood = totalBlinksGood + blinkStatisticsSummary(k).numberBlinks;
-        goodBlinksGood = goodBlinksGood  + blinkStatisticsSummary(k).numberGoodBlinks;
-        totalSecondsGood  = totalSecondsGood  + blinkStatisticsSummary(k).seconds;
+        totalBlinksGood = totalBlinksGood + blinkSummary(k).numberBlinks;
+        goodBlinksGood = goodBlinksGood  + blinkSummary(k).numberGoodBlinks;
+        totalSecondsGood  = totalSecondsGood  + blinkSummary(k).seconds;
     end
 end
 

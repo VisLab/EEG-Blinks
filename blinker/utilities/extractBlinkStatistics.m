@@ -14,6 +14,13 @@ function blinkStatistics = ...
     else
         correlationThreshold = params.correlationThresholdTop;
     end
+    
+%% Check to make sure that the structures are non-empty
+if isempty(blinks) || isempty(blinkFits) || isempty(blinkProperties) || ...
+        length(blinkFits) ~= length(blinkProperties)
+    blinkStatistics = [];
+    return;
+end
 
     %% Get an empty statistics structure and put in metadata
     blinkStatistics = getStatisticsStructure();
