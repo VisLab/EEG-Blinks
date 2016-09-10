@@ -133,49 +133,49 @@ By default, PREP uses all of the channels (<code>1:size(signal.data, 1)</code>).
 If your signal has extraneous or unused channels, you should specify which channels to use.  </p>
 
 <p><strong><code>srate</code></strong>
-A positive scalar giving the sampling rate of the signal in Hz. 
+ A positive scalar giving the sampling rate of the signal in Hz. 
 If an EEG structure is passed to <code>getBlinkerDefaults</code>, the default value is <code>EEG.srate</code>. 
 Otherwise, the default 1.</p>
 
 <p><strong><code>stdThreshold</code></strong><br>
-Number of robust standard deviations above the mean the signal for potential blinks.<br>
+ Number of robust standard deviations above the mean the signal for potential blinks.<br>
 [Scalar numeric positive (default is 1.5)]</p>
 
 <p><strong><code>subjectID</code></strong><br>
-String identifying the subject for the dataset. BLINKER uses this ID to combine short datasets from same session to get blink maxima distribution.
-[String (default is 'Subject1_Task1_Experiment1_Rep1’)]</p>
+ String identifying the subject for the dataset. BLINKER uses this ID to combine short datasets from same session to get blink maxima distribution.
+ [String (default is 'Subject1_Task1_Experiment1_Rep1’)]</p>
 
 <p><strong><code>uniqueName</code></strong>
-String uniquely identifying this dataset
-[String (default is 'Unknown')]</p>
+ String uniquely identifying this dataset
+ [String (default is 'Unknown')]</p>
 
 <p><strong><code>experiment</code></strong>
-String identifying the experiment
+ String identifying the experiment
 [String (default is 'Experiment1')]</p>
 
 <p><strong><code>task</code></strong>
-Name of task performed in this dataset
-[String (default is 'Task1')]</p>
+ Name of task performed in this dataset
+ [String (default is 'Task1')]</p>
 
 <p><strong><code>startDate</code></strong>
-String giving the start date of dataset in dd-mmm-yyyy format
-[String (default is '01-Jan-2016')]</p>
+ String giving the start date of dataset in dd-mmm-yyyy format
+ [String (default is '01-Jan-2016')]</p>
 
 <p><strong><code>startTime</code></strong>
 String giving the start time in 24 hour hh:mm:ss format.<br>
 [String (default is '00:00:00')]</p>
 
 <p><strong><code>signalTypeIndicator</code></strong>
-String specifying the type of signals from which to extract blinks.
-[String with possible values are 'UseNumbers' or 'UseLabels' or 'UseICs' (default is 'UseNumbers')]</p>
+ String specifying the type of signals from which to extract blinks.
+ [String with possible values are 'UseNumbers' or 'UseLabels' or 'UseICs' (default is 'UseNumbers')]</p>
 
 <p><strong><code>signalNumbers</code></strong>
-Vector of numbers of the channel numbers to try as potential signals if signalTypeIndicator is 'UseNumbers'. 
-[Row vector of positive integers less than the number of channels (default 1:number of channels)]</p>
+ Vector of numbers of the channel numbers to try as potential signals if signalTypeIndicator is 'UseNumbers'. 
+ [Row vector of positive integers less than the number of channels (default 1:number of channels)]</p>
 
 <p><strong><code>signalLabels</code></strong>
-Cell array of names of channels to try as potential signals if signalTypeIndicator is 'UseLabels'. 
-[Row cell array of channel labels (default: {'fp1', 'f1', 'fp2', 'fz', 'fpz', 'f3', 'f4', 'f2'})]</p>
+ Cell array of names of channels to try as potential signals if signalTypeIndicator is 'UseLabels'. 
+ [Row cell array of channel labels (default: {'fp1', 'f1', 'fp2', 'fz', 'fpz', 'f3', 'f4', 'f2'})]</p>
 
 <p><strong><code>excludeLabels</code></strong>
 Cell array of the names of signals to exclude from consideration.
@@ -287,78 +287,82 @@ includes a <code>.data</code> field and an <code>.srate</code> field. The <code>
 
 <p>![BLINKER menu]</p>
 
-<h3>
-<a id="the-blinks-structure" class="anchor" href="#the-blinks-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The <code>blinks</code> structure</h3>
+<h2>
+<a id="the-blinks-structure" class="anchor" href="#the-blinks-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The <code>blinks</code> structure</h2>
 
 <p>The <code>blinks</code> structure holds basic information about the dataset, the candidate signals and the positions of
 the potential blinks in the candidate signals. </p>
 
 <p><strong><code>fileName</code></strong>
-String with the full path name of the file from which the blinks were computed</p>
+ String with the full path name of the file from which the blinks were computed</p>
 
 <p><strong><code>srate</code></strong>
-Sampling rate in Hz of the signal</p>
+ Sampling rate in Hz of the signal</p>
 
 <p><strong><code>subjectID</code></strong>
-String identifying the subject from which the dataset was recorded. This field is used for display purposes and for combining datasets taken from a single subject in one session to improve estimates of blink maximum distribution.</p>
+ String identifying the subject from which the dataset was recorded. This field is used for display purposes and for combining datasets taken from a single subject in one session to improve estimates of blink maximum distribution.</p>
 
 <p><strong><code>experiment</code></strong>
-String identifying the experiment or data collection that this dataset is part of.</p>
+ String identifying the experiment or data collection that this dataset is part of.</p>
 
 <p><strong><code>uniqueName</code></strong>
-String uniquely identifying this dataset within the context of the analysis. Usually this will be a combination of the experiment, subject, task, replicate, and other identifying information. This string is used for display purposes and for lookup of datasets within a combined analysis.</p>
+ String uniquely identifying this dataset within the context of the analysis. Usually this will be a combination of the experiment, subject, task, replicate, and other identifying information. This string is used for display purposes and for lookup of datasets within a combined analysis.</p>
 
 <p><strong><code>task</code></strong>
-String identifying the task performed by the subject for this dataset.</p>
+ String identifying the task performed by the subject for this dataset.</p>
 
 <p><strong><code>startTime</code></strong>
-Double value giving the days (to within) from xxx.</p>
+ Double value giving the days (to within) from xxx.</p>
 
 <p><strong><code>signalData</code></strong>
-Structure with details of the candidate signals and potential blink positions.</p>
+ Structure with details of the candidate signals and potential blink positions.</p>
 
 <p><strong><code>usedSignal</code></strong>
-Integer identifying the signal that is selected as the "best" signal for blinks. Usually this will be a channel number within the original dataset or the number of an IC within an independent component decomposition associated with the dataset. A negative value indicates that the results of the calculation were marginal and that the signal may not have captured the blinks reliability.</p>
+ Integer identifying the signal that is selected as the "best" signal for blinks. Usually this will be a channel number within the original dataset or the number of an IC within an independent component decomposition associated with the dataset. A negative value indicates that the results of the calculation were marginal and that the signal may not have captured the blinks reliability.</p>
 
 <p><strong><code>status</code></strong>
-String indicated the status of the blink calculation. A value of "success" means that blinks were successfully computed, although the results may be marginal. A value of "failed" means that the algorithm could not extract blinks from any of the candidate signals provide.</p>
+ String indicated the status of the blink calculation. A value of "success" means that blinks were successfully computed, although the results may be marginal. A value of "failed" means that the algorithm could not extract blinks from any of the candidate signals provide.</p>
 
-<h4>
+<h3>
 <a id="the-signaldata-substructure-of-blinks" class="anchor" href="#the-signaldata-substructure-of-blinks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The <code>signalData</code> substructure of <code>blinks</code>
-</h4>
+</h3>
 
 <p>The <code>signalData</code> is a structure array containing information about candidate signals for the dataset. The individual fields are:</p>
 
 <p><strong><code>signalType</code></strong>
-String indicating the type of signal this is. Usually the <code>signalType</code> will indicate how the initial candidate signals were specified and will have a value 'SignalNumbers', 'SignalLabels', `ICs'. </p>
+ String indicating the type of signal this is. Usually the <code>signalType</code> will indicate how the initial candidate signals were specified and will have a value 'SignalNumbers', 'SignalLabels', `ICs'. </p>
 
 <p><strong><code>signalNumber</code></strong>
-An integer uniquely identifying the signal within the dataset as a whole (for example the channel number of the IC number.)</p>
+ An integer uniquely identifying the signal within the dataset as a whole (for example the channel number of the IC number.)</p>
 
 <p><strong><code>signalLabel</code></strong>
-A string uniquely identifying the signal within the dataset as a whole (for example the channel label). BLINKER automatically creates labels for independent components: 'IC1', 'IC2', etc.</p>
+ A string uniquely identifying the signal within the dataset as a whole (for example the channel label). BLINKER automatically creates labels for independent components: 'IC1', 'IC2', etc.</p>
 
 <p><strong><code>numberBlinks</code></strong>
-An integer giving the number of potential blinks detected in this signal.</p>
+ An integer giving the number of potential blinks detected in this signal.</p>
 
 <p><strong><code>numberGoodBlinks</code></strong>
-An integer giving the number of "good" potential blinks detected in this signal. These blinks must have
+ An integer giving the number of "good" potential blinks detected in this signal. These blinks must have
 left and right R^2 values at greater than correlationThresholdBottom (0.90 by default).</p>
 
 <p><strong><code>blinkAmpRatio</code></strong>
-A postive value indicating the blink-amplitude ratio for this signal.</p>
+ A postive value indicating the blink-amplitude ratio for this signal.</p>
 
 <p><strong><code>cutoff</code></strong>
-A positive value estimating the boundary between the blink maximum distributions of the "good blink candidates" and the other blink candidates. If this value is well away from the <code>bestMedian</code>, the dataset is likely to have  good separation between blinks and eye movements.</p>
+ A positive value estimating the boundary between the blink maximum distributions of the "good blink candidates" and the other blink candidates. If this value is well away from the <code>bestMedian</code>, the dataset is likely to have  good separation between blinks and eye movements.</p>
 
 <p><strong><code>bestMedian</code></strong>
-A positive value giving the median blink maximum amplitude of the best candidate blinks. These blinks must have
+ A positive value giving the median blink maximum amplitude of the best candidate blinks. These blinks must have
 left and right R^2 values at greater than correlationThresholdTop (0.98 by default).</p>
 
 <p><strong><code>bestRobustStd</code></strong>
-            'goodRatio', NaN, ...
-            'signal', NaN', ...
-            'blinkPositions', NaN ...</p>
+ A positive number giving the 1.486 times the median absolute deviation from the median (mad) of the best candidate blinks. These blinks must have left and right R^2 values at greater than correlationThresholdTop (0.98 by default).</p>
+
+<p><strong><code>goodRatio</code></strong></p>
+
+<p><code>**signal</code>**</p>
+
+<p><code>**blinkPositions</code>**</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/VisLab/EEG-Blinks">EEG-Blinks</a> is maintained by <a href="https://github.com/VisLab">VisLab</a>.</span>
