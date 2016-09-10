@@ -1,23 +1,26 @@
-% pop_blinks() - Runs BLINKER for a single EEG dataset.
+% pop_blinker() - Runs BLINKER for a single EEG dataset.
 %
 % Usage:
-%   >>   [OUTEEG, blinks, blinkFits, blinkProperties, params, com] = ...
-%                                pop_blinks(INEEG, params);
+%   >>   [OUTEEG, com, blinks, blinkFits, blinkProperties, ...
+%                    blinkStatistics, params] = pop_blinks(INEEG, params);
 %
 % Inputs:
-%   INEEG      input EEG dataset
-%   params     structure with parameters to override defaults
+%   INEEG      Input EEG dataset
+%   params     Structure with parameters to override defaults 
+%              (see getBlinkerDefaults() for a full description)
 %
 % Outputs:
-%   OUTEEG     output EEG dataset
-%   blinks     blink structure with positions
-%   blinkFits  blinkFit structure with shape information about blinks
-%   blinkProperties  blinkProperties structure with ocular index values
-%   params     structure of parameters actually used
-%   com        command string which produced this execution
+%   OUTEEG     Output EEG dataset (not changed)
+%   com        Command string used to execute this
+%   blinks     Structure with positions of blinks
+%   blinkFits  Structure with shape information about blinks
+%   blinkProperties  Structure with blink properties
+%   blinkStatistics  Structure with ocular index statistics
+%   params     Structure of parameters actually used
 %
 % See also:
-%    EEGLAB
+%    EEGLAB, extractBlinksEEG, extractBlinkProperties,
+%    extractBlinkStatistics
 
 % Copyright (C) 2016  Kay Robbins and Kelly Kleifgas, UTSA
 %
@@ -35,8 +38,8 @@
 % along with this program; if not, write to the Free Software
 % Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-function [EEG, com, blinks, blinkFits, blinkProperties, params] = ...
-                                                 pop_blinker(EEG, params)
+function [EEG, com, blinks, blinkFits, blinkProperties, blinkStatistics, ...
+                                         params] = pop_blinker(EEG, params)
      com = ''; % Return something if user presses the cancel button
      okay = true;
      blinks = [];
@@ -110,7 +113,8 @@ function [EEG, com, blinks, blinkFits, blinkProperties, params] = ...
      if params.verbose
          fprintf('Extracting blink statistics.....\n');
      end
-     blinkStatistics = getBlinkStatistics(blinks, blinkFits, blinkProperties, params);
+     blinkStatistics = extractBlinkStatistics(blinks, blinkFits, ...
+                                              blinkProperties, params);
      %% Calculate summary statistics
      if params.verbose
          outputBlinkStatistics(blinkStatistics);

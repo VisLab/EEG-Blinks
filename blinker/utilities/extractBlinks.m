@@ -11,6 +11,15 @@ function [blinks, params] = extractBlinks(candidateSignals, signalType, params)
 %     blinks             a blink structure 
 %     params             parameter structure with all values filled in.
 %
+% The fields of params that are used in this function:
+%     srate
+%     signalNumbers
+%     signalLabels
+%     stdThreshold
+%     correlationThresholdTop
+%     correlationThresholdBottom
+%     blinkAmpRange
+
 % This is the low level blink extraction function, which is usually not
 % called directly. Most of the time, you will want to call the wrapper 
 % extractBlinksEEG to set up the calls using an EEGLAB EEG structure.

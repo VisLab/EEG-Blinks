@@ -1,18 +1,22 @@
 %% Extract the blinks structure based on channel or EOG time series
 % This script assumes that EEGLAB is in the path, that the datasets are
-% in EEGLAB EEG structures. The particular example run is for the ARL-Shoot
-% collection. To run for your own data you must have first generated a 
+% in EEGLAB EEG structures. 
+%
+% To run for your own data you must have first generated a 
 % blink file list which contains a list of files with the appropriate 
 % subject and other metadata.  See examples in
 % ./moreExamples/addingSubjectInfo.
 % 
-% The BLINKER pipeline produces a directory of blink files (one per data
+% The BLINKER pipeline produces a directory of blink files (one file per data
 % file). Each file contains a blinks structure with the eligible signals
 % and metadata information, a blinkFits structure with the fits for the
 % used signal, a blinkProperties structure for the blinks of the used
-% signal and the params structure used to run the program.
+% signal, a blinkStatistics structure with the statistics of the basic
+% ocular indices, and the params structure used to run the program.
 %
-% Written by Kay Robbins, UTSA, 2016
+% See also pop_blinker 
+%
+% Written by Kay Robbins and Kelly Kleigfas, UTSA, 2016
 %
 %% Setup
 pop_editoptions('option_single', false, 'option_savetwofiles', false);
@@ -51,7 +55,7 @@ load(blinkFileList);
 
 %% Run the blinker blink extraction to create a file.
 numberFiles = length(blinkFiles);
-for k = 370:399 %1:numberFiles
+for k = 1:numberFiles
     fprintf('%d: %s\n', k, blinkFiles(k).fileName);
     try
         EEG = pop_loadset(blinkFiles(k).fileName);
@@ -65,14 +69,16 @@ for k = 370:399 %1:numberFiles
         params.startTime = blinkFiles(k).startTime;
         params.blinkerSaveFile = [blinkIndDir filesep ...
             blinkFiles(k).blinkFileName '_' typeBlinks '.mat'];
+        params.dumpBlinkerStructures = true;
         params.blinkerDumpDir = blinkIndDir;
         params.dumpBlinkImages = false;
         params.dumpBlinkPositions = false;
         params.keepSignals = false;      % Make true if combining downstream
         params.showMaxDistribution = false;
-        %params.excludeLabels = {'a1', 'a2', 'vehicle position'};
-%         [EEG, com] = pop_blinker(EEG, params);
-       [EEG, com, blinks, blinkFits, blinkProperties, params] = pop_blinker(EEG, params); 
+        params.verbose = false;
+        %params.excludeLabels = {'a1', 'a2', 'vehicle position'}; 
+       [EEG, com, blinks, blinkFits, blinkProperties, blinkStatistics, ...
+           params] = pop_blinker(EEG, params); 
     catch Mex
         blinks.status = ['failure:' Mex.message];
     end

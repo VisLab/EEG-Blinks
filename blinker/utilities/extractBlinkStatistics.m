@@ -1,6 +1,6 @@
 
 function blinkStatistics = ...
-         getBlinkStatistics(blinks, blinkFits, blinkProperties, params)
+         extractBlinkStatistics(blinks, blinkFits, blinkProperties, params)
 
 %% Make sure enough arguments
     if nargin == 0

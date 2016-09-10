@@ -5,7 +5,7 @@
 %
 %   see also: pop_blinker, runBlinkerPipeline
 
-% Author: Kay Robbins and Kelly Kliegfas
+% Author: Kay Robbins and Kelly Kliegfas, 2016
 
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -22,7 +22,9 @@
 % Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 function vers = eegplugin_blinker(fig, trystrs, catchstrs) 
+%% Adds blinker as a plugin under the tools menu on EEGLAB
 
+%% Set the version number
 vers = 'blinker1.0.0';
 
 %% Add subfolders
@@ -32,7 +34,7 @@ if isempty(tmp)
     addpath(genpath(myPath));
 end;
 
-% create menu
+%% Create menu
 comprep = [trystrs.no_check '[EEG LASTCOM] = pop_blinker(EEG);' ...
            catchstrs.new_and_hist];
 menu = findobj(fig, 'tag', 'tools');
