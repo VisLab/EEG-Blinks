@@ -28,10 +28,11 @@
 
 <ul>
 <li>Introduction (requirements, citing, installation)</li>
-<li>Quick start (Simple examples of running BLINKER)</li>
-<li>Algorithm (steps, meaning of parameters for each step)</li>
 <li>Running as an EEGLAB plug-in</li>
 <li>Running as a script</li>
+<li>Quick start (Simple examples of running BLINKER)</li>
+<li>Algorithm (steps, meaning of parameters for each step)</li>
+<li>Description of BLINKER structures (blinks, blinkFits, blinkProperties, blinkStatistics)</li>
 </ul>
 
 <h3>
@@ -280,6 +281,48 @@ includes a <code>.data</code> field and an <code>.srate</code> field. The <code>
 <p><code>[signal, lineNoiseOut] = cleanLineNoise(signal)</code><br>
 <code>[signal, lineNoiseOut] = cleanLineNoise(signal, lineNoiseIn)</code>  </p>
 </blockquote>
+
+<h1>
+<a id="blinker-structures" class="anchor" href="#blinker-structures" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>BLINKER structures</h1>
+
+<p>![BLINKER menu]</p>
+
+<h3>
+<a id="blinks" class="anchor" href="#blinks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>blinks</code>
+</h3>
+
+<p>The <code>blinks</code> structure holds basic information about the dataset, the candidate signals and the positions of
+the potential blinks in the candidate signals. </p>
+
+<p><code>fileName</code>
+String with the full path name of the file from which the blinks were computed</p>
+
+<p><code>srate</code>
+Sampling rate in Hz of the signal</p>
+
+<p><code>subjectID</code>
+String identifying the subject from which the dataset was recorded. This field is used for display purposes and for combining datasets taken from a single subject in one session to improve estimates of blink maximum distribution.</p>
+
+<p><code>experiment</code>
+String identifying the experiment or data collection that this dataset is part of.</p>
+
+<p><code>uniqueName</code>
+String uniquely identifying this dataset within the context of the analysis. Usually this will be a combination of the experiment, subject, task, replicate, and other identifying information. This string is used for display purposes and for lookup of datasets within a combined analysis.</p>
+
+<p><code>task</code>
+String identifying the task performed by the subject for this dataset.</p>
+
+<p><code>startTime</code>
+Double value giving the days (to within) from xxx.</p>
+
+<p><code>signalData</code>
+Structure with details of the candidate signals and potential blink positions.</p>
+
+<p><code>usedSignal</code>
+Integer identifying the signal that is selected as the "best" signal for blinks. Usually this will be a channel number within the original dataset or the number of an IC within an independent component decomposition associated with the dataset. A negative value indicates that the results of the calculation were marginal and that the signal may not have captured the blinks reliability.</p>
+
+<p><code>status</code>
+String indicated the status of the blink calculation. A value of "success" means that blinks were successfully computed, although the results may be marginal. A value of "failed" means that the algorithm could not extract blinks from any of the candidate signals provide.</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/VisLab/EEG-Blinks">EEG-Blinks</a> is maintained by <a href="https://github.com/VisLab">VisLab</a>.</span>
