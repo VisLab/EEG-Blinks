@@ -353,16 +353,68 @@ left and right R^2 values at greater than correlationThresholdBottom (0.90 by de
 
 <p><strong><code>bestMedian</code></strong>
  A positive value giving the median blink maximum amplitude of the best candidate blinks. These blinks must have
-left and right R^2 values at greater than correlationThresholdTop (0.98 by default).</p>
+left and right R^2 values at greater than <code>correlationThresholdTop</code> (0.98 by default).</p>
 
 <p><strong><code>bestRobustStd</code></strong>
- A positive number giving the 1.486 times the median absolute deviation from the median (mad) of the best candidate blinks. These blinks must have left and right R^2 values at greater than correlationThresholdTop (0.98 by default).</p>
+ A positive number giving the 1.486 times the median absolute deviation from the median (mad) of the best candidate blinks. These blinks must have left and right R^2 values at greater than <code>correlationThresholdTop</code> (0.98 by default).</p>
 
 <p><strong><code>goodRatio</code></strong></p>
 
-<p><code>**signal</code>**</p>
+<p><strong><code>signal</code></strong></p>
 
-<p><code>**blinkPositions</code>**</p>
+<p><strong><code>blinkPositions</code></strong></p>
+
+<h2>
+<a id="the-blinkfits-structure" class="anchor" href="#the-blinkfits-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The <strong><code>blinkFits</code></strong> structure</h2>
+
+<p>The <code>blinkFits</code> structure array holds basic shape information for a set of potential blinks. In <code>extractBlinkProperties</code> function returns this structure for the potential blinks of the used signal that meet specific quality criteria. Values that are undefined, have value <code>NaN</code>. The fields are:</p>
+
+<p><strong><code>number</code></strong>
+ An integer giving the number of the potential blink within the corresponding blinks structure.
+<strong><code>maxFrame</code></strong>
+ An integer giving the frame number of the first maximum amplitude of this blink.</p>
+
+<p><strong><code>maxValue</code></strong>
+ A numeric value giving the maximum value of the blink.</p>
+
+<p><strong><code>leftOuter</code></strong>
+ A positive integer giving the frame number of the left outer reach of the blink.</p>
+
+<p><strong><code>rightOuter</code></strong>
+ A positive integer giving the frame number of the right outer reach of the blink.</p>
+
+<p><strong><code>leftZero</code></strong>
+ A positive integer giving the frame number of the left zero crossing of the blink.</p>
+
+<p><strong><code>rightZero</code></strong>
+ A positive integer giving the frame number of the right zero crossing of the blink.</p>
+
+<p><strong><code>leftBase</code></strong>
+ A positive integer giving the frame number of the left local minimum of the blink.</p>
+
+<p><strong><code>rightBase</code></strong>
+ A positive integer giving the frame number of the right local minimum of the blink.</p>
+
+<p><strong><code>leftBaseHalfHeight</code></strong>
+ A numeric value giving the value of the signal that represents the halfway point (in height) between the blink maximum and the left base value.</p>
+
+<p><strong><code>rightBaseHalfHeight</code></strong>
+ A numeric value giving the value of the signal that represents the halfway point (in height) between the blink maximum and the right base value.</p>
+
+<p><strong><code>leftZeroHalfHeight</code></strong>
+<strong><code>rightZeroHalfHeight</code></strong>
+<strong><code>leftRange</code></strong>
+<strong><code>rightRange</code></strong>
+<strong><code>leftSlope</code></strong>
+<strong><code>rightSlope</code></strong>
+<strong><code>averLeftVelocity</code></strong>
+<strong><code>averRightVelocity</code></strong>
+<strong><code>leftR2</code></strong>
+<strong><code>rightR2</code></strong>
+<strong><code>xIntersect</code></strong>
+<strong><code>yIntersect</code></strong>
+<strong><code>leftXIntercept</code></strong>
+<strong><code>rightXIntercept</code></strong></p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/VisLab/EEG-Blinks">EEG-Blinks</a> is maintained by <a href="https://github.com/VisLab">VisLab</a>.</span>
