@@ -30,7 +30,7 @@
 <li>
 <a name="Introduction">Introduction</a> (requirements, citing, installation)</li>
 <li><a href="#Plugin">Running as an EEGLAB plug-in</a></li>
-<li>Running as a script</li>
+<li><a href="#Script">Running as a script</a></li>
 <li>Quick start (Simple examples of running BLINKER)</li>
 <li>Algorithm (steps, meaning of parameters for each step)</li>
 <li>Description of BLINKER structures (blinks, blinkFits, blinkProperties, blinkStatistics)</li>
@@ -78,6 +78,61 @@ can be found under the EEGLAB Tools submenu:<br>
 
 <p>[Code linke](<a href="https://github.com/Vislab/EEG-Blinks/">https://github.com/Vislab/EEG-Blinks/</a>
 <img src="https://github.com/VisLab/EEG-Blinks/tree/gh-pages/images/BLINKER_Plugin.png" alt="BLINKER menu">  </p>
+
+<h2>
+<a id="running-blinker-as-a-script-in-batch-processing-mode" class="anchor" href="#running-blinker-as-a-script-in-batch-processing-mode" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Script">Running BLINKER as a script in batch processing mode</a>
+</h2>
+
+<p>While it is possible to run BLINKER as a plugin from EEGLAB, BLINKER is meant to be run in batch processing mode to analyze large collections of EEG. While it is possible to run BLINKER using the low-level functions, the easiest way to run BLINKER is to put your EEG dataset into an EEGLAB EEG structure.</p>
+
+<p><strong>Example</strong><br>
+Run BLINKER outside of EEGLAB but bring up a GUI to set parameters:</p>
+
+<blockquote>
+<p><code>[EEG, com, blinks, blinkFits, blinkProperties, blinkStatistics, params] = pop_blinker(EEG);</code>  </p>
+</blockquote>
+
+<p><strong>Example</strong><br>
+Run BLINKER without manual intervention, using all of the default parameters:</p>
+
+<blockquote>
+<p>`[EEG, com, blinks, blinkFits, blinkProperties, blinkStatistics,  params] = pop_blinker(EEG, struct());  </p>
+</blockquote>
+
+<p><strong>Example</strong><br>
+The previous example uses all of the default values, including defaults for metadata such as the <code>subjectID</code>. Usually you will want to override the defaults. When you are going to override defaults it is good to start with a complete <code>params</code> structure with all of the default values filled in:  </p>
+
+<blockquote>
+<p><code>params = checkBlinkerDefaults(struct(), getBlinkerDefaults(EEG));</code> </p>
+</blockquote>
+
+<p><strong>Example</strong><br>
+The following example starts with a default <code>params</code> structure and then overrides some of the values related to controlling the output and to dataset metadata:  </p>
+
+<blockquote>
+<p><code>params = checkBlinkerDefaults(struct(), getBlinkerDefaults(EEG));</code><br>
+<code>params.subjectID = blinkFiles(k).subjectID;</code><br>
+<code>params.experiment = blinkFiles(k).experiment;</code><br>
+<code>params.uniqueName = blinkFiles(k).uniqueName;</code><br>
+<code>params.task = blinkFiles(k).task;</code><br>
+<code>params.fileName = blinkFiles(k).fileName;</code><br>
+<code>params.startDate = blinkFiles(k).startDate;</code><br>
+<code>params.startTime = blinkFiles(k).startTime;</code><br>
+<code>params.blinkerSaveFile = [blinkIndDir filesep  blinkFiles(k).blinkFileName '_' typeBlinks '.mat'];</code><br>
+<code>params.dumpBlinkerStructures = true;</code><br>
+<code>params.blinkerDumpDir = blinkIndDir;</code><br>
+<code>params.dumpBlinkImages = false;</code><br>
+<code>params.dumpBlinkPositions = false;</code><br>
+<code>params.keepSignals = false;</code><br>
+<code>params.showMaxDistribution = false;</code><br>
+<code>params.verbose = false;</code><br>
+<code>params.excludeLabels = {'a1', 'a2', 'vehicle position'}; 
+</code>[EEG, com, blinks, blinkFits, blinkProperties, blinkStatistics, params] = pop_blinker(EEG, params); </p>
+</blockquote>
+
+<p><em>Example</em> 
+Run BLINKER outside of EEGLAB but bring up a GUI to set parameters:
+Th</p>
 
 <h1>
 <a id="blinker-overview" class="anchor" href="#blinker-overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>BLINKER Overview</h1>
