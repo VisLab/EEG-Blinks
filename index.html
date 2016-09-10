@@ -294,35 +294,65 @@ includes a <code>.data</code> field and an <code>.srate</code> field. The <code>
 <p>The <code>blinks</code> structure holds basic information about the dataset, the candidate signals and the positions of
 the potential blinks in the candidate signals. </p>
 
-<p><code>fileName</code>
-String with the full path name of the file from which the blinks were computed</p>
+<h4>
+<a id="filename" class="anchor" href="#filename" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>fileName</code>
+</h4>
 
-<p><code>srate</code>
-Sampling rate in Hz of the signal</p>
+<p>String with the full path name of the file from which the blinks were computed</p>
 
-<p><code>subjectID</code>
-String identifying the subject from which the dataset was recorded. This field is used for display purposes and for combining datasets taken from a single subject in one session to improve estimates of blink maximum distribution.</p>
+<h4>
+<a id="srate" class="anchor" href="#srate" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>srate</code>
+</h4>
 
-<p><code>experiment</code>
-String identifying the experiment or data collection that this dataset is part of.</p>
+<p>Sampling rate in Hz of the signal</p>
 
-<p><code>uniqueName</code>
-String uniquely identifying this dataset within the context of the analysis. Usually this will be a combination of the experiment, subject, task, replicate, and other identifying information. This string is used for display purposes and for lookup of datasets within a combined analysis.</p>
+<h4>
+<a id="subjectid" class="anchor" href="#subjectid" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>subjectID</code>
+</h4>
 
-<p><code>task</code>
-String identifying the task performed by the subject for this dataset.</p>
+<p>String identifying the subject from which the dataset was recorded. This field is used for display purposes and for combining datasets taken from a single subject in one session to improve estimates of blink maximum distribution.</p>
 
-<p><code>startTime</code>
-Double value giving the days (to within) from xxx.</p>
+<h4>
+<a id="experiment" class="anchor" href="#experiment" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>experiment</code>
+</h4>
 
-<p><code>signalData</code>
-Structure with details of the candidate signals and potential blink positions.</p>
+<p>String identifying the experiment or data collection that this dataset is part of.</p>
 
-<p><code>usedSignal</code>
-Integer identifying the signal that is selected as the "best" signal for blinks. Usually this will be a channel number within the original dataset or the number of an IC within an independent component decomposition associated with the dataset. A negative value indicates that the results of the calculation were marginal and that the signal may not have captured the blinks reliability.</p>
+<h4>
+<a id="uniquename" class="anchor" href="#uniquename" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>uniqueName</code>
+</h4>
 
-<p><code>status</code>
-String indicated the status of the blink calculation. A value of "success" means that blinks were successfully computed, although the results may be marginal. A value of "failed" means that the algorithm could not extract blinks from any of the candidate signals provide.</p>
+<p>String uniquely identifying this dataset within the context of the analysis. Usually this will be a combination of the experiment, subject, task, replicate, and other identifying information. This string is used for display purposes and for lookup of datasets within a combined analysis.</p>
+
+<h4>
+<a id="task" class="anchor" href="#task" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>task</code>
+</h4>
+
+<p>String identifying the task performed by the subject for this dataset.</p>
+
+<h4>
+<a id="starttime" class="anchor" href="#starttime" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>startTime</code>
+</h4>
+
+<p>Double value giving the days (to within) from xxx.</p>
+
+<h4>
+<a id="signaldata" class="anchor" href="#signaldata" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>signalData</code>
+</h4>
+
+<p>Structure with details of the candidate signals and potential blink positions.</p>
+
+<h4>
+<a id="usedsignal" class="anchor" href="#usedsignal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>usedSignal</code>
+</h4>
+
+<p>Integer identifying the signal that is selected as the "best" signal for blinks. Usually this will be a channel number within the original dataset or the number of an IC within an independent component decomposition associated with the dataset. A negative value indicates that the results of the calculation were marginal and that the signal may not have captured the blinks reliability.</p>
+
+<h4>
+<a id="status" class="anchor" href="#status" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>status</code>
+</h4>
+
+<p>String indicated the status of the blink calculation. A value of "success" means that blinks were successfully computed, although the results may be marginal. A value of "failed" means that the algorithm could not extract blinks from any of the candidate signals provide.</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/VisLab/EEG-Blinks">EEG-Blinks</a> is maintained by <a href="https://github.com/VisLab">VisLab</a>.</span>
