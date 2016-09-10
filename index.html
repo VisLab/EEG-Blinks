@@ -153,49 +153,52 @@ String uniquely identifying this dataset<br>
  String identifying the experiment. 
 [String (default is 'Experiment1')]</p>
 
-<p><strong><code>task</code></strong>
- Name of task performed in this dataset
- [String (default is 'Task1')]</p>
+<p><strong><code>task</code></strong><br>
+Name of task performed in this dataset<br>
+[String (default is 'Task1')]  </p>
 
-<p><strong><code>startDate</code></strong>
- String giving the start date of dataset in dd-mmm-yyyy format
- [String (default is '01-Jan-2016')]</p>
+<p><strong><code>startDate</code></strong><br>
+String giving the start date of dataset in dd-mmm-yyyy format<br>
+[String (default is '01-Jan-2016')]</p>
 
-<p><strong><code>startTime</code></strong>
+<p><strong><code>startTime</code></strong><br>
 String giving the start time in 24 hour hh:mm:ss format.<br>
 [String (default is '00:00:00')]</p>
 
-<p><strong><code>signalTypeIndicator</code></strong>
- String specifying the type of signals from which to extract blinks.
- [String with possible values are 'UseNumbers' or 'UseLabels' or 'UseICs' (default is 'UseNumbers')]</p>
+<p><strong><code>signalTypeIndicator</code></strong><br>
+String specifying the type of signals from which to extract blinks.<br>
+[String with possible values are 'UseNumbers' or 'UseLabels' or 'UseICs' (default is 'UseNumbers')]</p>
 
-<p><strong><code>signalNumbers</code></strong>
- Vector of numbers of the channel numbers to try as potential signals if signalTypeIndicator is 'UseNumbers'. 
- [Row vector of positive integers less than the number of channels (default 1:number of channels)]</p>
+<p><strong><code>signalNumbers</code></strong><br>
+Vector of numbers of the channel numbers to try as potential signals if signalTypeIndicator is 'UseNumbers'.<br>
+[Row vector of positive integers less than the number of channels (default 1:number of channels)]</p>
 
-<p><strong><code>signalLabels</code></strong>
- Cell array of names of channels to try as potential signals if signalTypeIndicator is 'UseLabels'. 
- [Row cell array of channel labels (default: {'fp1', 'f1', 'fp2', 'fz', 'fpz', 'f3', 'f4', 'f2'})]</p>
+<p><strong><code>signalLabels</code></strong><br>
+Cell array of names of channels to try as potential signals if signalTypeIndicator is 'UseLabels'.<br>
+[Row cell array of channel labels (default: {'fp1', 'f1', 'fp2', 'fz', 'fpz', 'f3', 'f4', 'f2'})]</p>
 
-<p><strong><code>excludeLabels</code></strong>
-Cell array of the names of signals to exclude from consideration.
+<p><strong><code>excludeLabels</code></strong><br>
+Cell array of the names of signals to exclude from consideration.<br>
 [Row cell array of channel labels (default: {'exg5', 'exg6', 'exg7', 'exg8', 'vehicle position'})]</p>
 
-<p><strong><code>dumpBlinkerStructures</code></strong>
-Logical flag indicating whether to save all of the blinker structures in a file
+<p><strong><code>dumpBlinkerStructures</code></strong><br>
+Logical flag indicating whether to save all of the blinker structures in a file.<br>
 [Logical (default: true)]</p>
 
-<p><strong><code>showMaxDistribution</code></strong>
-Logical flag indicating whether to show a figure with a histogram of blink maxima. The
-default value is true.</p>
+<p><strong><code>showMaxDistribution</code></strong><br>
+Logical flag indicating whether to show a figure with a histogram of blink maxima.<br>
+[Logical (default: true)]</p>
 
-<p><strong><code>dumpBlinkImages</code></strong>
-    getRules(false, {'logical'}, {}, ...
-    'If true, blinker dumps pictures of the individual blinks.'), ...</p>
+<p><strong><code>dumpBlinkImages</code></strong><br>
+Logical flag indicating whether to dump pictures of the individual blinks in a directory, indexed by an HTML file.<br>
+[Logical (default:true)]</p>
 
-<p><strong><code>dumpBlinkPositions</code></strong>
-    getRules(false, {'logical'}, {}, ...
-A logical flag indicating whether to dump a text file of the frame left zeros, and frames of blink maxima frames and times.'), ...</p>
+<p><strong><code>dumpBlinkPositions</code></strong>  </p>
+
+<pre><code>getRules(false, {'logical'}, {}, ...
+</code></pre>
+
+<p>A logical flag indicating whether to dump a text file of the frame left zeros, and frames of blink maxima frames and times.'), ...</p>
 
 <p><strong><code>fileName</code></strong>
 A string giving the full path name of the input EEG file.</p>
@@ -338,29 +341,31 @@ the potential blinks in the candidate signals. </p>
 <p><strong><code>signalLabel</code></strong>
  A string uniquely identifying the signal within the dataset as a whole (for example the channel label). BLINKER automatically creates labels for independent components: 'IC1', 'IC2', etc.</p>
 
-<p><strong><code>numberBlinks</code></strong>
- An integer giving the number of potential blinks detected in this signal.</p>
+<p><strong><code>numberBlinks</code></strong><br>
+An integer giving the number of potential blinks detected in this signal.</p>
 
-<p><strong><code>numberGoodBlinks</code></strong>
- An integer giving the number of "good" potential blinks detected in this signal. These blinks must have
-left and right R^2 values at greater than correlationThresholdBottom (0.90 by default).</p>
+<p><strong><code>numberGoodBlinks</code></strong><br>
+An integer giving the number of "good" potential blinks detected in this signal. These blinks must have
+left and right R^2 values at greater than <code>correlationThresholdBottom</code> (0.90 by default).</p>
 
-<p><strong><code>blinkAmpRatio</code></strong>
- A postive value indicating the blink-amplitude ratio for this signal.</p>
+<p><strong><code>blinkAmpRatio</code></strong><br>
+A positive value indicating the blink-amplitude ratio for this signal.</p>
 
-<p><strong><code>cutoff</code></strong>
- A positive value estimating the boundary between the blink maximum distributions of the "good blink candidates" and the other blink candidates. If this value is well away from the <code>bestMedian</code>, the dataset is likely to have  good separation between blinks and eye movements.</p>
+<p><strong><code>cutoff</code></strong><br>
+A positive value estimating the boundary between the blink maximum distributions of the "good" blink candidates and the other blink candidates. If this value is well away from the <code>bestMedian</code>, the dataset is likely to have  good separation between blinks and eye movements.</p>
 
-<p><strong><code>bestMedian</code></strong>
- A positive value giving the median blink maximum amplitude of the best candidate blinks. These blinks must have
+<p><strong><code>bestMedian</code></strong><br>
+A positive value giving the median blink maximum amplitude of the best candidate blinks. These blinks must have
 left and right R^2 values at greater than <code>correlationThresholdTop</code> (0.98 by default).</p>
 
-<p><strong><code>bestRobustStd</code></strong>
- A positive number giving the 1.486 times the median absolute deviation from the median (mad) of the best candidate blinks. These blinks must have left and right R^2 values at greater than <code>correlationThresholdTop</code> (0.98 by default).</p>
+<p><strong><code>bestRobustStd</code></strong><br>
+A positive number giving the 1.486 times the median absolute deviation from the median (mad) of the best candidate blinks. These blinks must have left and right R^2 values at greater than <code>correlationThresholdTop</code> (0.98 by default).</p>
 
-<p><strong><code>goodRatio</code></strong></p>
+<p><strong><code>goodRatio</code></strong><br>
+A positive numeric value between 0 and 1 indicating the fraction of blinks whose maximum amplitude is within two robust standard deviations of the median of the best blinks that are "good" blinks. This is a measure of how badly eye movements confound the maximum amplitude distribution.</p>
 
-<p><strong><code>signal</code></strong></p>
+<p><strong><code>signal</code></strong><br>
+The timeseries for this signal.</p>
 
 <p><strong><code>blinkPositions</code></strong></p>
 
@@ -369,37 +374,38 @@ left and right R^2 values at greater than <code>correlationThresholdTop</code> (
 
 <p>The <code>blinkFits</code> structure array holds basic shape information for a set of potential blinks. In <code>extractBlinkProperties</code> function returns this structure for the potential blinks of the used signal that meet specific quality criteria. Values that are undefined, have value <code>NaN</code>. The fields are:</p>
 
-<p><strong><code>number</code></strong>
- An integer giving the number of the potential blink within the corresponding blinks structure.
-<strong><code>maxFrame</code></strong>
- An integer giving the frame number of the first maximum amplitude of this blink.</p>
+<p><strong><code>number</code></strong><br>
+An integer giving the number of the potential blink within the corresponding blinks structure.</p>
 
-<p><strong><code>maxValue</code></strong>
- A numeric value giving the maximum value of the blink.</p>
+<p><strong><code>maxFrame</code></strong><br>
+An integer giving the frame number of the first maximum amplitude of this blink.</p>
 
-<p><strong><code>leftOuter</code></strong>
- A positive integer giving the frame number of the left outer reach of the blink.</p>
+<p><strong><code>maxValue</code></strong><br>
+A numeric value giving the maximum value of the blink.</p>
 
-<p><strong><code>rightOuter</code></strong>
- A positive integer giving the frame number of the right outer reach of the blink.</p>
+<p><strong><code>leftOuter</code></strong><br>
+A positive integer giving the frame number of the left outer reach of the blink.</p>
 
-<p><strong><code>leftZero</code></strong>
- A positive integer giving the frame number of the left zero crossing of the blink.</p>
+<p><strong><code>rightOuter</code></strong><br>
+A positive integer giving the frame number of the right outer reach of the blink.</p>
 
-<p><strong><code>rightZero</code></strong>
- A positive integer giving the frame number of the right zero crossing of the blink.</p>
+<p><strong><code>leftZero</code></strong><br>
+A positive integer giving the frame number of the left zero crossing of the blink.</p>
 
-<p><strong><code>leftBase</code></strong>
- A positive integer giving the frame number of the left local minimum of the blink.</p>
+<p><strong><code>rightZero</code></strong><br>
+A positive integer giving the frame number of the right zero crossing of the blink.</p>
 
-<p><strong><code>rightBase</code></strong>
- A positive integer giving the frame number of the right local minimum of the blink.</p>
+<p><strong><code>leftBase</code></strong><br>
+A positive integer giving the frame number of the left local minimum of the blink.</p>
 
-<p><strong><code>leftBaseHalfHeight</code></strong>
- A numeric value giving the value of the signal that represents the halfway point (in height) between the blink maximum and the left base value.</p>
+<p><strong><code>rightBase</code></strong><br>
+A positive integer giving the frame number of the right local minimum of the blink.</p>
 
-<p><strong><code>rightBaseHalfHeight</code></strong>
- A numeric value giving the value of the signal that represents the halfway point (in height) between the blink maximum and the right base value.</p>
+<p><strong><code>leftBaseHalfHeight</code></strong><br>
+A numeric value giving the value of the signal that represents the halfway point (in height) between the blink maximum and the left base value.</p>
+
+<p><strong><code>rightBaseHalfHeight</code></strong><br>
+A numeric value giving the value of the signal that represents the halfway point (in height) between the blink maximum and the right base value.</p>
 
 <p><strong><code>leftZeroHalfHeight</code></strong>
 <strong><code>rightZeroHalfHeight</code></strong>
