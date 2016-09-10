@@ -28,8 +28,9 @@
 
 <ul>
 <li>
-<a name="Introduction">Introduction</a> (requirements, citing, installation)</li>
-<li><a href="#Plugin">Running as an EEGLAB plug-in</a></li>
+<a name="Introduction">Introduction</a> (requirements](#Requirements), [citation]&lt;#Citing), <a href="#Installing">installation</a>
+</li>
+<li><a href="#Plugin">Running BLINKER as an EEGLAB plugin</a></li>
 <li><a href="#Script">Running as a script</a></li>
 <li>Quick start (Simple examples of running BLINKER)</li>
 <li>Algorithm (steps, meaning of parameters for each step)</li>
@@ -37,13 +38,15 @@
 </ul>
 
 <h3>
-<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h3>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Requirements">Requirements</a>
+</h3>
 
 <p>The BLINKER pipeline relies on the MATLAB Signal Processing toolbox, the MATLAB Statistics toolbox and EEGLAB, a freely-available MATLAB toolbox for processing EEG. EEGLAB is available from  <a href="http://scn.ucsd.edu/eeglab">http://scn.ucsd.edu/eeglab</a>. Various high-level BLINKER wrapper functions assume that the EEG data is provided as an EEGLAB EEG structure and that channel locations are provided in the EEG.chanlocs structure. However, low-level processing functions work directly
 on signals.</p>
 
 <h3>
-<a id="citing-the-blinker" class="anchor" href="#citing-the-blinker" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Citing the BLINKER</h3>
+<a id="citing-blinker" class="anchor" href="#citing-blinker" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Citing">Citing BLINKER</a>
+</h3>
 
 <p>BLINKER is freely available under the GNU General Public License. 
 Please cite the following publication if using:  </p>
@@ -54,22 +57,24 @@ BLINKER: Large-scale automated analysis of ocular indices extracted from EEG  </
 </blockquote>
 
 <h3>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h3>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Installation">Installation</a>
+</h3>
 
-<p>The BLINKER pipeline can be run in two ways --- as a standalone toolbox or as an EEGLAB plugin. To run in standalone mode, simply download the BLINKER code, found in the EEG-Blinks github repository, and add the <code>blinker</code> directory and all of its subdirectories to the MATLAB path.</p>
+<p>The BLINKER pipeline can be run in two ways --- as a standalone toolbox or as an EEGLAB plugin. To run in standalone mode, simply download the BLINKER code, found in the EEG-Blinks github repository, and add the <code>blinker</code> directory and all of its subdirectories to the MATLAB path. Regardless of how you run BLINKER, EEGLAB will need to be in your path.</p>
 
 <h2>
 <a id="blinker-as-an-eeglab-plugin" class="anchor" href="#blinker-as-an-eeglab-plugin" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Plugin">BLINKER as an EEGLAB plugin</a>
 </h2>
 
-<p>You can install BLINKER as an EEGLAB plugin by unzipping the BlinkerVxx directory into the plugins directory of your EEGLAB installation. </p>
+<p>You can install BLINKER as an EEGLAB plugin by unzipping the <code>blinker1.0.0</code> directory into the plugins directory of your EEGLAB installation. When you start EEGLAB, BLINKER will be available.</p>
 
 <h2>
 <a id="running-the-blinker-pipeline-from-eeglab" class="anchor" href="#running-the-blinker-pipeline-from-eeglab" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Running the BLINKER pipeline from EEGLAB</h2>
 
 <p>Load an EEG dataset to be processed using the <code>Load dataset</code> submenu under the <code>File</code> menu of EEGLAB. The BLINKER pipeline 
-can be found under the EEGLAB Tools submenu:<br>
-<img src="https://raw.githubusercontent.com/VisLab/EEG-Blinks/gh-pages/images/EEGLAB_Menu.png" alt="BLINKER from EEGLAB">  </p>
+can be found under the EEGLAB Tools submenu:  </p>
+
+<p><img src="https://raw.githubusercontent.com/VisLab/EEG-Blinks/gh-pages/images/EEGLAB_Menu.png" alt="BLINKER from EEGLAB">  </p>
 
 <p><img src="https://raw.githubusercontent.com/VisLab/EEG-Blinks/gh-pages/images/BLINKER_Plugin.png" alt="BLINKER menu"><br>
 <img src="./images/BLINKER_Plugin.png" alt="BLINKER menu"> </p>
