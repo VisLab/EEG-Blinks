@@ -159,8 +159,7 @@ uilist = { ...
 outStruct.signalTypeIndicator = signalTypeMenu{outStruct.signalTypeIndicator};
 outStruct.dumpBlinkerStructures = logical(outStruct.dumpBlinkerStructures);
 outStruct.showMaxDistribution = logical(outStruct.showMaxDistribution);
-outStruct.dumpBlinkPositions = logical(outStruct.dumpBlinkPositions);
-outStruct.dumpBlinkImages = logical(outStruct.dumpBlinkImages);
+outStruct.dumpBlinkPositions = logical(
 if ~isempty(outStruct.signalNumbers)
     outStruct.signalNumbers = sort(str2num(outStruct.signalNumbers)); %#ok<ST2NM>
 else
