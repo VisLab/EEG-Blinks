@@ -336,17 +336,21 @@ the potential blinks in the candidate signals. </p>
  String indicating the type of signal this is. Usually the <code>signalType</code> will indicate how the initial candidate signals were specified and will have a value 'SignalNumbers', 'SignalLabels', `ICs'. </p>
 
 <p><strong><code>signalNumber</code></strong>
- An integer uniquely identifying the signal within the dataset as a whole (for example the channel number of the IC number.)</p>
+A unique integer identifier of the signal within the dataset as a whole (for example the channel number of the IC number.)
+[A positive integer.]</p>
 
 <p><strong><code>signalLabel</code></strong>
- A string uniquely identifying the signal within the dataset as a whole (for example the channel label). BLINKER automatically creates labels for independent components: 'IC1', 'IC2', etc.</p>
+A unique identifier of the signal within the dataset as a whole (for example the channel label). BLINKER automatically creates labels for independent components: 'IC1', 'IC2', etc.
+[A string.]</p>
 
 <p><strong><code>numberBlinks</code></strong><br>
-An integer giving the number of potential blinks detected in this signal.</p>
+The number of potential blinks detected in this signal.
+[A nonnegative integer.]</p>
 
 <p><strong><code>numberGoodBlinks</code></strong><br>
 An integer giving the number of "good" potential blinks detected in this signal. These blinks must have
-left and right R^2 values at greater than <code>correlationThresholdBottom</code> (0.90 by default).</p>
+left and right R^2 values at greater than <code>correlationThresholdBottom</code> (0.90 by default).
+[A nonnegative integer.]</p>
 
 <p><strong><code>blinkAmpRatio</code></strong><br>
 A positive value indicating the blink-amplitude ratio for this signal.</p>
@@ -367,7 +371,8 @@ A positive numeric value between 0 and 1 indicating the fraction of blinks whose
 <p><strong><code>signal</code></strong><br>
 The timeseries for this signal.</p>
 
-<p><strong><code>blinkPositions</code></strong></p>
+<p><strong><code>blinkPositions</code></strong><br>
+A 2 x n array with the frame numbers of the starts and ends of intervals defining the portion of the n potential blinks that exceeds the threshold. The blink maximum should be in this interval.</p>
 
 <h2>
 <a id="the-blinkfits-structure" class="anchor" href="#the-blinkfits-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The <strong><code>blinkFits</code></strong> structure</h2>
@@ -375,52 +380,121 @@ The timeseries for this signal.</p>
 <p>The <code>blinkFits</code> structure array holds basic shape information for a set of potential blinks. In <code>extractBlinkProperties</code> function returns this structure for the potential blinks of the used signal that meet specific quality criteria. Values that are undefined, have value <code>NaN</code>. The fields are:</p>
 
 <p><strong><code>number</code></strong><br>
-An integer giving the number of the potential blink within the corresponding blinks structure.</p>
+The number of the potential blink within the corresponding blinks structure.
+[A positive numeric value.]</p>
 
 <p><strong><code>maxFrame</code></strong><br>
-An integer giving the frame number of the first maximum amplitude of this blink.</p>
+The frame number of the first maximum amplitude of this blink.
+[A positive numeric value.]</p>
 
 <p><strong><code>maxValue</code></strong><br>
 A numeric value giving the maximum value of the blink.</p>
 
 <p><strong><code>leftOuter</code></strong><br>
-A positive integer giving the frame number of the left outer reach of the blink.</p>
+The frame number of the left outer reach of the blink.
+[A positive numeric value.]</p>
 
 <p><strong><code>rightOuter</code></strong><br>
-A positive integer giving the frame number of the right outer reach of the blink.</p>
+The frame number of the right outer reach of the blink.
+[A positive numeric value.]</p>
 
 <p><strong><code>leftZero</code></strong><br>
-A positive integer giving the frame number of the left zero crossing of the blink.</p>
+The frame number of the left zero crossing of the blink.
+[A positive numeric value.]</p>
 
 <p><strong><code>rightZero</code></strong><br>
-A positive integer giving the frame number of the right zero crossing of the blink.</p>
+The frame number of the right zero crossing of the blink.
+[A positive numeric value.]</p>
 
 <p><strong><code>leftBase</code></strong><br>
-A positive integer giving the frame number of the left local minimum of the blink.</p>
+The frame number of the left local minimum of the blink.
+[A positive numeric value.]</p>
 
 <p><strong><code>rightBase</code></strong><br>
-A positive integer giving the frame number of the right local minimum of the blink.</p>
+The frame number of the right local minimum of the blink.
+[A positive numeric value.]</p>
 
 <p><strong><code>leftBaseHalfHeight</code></strong><br>
-A numeric value giving the value of the signal that represents the halfway point (in height) between the blink maximum and the left base value.</p>
+The coordinate of the signal halfway (in height) between the blink maximum and the left base value.
+[A positive numeric value.]</p>
 
 <p><strong><code>rightBaseHalfHeight</code></strong><br>
-A numeric value giving the value of the signal that represents the halfway point (in height) between the blink maximum and the right base value.</p>
+The coordinate of the signal halfway (in height) between the blink maximum and the right base value.<br>
+[A positive numeric value.]</p>
 
-<p><strong><code>leftZeroHalfHeight</code></strong>
-<strong><code>rightZeroHalfHeight</code></strong>
-<strong><code>leftRange</code></strong>
-<strong><code>rightRange</code></strong>
-<strong><code>leftSlope</code></strong>
-<strong><code>rightSlope</code></strong>
-<strong><code>averLeftVelocity</code></strong>
-<strong><code>averRightVelocity</code></strong>
-<strong><code>leftR2</code></strong>
-<strong><code>rightR2</code></strong>
-<strong><code>xIntersect</code></strong>
-<strong><code>yIntersect</code></strong>
-<strong><code>leftXIntercept</code></strong>
-<strong><code>rightXIntercept</code></strong></p>
+<p><strong><code>leftZeroHalfHeight</code></strong>  </p>
+
+<p><strong><code>rightZeroHalfHeight</code></strong>  </p>
+
+<p><strong><code>leftRange</code></strong>  </p>
+
+<p><strong><code>rightRange</code></strong>  </p>
+
+<p><strong><code>leftSlope</code></strong><br>
+[A negative value or NaN if the tent line doesn't exist.]</p>
+
+<p><strong><code>rightSlope</code></strong><br>
+Slope of the right blink tent line.
+[A negative value or NaN if the tent line doesn't exist.]</p>
+
+<p><strong><code>averLeftVelocity</code></strong>  </p>
+
+<p><strong><code>averRightVelocity</code></strong>  </p>
+
+<p><strong><code>leftR2</code></strong><br>
+The correlation of the left tent line with the 80% blink upstroke. 
+[A numeric value or NaN if the tent line doesn't exist.]</p>
+
+<p><strong><code>rightR2</code></strong><br>
+The correlation of the right tent line with the 80% blink downstroke. 
+[A numeric value or NaN if the tent line doesn't exist.]</p>
+
+<p><strong><code>xIntersect</code></strong><br>
+The x-coordinate of the intersection of the left and right tent line with the x-axis.<br>
+[A numeric value or NaN if the tent line doesn't exist.]</p>
+
+<p><strong><code>yIntersect</code></strong><br>
+The y-coordinate of the intersection of the left and right tent line with the x-axis.<br>
+[A numeric value or NaN if the tent line doesn't exist.]</p>
+
+<p><strong><code>leftXIntercept</code></strong><br>
+An integer giving the frame number of the intersection of the left tent line with the x-axis (or NaN if the tent line doesn't exist).</p>
+
+<p><strong><code>rightXIntercept</code></strong><br>
+An integer giving the frame number of the intersection of the right tent line with the x-axis (or NaN if the tent line doesn't exist).</p>
+
+<h2>
+<a id="the-blinkproperties-structure" class="anchor" href="#the-blinkproperties-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The <strong><code>blinkProperties</code></strong> structure</h2>
+
+<p>The <code>blinkProperties</code> structure array holds basic ocular characteristics for a set of potential blinks. The <code>extractBlinkProperties</code> function returns this structure for the potential blinks of the used signal that meet specific quality criteria. Values that are undefined, have value <code>NaN</code>. The fields are:</p>
+
+<p><strong><code>durationBase</code></strong><br>
+Length of the blink in seconds calculated as the difference between <code>rightBase</code> and <code>leftBase</code>.</p>
+
+<p><strong><code>durationZero</code></strong><br>
+<strong><code>durationTent</code></strong><br>
+<strong><code>durationHalfBase</code></strong><br>
+<strong><code>durationHalfZero</code></strong><br>
+<strong><code>interBlinkMaxAmp</code></strong><br>
+<strong><code>interBlinkMaxVelBase</code></strong><br>
+<strong><code>interBlinkMaxVelZero</code></strong><br>
+<strong><code>negAmpVelRatioBase</code></strong><br>
+<strong><code>posAmpVelRatioBase</code></strong><br>
+<strong><code>negAmpVelRatioZero</code></strong><br>
+<strong><code>posAmpVelRatioZero</code></strong><br>
+<strong><code>negAmpVelRatioTent</code></strong><br>
+<strong><code>posAmpVelRatioTent</code></strong><br>
+<strong><code>'timeShutBase</code></strong><br>
+<strong><code>'timeShutZero</code></strong><br>
+<strong><code>timeShutTent</code></strong><br>
+<strong><code>closingTimeZero</code></strong><br>
+<strong><code>reopeningTimeZero</code></strong><br>
+<strong><code>closingTimeTent</code></strong><br>
+<strong><code>reopeningTimeTent</code></strong><br>
+<strong><code>peakTimeBlink</code></strong><br>
+<strong><code>peakTimeTent</code></strong><br>
+<strong><code>peakMaxBlink</code></strong><br>
+<strong><code>peakMaxTent</code></strong>  </p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/VisLab/EEG-Blinks">EEG-Blinks</a> is maintained by <a href="https://github.com/VisLab">VisLab</a>.</span>
