@@ -48,7 +48,17 @@
 <li>(steps, meaning of parameters for each step)</li>
 </ul>
 </li>
-<li>Description of BLINKER structures (blinks, blinkFits, blinkProperties, blinkStatistics)</li>
+<li>Description of BLINKER structures
+
+<ul>
+<li>
+<a href="#blinks">The blinks structure</a><br>
+</li>
+<li><a href="#blinkFits">The blinkFits structure</a></li>
+<li><a href="#blinkProperties">The blinkProperties structure</a></li>
+<li><a href="#blinkStatistics">The blinkStatistics structure</a></li>
+</ul>
+</li>
 </ul>
 
 <h3>
@@ -371,7 +381,8 @@ includes a <code>.data</code> field and an <code>.srate</code> field. The <code>
 <p>![BLINKER menu]</p>
 
 <h2>
-<a id="the-blinks-structure" class="anchor" href="#the-blinks-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The <code>blinks</code> structure</h2>
+<a id="the-blinks-structure" class="anchor" href="#the-blinks-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="blinks">The blinks structure</a>
+</h2>
 
 <p>The <code>blinks</code> structure holds basic information about the dataset, the candidate signals and the positions of
 the potential blinks in the candidate signals. </p>
@@ -407,7 +418,7 @@ the potential blinks in the candidate signals. </p>
  String indicated the status of the blink calculation. A value of "success" means that blinks were successfully computed, although the results may be marginal. A value of "failed" means that the algorithm could not extract blinks from any of the candidate signals provide.</p>
 
 <h3>
-<a id="the-signaldata-substructure-of-blinks" class="anchor" href="#the-signaldata-substructure-of-blinks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The <code>signalData</code> substructure of <code>blinks</code>
+<a id="the-signaldata-substructure-of-blinks" class="anchor" href="#the-signaldata-substructure-of-blinks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="signalData">The signalData substructure of blinks</a>
 </h3>
 
 <p>The <code>signalData</code> is a structure array containing information about candidate signals for the dataset. The individual fields are:</p>
@@ -455,7 +466,8 @@ The timeseries for this signal.</p>
 A 2 x n array with the frame numbers of the starts and ends of intervals defining the portion of the n potential blinks that exceeds the threshold. The blink maximum should be in this interval.</p>
 
 <h2>
-<a id="the-blinkfits-structure" class="anchor" href="#the-blinkfits-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The <strong><code>blinkFits</code></strong> structure</h2>
+<a id="the-blinkfits-structure" class="anchor" href="#the-blinkfits-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="blinkFits">The blinkFits structure</a>
+</h2>
 
 <p>The <code>blinkFits</code> structure array holds basic shape information for a set of potential blinks. In <code>extractBlinkProperties</code> function returns this structure for the potential blinks of the used signal that meet specific quality criteria. Values that are undefined, have value <code>NaN</code>. The fields are:</p>
 
@@ -544,7 +556,8 @@ An integer giving the frame number of the intersection of the left tent line wit
 An integer giving the frame number of the intersection of the right tent line with the x-axis (or NaN if the tent line doesn't exist).</p>
 
 <h2>
-<a id="the-blinkproperties-structure" class="anchor" href="#the-blinkproperties-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The <strong><code>blinkProperties</code></strong> structure</h2>
+<a id="the-blinkproperties-structure" class="anchor" href="#the-blinkproperties-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="blinkProperties">The blinkProperties structure</a>
+</h2>
 
 <p>The <code>blinkProperties</code> structure array holds basic ocular characteristics for a set of potential blinks. The <code>extractBlinkProperties</code> function returns this structure for the potential blinks of the used signal that meet specific quality criteria. Values that are undefined, have value <code>NaN</code>. The fields are:</p>
 
@@ -575,6 +588,23 @@ Length of the blink in seconds calculated as the difference between <code>rightB
 <strong><code>peakTimeTent</code></strong><br>
 <strong><code>peakMaxBlink</code></strong><br>
 <strong><code>peakMaxTent</code></strong>  </p>
+
+<h2>
+<a id="the-blinkstatistics-structure" class="anchor" href="#the-blinkstatistics-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="blinkStatistics">The blinkStatistics structure</a>
+</h2>
+
+<p>The <code>blinkProperties</code> structure array holds basic ocular characteristics for a set of potential blinks. The <code>extractBlinkProperties</code> function returns this structure for the potential blinks of the used signal that meet specific quality criteria. Values that are undefined, have value <code>NaN</code>. header = {'mean', 'median', 'std', 'mad', 'goodMean', 'goodMedian', ...
+               'goodStd', 'goodMad'};The fields are:</p>
+
+<p>'fileName', nan, ...
+            'subjectID', nan, 'task', nan, 'uniqueName', nan, ...
+            'srate', nan, 'startTime', nan, ...
+            'usedNumber', nan, 'usedLabel', nan, 'status', nan, ...
+            'seconds', nan, 'numberBlinks', nan, 'numberGoodBlinks', nan, ... ...
+            'goodRatio', nan, 'header', nan, ...
+            'pAVRZ', nan, 'nAVRZ', nan, 'durationZ', nan, ...
+            'durationB', nan, 'durationT', nan, ...
+            'durationHZ', nan, 'durationHB', nan, 'blinksPerMin', nan);</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/VisLab/EEG-Blinks">EEG-Blinks</a> is maintained by <a href="https://github.com/VisLab">VisLab</a>.</span>
