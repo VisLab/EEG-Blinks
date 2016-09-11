@@ -41,7 +41,16 @@
 </ul>
 </li>
 <li><a href="#Plugin">Running BLINKER as an EEGLAB plugin</a></li>
-<li><a href="#Script">Running as a script</a></li>
+<li>
+<a href="#Script">Running as a script</a>
+
+<ul>
+<li>
+<a href="#Metadata">Parameters describing data set metadata.</a><br>
+</li>
+<li><a href="#Save">Parameters describing what to save or display.</a></li>
+</ul>
+</li>
 <li>The BLINKER algorithm
 
 <ul>
@@ -109,8 +118,6 @@ can be found under the EEGLAB Tools submenu:<br>
 
 <p><img src="./images/BLINKER_Plugin.png" alt="BLINKER menu"> </p>
 
-<p><img src="./images/Mission021S2007X2.png" alt="Exampe Show Max Distribution"> </p>
-
 <h2>
 <a id="running-blinker-as-a-script-in-batch-processing-mode" class="anchor" href="#running-blinker-as-a-script-in-batch-processing-mode" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Script">Running BLINKER as a script in batch processing mode</a>
 </h2>
@@ -162,29 +169,34 @@ The following example starts with a default <code>params</code> structure and th
 </blockquote>
 
 <h3>
-<a id="parameters-related-to-data-set-metadata" class="anchor" href="#parameters-related-to-data-set-metadata" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parameters related to data set metadata</h3>
+<a id="parameters-describing-data-set-metadata" class="anchor" href="#parameters-describing-data-set-metadata" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Metadata">Parameters describing data set metadata</a>
+</h3>
 
 <p>The following parameters should be set individually for each data set so that the BLINKER output structures contain the information needed for downstream analysis.</p>
 
-<p><strong><code>srate</code></strong><br>
-A positive scalar giving the sampling rate of the signal in Hz. If an EEG structure is passed to <code>getBlinkerDefaults</code>, the default value is <code>EEG.srate</code>. Otherwise, the default 1.<br>
-[Positive scalar (default is <code>EEG.srate</code> or 1 if EEG structure is not available).]</p>
-
-<p><strong><code>subjectID</code></strong><br>
-String identifying the subject for the data set. BLINKER uses this ID to combine short data sets from same session to get blink maxima distribution.<br>
-[String (default is <code>'Subject1_Task1_Experiment1_Rep1'</code>).]</p>
-
-<p><strong><code>uniqueName</code></strong><br>
-String uniquely identifying this data set.<br>
-[String (default is <code>'Unknown'</code>).]  </p>
+<p><strong><code>excludeLabels</code></strong><br>
+The names of signals to exclude from consideration.<br>
+[Row cell array of channel labels (default: {'exg5', 'exg6', 'exg7', 'exg8', 'vehicle position'}).]</p>
 
 <p><strong><code>experiment</code></strong><br>
 String identifying the experiment.<br>
 [String (default is <code>'Experiment1'</code>).]</p>
 
-<p><strong><code>task</code></strong><br>
-Name of task performed in this data set.<br>
-[String (default is 'Task1')]  </p>
+<p><strong><code>signalLabels</code></strong><br>
+The names of channels to try as potential signals if <code>signalTypeIndicator</code> is <code>'UseLabels'</code>.<br>
+[Row cell array of channel labels (default: {'fp1', 'f1', 'fp2', 'fz', 'fpz', 'f3', 'f4', 'f2'}).]</p>
+
+<p><strong><code>signalNumbers</code></strong><br>
+The numbers of the channel numbers to try as potential signals if signalTypeIndicator is 'UseNumbers'.<br>
+[Row vector of positive integers less than the number of channels (default 1:number of channels)]</p>
+
+<p><strong><code>signalTypeIndicator</code></strong><br>
+String specifying the type of signals from which to extract blinks. The possibilities are to use a specific set of channel numbers, a specific set of channels identified by their labels, or a specific set of independent components identified by their position in the mixing matrix.<br>
+[String with possible values <code>'UseNumbers'</code> or <code>'UseLabels'</code> or <code>'UseICs'</code> (default is <code>'UseNumbers'</code>).]</p>
+
+<p><strong><code>srate</code></strong><br>
+A positive scalar giving the sampling rate of the signal in Hz. If an EEG structure is passed to <code>getBlinkerDefaults</code>, the default value is <code>EEG.srate</code>. Otherwise, the default 1.<br>
+[Positive scalar (default is <code>EEG.srate</code> or 1 if EEG structure is not available).]</p>
 
 <p><strong><code>startDate</code></strong><br>
 String giving the start date of data set in dd-mmm-yyyy format.<br>
@@ -194,32 +206,29 @@ String giving the start date of data set in dd-mmm-yyyy format.<br>
 String giving the start time in 24 hour hh:mm:ss format.<br>
 [String (default is <code>'00:00:00'</code>).]</p>
 
-<p><strong><code>signalTypeIndicator</code></strong><br>
-String specifying the type of signals from which to extract blinks. The possibilities are to use a specific set of channel numbers, a specific set of channels identified by their labels, or a specific set of independent components identified by their position in the mixing matrix.<br>
-[String with possible values <code>'UseNumbers'</code> or <code>'UseLabels'</code> or <code>'UseICs'</code> (default is <code>'UseNumbers'</code>).]</p>
+<p><strong><code>subjectID</code></strong><br>
+String identifying the subject for the data set. BLINKER uses this ID to combine short data sets from same session to get blink maxima distribution.<br>
+[String (default is <code>'Subject1_Task1_Experiment1_Rep1'</code>).]</p>
 
-<p><strong><code>signalNumbers</code></strong><br>
-The numbers of the channel numbers to try as potential signals if signalTypeIndicator is 'UseNumbers'.<br>
-[Row vector of positive integers less than the number of channels (default 1:number of channels)]</p>
+<p><strong><code>task</code></strong><br>
+Name of task performed in this data set.<br>
+[String (default is 'Task1')]  </p>
 
-<p><strong><code>signalLabels</code></strong><br>
-The names of channels to try as potential signals if <code>signalTypeIndicator</code> is <code>'UseLabels'</code>.<br>
-[Row cell array of channel labels (default: {'fp1', 'f1', 'fp2', 'fz', 'fpz', 'f3', 'f4', 'f2'}).]</p>
-
-<p><strong><code>excludeLabels</code></strong><br>
-The names of signals to exclude from consideration.<br>
-[Row cell array of channel labels (default: {'exg5', 'exg6', 'exg7', 'exg8', 'vehicle position'}).]</p>
+<p><strong><code>uniqueName</code></strong><br>
+String uniquely identifying this data set.<br>
+[String (default is <code>'Unknown'</code>).]  </p>
 
 <h3>
-<a id="parameters-for-controlling-what-is-output" class="anchor" href="#parameters-for-controlling-what-is-output" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parameters for controlling what is output</h3>
+<a id="parameters-describing-what-to-save-or-display" class="anchor" href="#parameters-describing-what-to-save-or-display" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Save">Parameters describing what to save or display</a>
+</h3>
 
-<p><strong><code>dumpBlinkerStructures</code></strong><br>
-Logical flag indicating whether to save all of the blinker structures in a file.<br>
-[Logical (default: true)]</p>
+<p><strong><code>blinkerDumpDir</code></strong><br>
+The path of the directory in which to dump pictures of blinks. Usually this will be empty to start with.<br>
+[char (default: [pwd filesep 'blinkDump'].)</p>
 
-<p><strong><code>showMaxDistribution</code></strong><br>
-Logical flag indicating whether to show a figure with a histogram of blink maxima.<br>
-[Logical (default: true)]</p>
+<p><strong><code>blinkerSaveFile</code></strong><br>
+The full path name of the file to save the BLINKER structures and parameters in.<br>
+[char (default: [pwd theNameOfDataset '_blinks.mat']).]</p>
 
 <p><strong><code>dumpBlinkImages</code></strong><br>
 Logical flag indicating whether to dump pictures of the individual blinks in a directory, indexed by an HTML file.<br>
@@ -229,21 +238,25 @@ Logical flag indicating whether to dump pictures of the individual blinks in a d
 A logical flag indicating whether to dump a text file of the frame left zeros, and frames of blink maxima frames and times.<br>
 [Logical (default:false).]</p>
 
+<p><strong><code>dumpBlinkerStructures</code></strong><br>
+Logical flag indicating whether to save all of the blinker structures in a file.<br>
+[Logical (default: true)]</p>
+
 <p><strong><code>fileName</code></strong><br>
 The full path name of the input EEG file.<br>
 [char]</p>
 
-<p><strong><code>blinkerSaveFile</code></strong><br>
-The full path name of the file to save the BLINKER structures and parameters in.<br>
-[char (default: [pwd theNameOfDataset '_blinks.mat']).]</p>
-
-<p><strong><code>blinkerDumpDir</code></strong><br>
-The path of the directory in which to dump pictures of blinks. Usually this will be empty to start with.<br>
-[char (default: [pwd filesep 'blinkDump'].)</p>
-
 <p><strong><code>numberMaxBins</code></strong>
 Number of bins used to display histograms of blink maxima
-[Scalar numeric positive (default: 80)]      </p>
+[Scalar numeric positive (default: 80)]  </p>
+
+<p><strong><code>showMaxDistribution</code></strong><br>
+Logical flag indicating whether to show a figure with a histogram of blink maxima.<br>
+[Logical (default: true)]</p>
+
+<p><strong><code>verbose</code></strong><br>
+A flag indicating whether to output status messages during execution and a summary of results at the end.<br>
+[logical (default: true).] </p>
 
 <h1>
 <a id="blinker-algorithm-overview" class="anchor" href="#blinker-algorithm-overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>BLINKER Algorithm Overview</h1>
@@ -302,24 +315,26 @@ BLINKER computes for each potential blink in a candidate signal the best linear 
 The range of blink amplitude ratios allowed for candidate signals.<br>
 [Two-element row vector of positive values (default: [3, 50]).] </p>
 
-<ul>
-<li>
-<a href="#Used">Select the "best" candidate signal as the "used" signal.</a>
-<strong><code>minGoodBlinks</code></strong>
-The minimum number of good blinks a signal must have to be considered a candidate signal.<br>
-[Non negative scalar (default: 10).]</li>
-</ul>
+<p><strong><code>correlationThresholdBottom</code></strong>
+Minimum correlation of blink with linear fits in order to be considered a "good" blink.<br>
+[Non negative scalar between 0 and 1 (Default: 0.90).]</p>
 
 <p><strong><code>goodRatioThreshold</code></strong><br>
 The minimum value of <code>goodRatio</code> needed for a signal to be considered non-marginal.
 [Non negative scalar (default: 0.7).]</p>
 
+<p><strong><code>minGoodBlinks</code></strong>
+The minimum number of good blinks a signal must have to be considered a candidate signal.<br>
+[Non negative scalar (default: 10).]</p>
+
 <h2>
 <a id="calculate-blink-maximum-amplitude-distributions-and-eliminate-out-of-range-signals" class="anchor" href="#calculate-blink-maximum-amplitude-distributions-and-eliminate-out-of-range-signals" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Maxima">Calculate blink maximum amplitude distributions and eliminate out of range signals</a>
 </h2>
 
-<p>The distribution of blink maximum amplitudes is typically bell-shaped, as show in the figure below.
-The green line shows the distribution of maximum amplitudes of all potential blinks, and the thick light gray line shows the distribution of maximum amplitudes of the “good” blinks (up-stroke and down-stroke R2 &gt; 0.90). The medium thick gray line shows the distribution of maximum amplitudes of the “better” blinks (up-stroke and down-stroke R2 &gt; 0.95), and the black line shows the distribution of maximum amplitudes of the “best” blinks (up-stroke and down-stroke R2 &gt; 0.98). The magenta line shows the blinks selected by BLINKER.  These “used” blinks have up-stroke and down-stroke R2 &gt; 0.90 and satisfy the maximum amplitude distribution criterion and the pAVR criterion.  These later criteria allow BLINKER to separate normal blinks from eye movements. </p>
+<p>The distribution of blink maximum amplitudes is typically bell-shaped, as show in the figure below.<br>
+<img src="./images/Mission021S2007X2.png" alt="Example Show Max Distribution"> </p>
+
+<p>The green line shows the distribution of maximum amplitudes of all potential blinks, and the thick light gray line shows the distribution of maximum amplitudes of the “good” blinks (up-stroke and down-stroke R2 &gt; 0.90). The medium thick gray line shows the distribution of maximum amplitudes of the “better” blinks (up-stroke and down-stroke R2 &gt; 0.95), and the black line shows the distribution of maximum amplitudes of the “best” blinks (up-stroke and down-stroke R2 &gt; 0.98). The magenta line shows the blinks selected by BLINKER.  These “used” blinks have up-stroke and down-stroke R2 &gt; 0.90 and satisfy the maximum amplitude distribution criterion and the pAVR criterion.  These later criteria allow BLINKER to separate normal blinks from eye movements. </p>
 
 <p>The maximum amplitude distribution criterion enforces the bell-shaped maximum distribution that normal blinks have around the median of the “best” blinks. This criteria eliminates blinks whose R2 is low and whose amplitudes are far from the best blink median. By default, BLINKER eliminates “best blinks” more than five robust standard deviations from the median and “good” blinks more than two robust standard deviations away from this median. Here we define the robust standard deviation as 1.4826 times the median absolute deviation from the median. Fig. 3 displays the median of the “best” blinks with a gray vertical line and the locations that are two robust standard deviations from this median with dashed gray lines. </p>
 
@@ -342,6 +357,11 @@ Minimum correlation of blink with linear fits in order to be considered a "good"
 <p><strong><code>correlationThresholdMiddle</code></strong><br>
 Minimum correlation of blink with linear fits in order to be considered a "better" blink.<br>
 [Non negative scalar between 0 and 1 (Default: 0.95).]</p>
+
+<pre><code>'zThresholds', ...
+ getRules([0.90, 2; 0.98, 5], {'numeric'}, {'positive', 'ncols', 2}, ...
+ 'Rows contain correlation and max z-score threshold pairs for determining good blinks'), ...
+</code></pre>
 
 <h2>
 <a id="select-the-best-candidate-signal-as-the-used-signal" class="anchor" href="#select-the-best-candidate-signal-as-the-used-signal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Used">Select the "best" candidate signal as the "used" signal.</a>
