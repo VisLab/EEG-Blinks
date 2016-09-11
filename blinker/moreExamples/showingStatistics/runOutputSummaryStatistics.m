@@ -3,16 +3,16 @@
 % This script assumes that a blinkStatisticsSummary has been computed.
 %
 %% Load the NCTU directory
-summaryDir = 'O:\ARL_Data\NCTU\NCTUBlinksNewRefactored';
-summaryFile = 'NCTU_LKAllMastNewBothSummary.mat';
+% summaryDir = 'O:\ARL_Data\NCTU\NCTUBlinksNewRefactored';
+% summaryFile = 'NCTU_LKAllMastNewBothSummary.mat';
 
 %% Load the Shooter directory
 % summaryDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
 % summaryFile = 'ShooterAllMastNewBothCombinedSummary.mat';
 
 %% Load the BCIT directory
-% summaryDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
-% summaryFile = 'BCITLevel0AllUnrefNewBothBlinksSummary.mat';
+summaryDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
+summaryFile = 'BCITLevel0AllUnrefNewBothBlinksSummary.mat';
 
 %% Load the BCI2000 directory
 % summaryFile = 'BCI2000AllMastNewBothCombinedSummary.mat';

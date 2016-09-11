@@ -8,14 +8,14 @@
 
 
 %% BCIT counts
-% experiment = 'BCITLevel0';
-% blinkDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
-% excludedTasks = {};
-% typeBlinks = 'AllUnrefNewBothBlinks';
-% summaryDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
-% summaryFile = 'BCITLevel0AllUnrefNewBothBlinksSummary.mat';
-% blinkFileList = [blinkDir filesep experiment 'FileList.mat'];
-% blinkDirInd = 'O:\ARL_Data\BCITBlinksNewRefactored\BCITLevel0AllUnrefNewBoth';
+experiment = 'BCITLevel0';
+blinkDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
+excludedTasks = {};
+typeBlinks = 'AllUnrefNewBoth';
+summaryDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
+summaryFile = 'BCITLevel0AllUnrefNewBothBlinksSummary.mat';
+blinkFileList = [blinkDir filesep experiment 'FileList.mat'];
+blinkDirInd = 'O:\ARL_Data\BCITBlinksNewRefactored\AllUnrefNewBoth';
 
 %% BCI2000 counts
 % experiment = 'BCI2000';
@@ -38,14 +38,14 @@
 % blinkDirInd = [blinkDir filesep typeBlinks];
 
 %% NCTU counts
-blinkDir = 'O:\ARL_Data\NCTU\NCTUBlinksNewRefactored';
-experiment = 'NCTU_LK';
-excludedTasks = {};
-typeBlinks = 'AllMastNewBoth';
-summaryDir = 'O:\ARL_Data\NCTU\NCTUBlinksNewRefactored';
-summaryFile = 'NCTU_LKAllMastNewBothSummary.mat';
-blinkFileList = [blinkDir filesep experiment 'FileList.mat'];
-blinkDirInd = [blinkDir filesep typeBlinks];
+% blinkDir = 'O:\ARL_Data\NCTU\NCTUBlinksNewRefactored';
+% experiment = 'NCTU_LK';
+% excludedTasks = {};
+% typeBlinks = 'AllMastNewBoth';
+% summaryDir = 'O:\ARL_Data\NCTU\NCTUBlinksNewRefactored';
+% summaryFile = 'NCTU_LKAllMastNewBothSummary.mat';
+% blinkFileList = [blinkDir filesep experiment 'FileList.mat'];
+% blinkDirInd = [blinkDir filesep typeBlinks];
 
 %% Get the files from the base directory
 inList = dir(blinkDirInd);

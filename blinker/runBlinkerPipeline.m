@@ -54,9 +54,16 @@ blinkIndDir = [blinkDir filesep experiment typeBlinks];
 load(blinkFileList);
 
 %% Run the blinker blink extraction to create a file.
+skipIfPresent = true;
 numberFiles = length(blinkFiles);
 for k = 1:numberFiles
     fprintf('%d: %s\n', k, blinkFiles(k).fileName);
+    blinkerSaveFile = [blinkIndDir filesep ...
+                      blinkFiles(k).blinkFileName '_' typeBlinks '.mat'];
+    if skipIfPresent && exist(blinkerSaveFile, 'file')
+       fprintf('.....already computed....skipping\n');
+       continue;
+    end
     try
         EEG = pop_loadset(blinkFiles(k).fileName);
         params = checkBlinkerDefaults(struct(), getBlinkerDefaults(EEG));
@@ -67,8 +74,7 @@ for k = 1:numberFiles
         params.fileName = blinkFiles(k).fileName;
         params.startDate = blinkFiles(k).startDate;
         params.startTime = blinkFiles(k).startTime;
-        params.blinkerSaveFile = [blinkIndDir filesep ...
-            blinkFiles(k).blinkFileName '_' typeBlinks '.mat'];
+        params.blinkerSaveFile = blinkerSaveFile;
         params.dumpBlinkerStructures = true;
         params.blinkerDumpDir = blinkIndDir;
         params.dumpBlinkImages = false;

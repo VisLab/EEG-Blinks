@@ -2,18 +2,20 @@
 %
 % This script assumes that a filelist is provided and that the blink
 % structures have already been computed using a function such as
-% pop_blinker.
+% pop_blinker.  The goal is to put all of the statistics for the collection
+% into a single file for display and analysis purposes.
 %
 
+
 %% BCIT counts
-% experiment = 'BCITLevel0';
-% blinkDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
-% excludedTasks = {};
-% typeBlinks = 'AllUnrefNewBothBlinks';
-% summaryDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
-% summaryFile = 'BCITLevel0AllUnrefNewBothBlinksSummary.mat';
-% blinkFileList = [blinkDir filesep experiment 'FileList.mat'];
-% blinkDirInd = 'O:\ARL_Data\BCITBlinksNewRefactored\BCITLevel0AllUnrefNewBoth';
+experiment = 'BCITLevel0';
+blinkDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
+excludedTasks = {};
+typeBlinks = 'AllUnrefNewBothBlinks';
+summaryDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
+summaryFile = 'BCITLevel0AllUnrefNewBothBlinksSummary.mat';
+blinkFileList = [blinkDir filesep experiment 'FileList.mat'];
+blinkDirInd = 'O:\ARL_Data\BCITBlinksNewRefactored\BCITLevel0AllUnrefNewBoth';
 
 %% BCI2000 counts
 % experiment = 'BCI2000';
@@ -62,17 +64,10 @@ for k = 1:numberActualFiles
     fileMap(fileNames{k}) = k;
 end
 
-%% Shooter examples
-% blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRevised';
-% experiment = 'Shooter';
-% %typeBlinks = 'ChannelUnrefNewBothCombined';
-% typeBlinks = 'EOGUnrefNewBothCombined';
-% excludeTasks = {'EO', 'EC'};
-
 %% Fill in an empty structure for efficiency
-blinkStatisticsSummary(numberFiles) = getSummaryStatistics();
+blinkStatisticsSummary(numberFiles) = extractBlinkStatistics();
 for k = 1:numberFiles - 1
-    blinkStatisticsSummary(k) = getSummaryStatistics();
+    blinkStatisticsSummary(k) = extractBlinkStatistics();
 end
 
 %% Now read in the individual files and process
@@ -105,12 +100,16 @@ for k = 1:numberFiles
         nanMask(k) = true;
         warning('---%s does not have blinks\n', fileName);
         continue;
-    elseif ~exist('blinkStatistics', 'var')
+    elseif ~exist('blinkStatistics', 'var') || isempty(blinkStatistics)
         nanMask(k) = true;
         warning('---%s does not have blinkStatistics\n', fileName);
         continue;
     end
     blinkStatisticsSummary(k) = blinkStatistics;
+    sData = blinks.signalData;
+    signalNumbers = cellfun(@double, {sData.signalNumber});
+    pos = find(signalNumbers == abs(blinks.usedSignal), 1, 'first');
+    theLabel = lower(sData(pos).signalLabel);
     if strcmpi(blinkStatisticsSummary(k).status, 'marginal')
         if isKey(mapMarginal, theLabel)
             theCount = mapMarginal(theLabel);

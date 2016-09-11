@@ -23,11 +23,8 @@ pop_editoptions('option_single', false, 'option_savetwofiles', false);
 params = struct();
 
 %% Set up for the BCIT driving data
-% blinkDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
-% typeBlinks = 'AllUnrefNewBoth';
-% experiment = 'BCITLevel0';
-% blinkFileList = [blinkDir filesep experiment 'FileList.mat'];
-% blinkIndDir = [blinkDir filesep experiment typeBlinks];
+blinkDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
+blinkDirInd = [blinkDir filesep 'AllUnrefNewBoth'];
 
 %% Shooter
 % blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
@@ -38,8 +35,8 @@ params = struct();
 % blinkDirInd = [blinkDir filesep 'AllMastNewBothCombined'];
 
 %% NCTU Lane Keeping
-blinkDir = 'O:\ARL_Data\NCTU\NCTUBlinksNewRefactored';
-blinkDirInd = [blinkDir filesep 'AllMastNewBoth'];
+% blinkDir = 'O:\ARL_Data\NCTU\NCTUBlinksNewRefactored';
+% blinkDirInd = [blinkDir filesep 'AllMastNewBoth'];
 
 %% Get the files from the base directory
 inList = dir(blinkDirInd);
