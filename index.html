@@ -42,12 +42,12 @@
 </li>
 <li><a href="#Plugin">Running BLINKER as an EEGLAB plugin</a></li>
 <li><a href="#Script">Running as a script</a></li>
-<li>Algorithm
+<li>The BLINKER algorithm
 
 <ul>
 <li><a href="#Extraction">Extract potential blinks of each candidate signal.</a></li>
 <li><a href="#Landmarks">Calculate landmarks of potential blinks.</a></li>
-<li><a href="#SNRs">Reject signals with low signal-to-noise (SNR) ratios.</a></li>
+<li><a href="#SNR">Reject signals with low signal-to-noise (SNR) ratios.</a></li>
 <li><a href="#Maxima">Calculate blink maximum amplitude distributions.</a></li>
 <li><a href="#Used">Select the "best" candidate signal as the "used" signal.</a></li>
 <li><a href="#Shapes">Calculate the blink properties and blink shapes for the "used" signal.</a></li>
@@ -109,8 +109,6 @@ can be found under the EEGLAB Tools submenu:<br>
 
 <p><img src="./images/BLINKER_Plugin.png" alt="BLINKER menu"> </p>
 
-<p><img src="https://vislab.github.io/EEG-Blinks/images/BLINKER_Plugin.png" alt="BLINKER menu">  </p>
-
 <p><img src="./images/Mission021S2007X2.png" alt="Exampe Show Max Distribution"> </p>
 
 <h2>
@@ -141,20 +139,19 @@ The previous example uses all of the default values, including defaults for meta
 </blockquote>
 
 <p><strong>Example</strong><br>
-The following example starts with a default <code>params</code> structure and then overrides some of the values related to controlling the output and to dataset metadata:  </p>
+The following example starts with a default <code>params</code> structure and then overrides some of the values related to controlling the output and to data set metadata:  </p>
 
 <blockquote>
 <p><code>params = checkBlinkerDefaults(struct(), getBlinkerDefaults(EEG));</code><br>
-<code>params.subjectID = blinkFiles(k).subjectID;</code><br>
-<code>params.experiment = blinkFiles(k).experiment;</code><br>
-<code>params.uniqueName = blinkFiles(k).uniqueName;</code><br>
-<code>params.task = blinkFiles(k).task;</code><br>
-<code>params.fileName = blinkFiles(k).fileName;</code><br>
-<code>params.startDate = blinkFiles(k).startDate;</code><br>
-<code>params.startTime = blinkFiles(k).startTime;</code><br>
-<code>params.blinkerSaveFile = [blinkIndDir filesep  blinkFiles(k).blinkFileName '_' typeBlinks '.mat'];</code><br>
+<code>params.subjectID = 'S007';</code><br>
+<code>params.experiment = 'ARL_BCIT';</code><br>
+<code>params.uniqueName = 'S007_M053_Rep03';</code><br>
+<code>params.task = 'RSVP';</code><br>
+<code>params.fileName = 'D:\ARL_BCIT\S007_M053_Rep03.set';</code><br>
+<code>params.startDate = '15-Feb-2009';</code><br>
+<code>params.startTime = '15:26:31';</code><br>
+<code>params.blinkerSaveFile = 'D:\ARL_BCIT_BLINKS\AllUnrefBlinkSummary.mat';</code><br>
 <code>params.dumpBlinkerStructures = true;</code><br>
-<code>params.blinkerDumpDir = blinkIndDir;</code><br>
 <code>params.dumpBlinkImages = false;</code><br>
 <code>params.dumpBlinkPositions = false;</code><br>
 <code>params.keepSignals = false;</code><br>
@@ -164,56 +161,54 @@ The following example starts with a default <code>params</code> structure and th
 </code>[EEG, com, blinks, blinkFits, blinkProperties, blinkStatistics, params] = pop_blinker(EEG, params); </p>
 </blockquote>
 
-<p><em>Example</em> 
-Run BLINKER outside of EEGLAB but bring up a GUI to set parameters:</p>
-
 <h3>
-<a id="parameters-related-to-dataset-metadata" class="anchor" href="#parameters-related-to-dataset-metadata" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parameters related to dataset metadata</h3>
+<a id="parameters-related-to-data-set-metadata" class="anchor" href="#parameters-related-to-data-set-metadata" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parameters related to data set metadata</h3>
 
-<p><strong><code>srate</code></strong>
- A positive scalar giving the sampling rate of the signal in Hz. 
-If an EEG structure is passed to <code>getBlinkerDefaults</code>, the default value is <code>EEG.srate</code>. 
-Otherwise, the default 1.</p>
+<p>The following parameters should be set individually for each data set so that the BLINKER output structures contain the information needed for downstream analysis.</p>
+
+<p><strong><code>srate</code></strong><br>
+A positive scalar giving the sampling rate of the signal in Hz. If an EEG structure is passed to <code>getBlinkerDefaults</code>, the default value is <code>EEG.srate</code>. Otherwise, the default 1.<br>
+[Positive scalar (default is <code>EEG.srate</code> or 1 if EEG structure is not available).]</p>
 
 <p><strong><code>subjectID</code></strong><br>
-String identifying the subject for the dataset. BLINKER uses this ID to combine short datasets from same session to get blink maxima distribution.<br>
-[String (default is 'Subject1_Task1_Experiment1_Rep1’)]</p>
+String identifying the subject for the data set. BLINKER uses this ID to combine short data sets from same session to get blink maxima distribution.<br>
+[String (default is <code>'Subject1_Task1_Experiment1_Rep1'</code>).]</p>
 
 <p><strong><code>uniqueName</code></strong><br>
-String uniquely identifying this dataset<br>
-[String (default is 'Unknown')]  </p>
+String uniquely identifying this data set.<br>
+[String (default is <code>'Unknown'</code>).]  </p>
 
-<p><strong><code>experiment</code></strong> 
- String identifying the experiment. 
-[String (default is 'Experiment1')]</p>
+<p><strong><code>experiment</code></strong><br>
+String identifying the experiment.<br>
+[String (default is <code>'Experiment1'</code>).]</p>
 
 <p><strong><code>task</code></strong><br>
-Name of task performed in this dataset<br>
+Name of task performed in this data set.<br>
 [String (default is 'Task1')]  </p>
 
 <p><strong><code>startDate</code></strong><br>
-String giving the start date of dataset in dd-mmm-yyyy format<br>
-[String (default is '01-Jan-2016')]</p>
+String giving the start date of data set in dd-mmm-yyyy format.<br>
+[String (default is <code>'01-Jan-2016'</code>).]</p>
 
 <p><strong><code>startTime</code></strong><br>
 String giving the start time in 24 hour hh:mm:ss format.<br>
-[String (default is '00:00:00')]</p>
+[String (default is <code>'00:00:00'</code>).]</p>
 
 <p><strong><code>signalTypeIndicator</code></strong><br>
-String specifying the type of signals from which to extract blinks.<br>
-[String with possible values are 'UseNumbers' or 'UseLabels' or 'UseICs' (default is 'UseNumbers')]</p>
+String specifying the type of signals from which to extract blinks. The possibilities are to use a specific set of channel numbers, a specific set of channels identified by their labels, or a specific set of independent components identified by their position in the mixing matrix.<br>
+[String with possible values <code>'UseNumbers'</code> or <code>'UseLabels'</code> or <code>'UseICs'</code> (default is <code>'UseNumbers'</code>).]</p>
 
 <p><strong><code>signalNumbers</code></strong><br>
-Vector of numbers of the channel numbers to try as potential signals if signalTypeIndicator is 'UseNumbers'.<br>
+The numbers of the channel numbers to try as potential signals if signalTypeIndicator is 'UseNumbers'.<br>
 [Row vector of positive integers less than the number of channels (default 1:number of channels)]</p>
 
 <p><strong><code>signalLabels</code></strong><br>
-Cell array of names of channels to try as potential signals if signalTypeIndicator is 'UseLabels'.<br>
-[Row cell array of channel labels (default: {'fp1', 'f1', 'fp2', 'fz', 'fpz', 'f3', 'f4', 'f2'})]</p>
+The names of channels to try as potential signals if <code>signalTypeIndicator</code> is <code>'UseLabels'</code>.<br>
+[Row cell array of channel labels (default: {'fp1', 'f1', 'fp2', 'fz', 'fpz', 'f3', 'f4', 'f2'}).]</p>
 
 <p><strong><code>excludeLabels</code></strong><br>
-Cell array of the names of signals to exclude from consideration.<br>
-[Row cell array of channel labels (default: {'exg5', 'exg6', 'exg7', 'exg8', 'vehicle position'})]</p>
+The names of signals to exclude from consideration.<br>
+[Row cell array of channel labels (default: {'exg5', 'exg6', 'exg7', 'exg8', 'vehicle position'}).]</p>
 
 <h3>
 <a id="parameters-for-controlling-what-is-output" class="anchor" href="#parameters-for-controlling-what-is-output" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parameters for controlling what is output</h3>
