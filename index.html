@@ -336,10 +336,11 @@ The range of blink amplitude ratios allowed for candidate signals.<br>
 <a id="select-the-best-candidate-signal-as-the-used-signal" class="anchor" href="#select-the-best-candidate-signal-as-the-used-signal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Used">Select the "best" candidate signal as the "used" signal.</a>
 </h2>
 
-<p>The next step is to select the best candidate signal to be used for downstream calculations. The best signal is the one with <code>goodRatio</code> above <code>goodRatioThreshold</code> that has the maximum number of "good" blinks. A good blink for these purposes has both left and right correlations above <code>correlationThresholdBottom</code>. If no signals have a <code>goodRatio</code> above the threshold, then BLINKER picks the signal with highest number of good blinks and marks the signal as marginal by making the "used" value negative.  </p>
+<p>The next step is to select the best candidate signal to be used for downstream calculations. The best signal is the one with <code>goodRatio</code> above <code>goodRatioThreshold</code> that has the maximum number of "good" blinks. A good blink for these purposes has both left and right correlations above <code>correlationThresholdBottom</code>. If no signals have a <code>goodRatio</code> above the threshold, then BLINKER picks the signal with highest number of good blinks and marks the signal as marginal by making the "used" value negative.  If <code>keepSignals</code> is true, then BLINKER retails all of the signals that meet the BAR criteria in the <code>signalData</code> structure. If <code>keepSignals</code> is false and some signals meet the <code>goodRatio</code> threshold, then BLINKER only retains those signals. In any case, BLINKER only retains signals that have at least <code>minNumberGoodBlinks</code> good blinks for downstream analysis.</p>
 
-<p>The <code>goodRatio</code> is first determined by 
-<strong><code>correlationThresholdBottom</code></strong><br>
+<p>The <code>goodRatio</code> is first determined by computing the median and the robust standard deviation of the "best" blinks (those with both R<sup>2</sup> values above <code>correlationThresholdTop</code>.</p>
+
+<p><strong><code>correlationThresholdBottom</code></strong><br>
 Minimum correlation of blink with linear fits in order to be considered a "good" blink.<br>
 [Non negative scalar between 0 and 1 (Default: 0.90).]</p>
 
