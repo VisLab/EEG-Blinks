@@ -641,12 +641,24 @@ Length of the interval in seconds between the maximum positive velocity (calcula
 Length of the interval in seconds between the maximum positive velocity (calculated from <code>leftZero</code>) of one blink and the next one. </p>
 
 <p><strong><code>negAmpVelRatioBase</code></strong><br>
-<strong><code>posAmpVelRatioBase</code></strong><br>
-<strong><code>negAmpVelRatioZero</code></strong><br>
-<strong><code>posAmpVelRatioZero</code></strong><br>
-<strong><code>negAmpVelRatioTent</code></strong><br>
-<strong><code>posAmpVelRatioTent</code></strong><br>
-<strong><code>'timeShutBase</code></strong><br>
+The amplitude velocity ratio calculated using interval from <code>maxBlink</code> to <code>rightBase</code>.  </p>
+
+<p><strong><code>posAmpVelRatioBase</code></strong><br>
+The amplitude velocity ratio calculated using interval from <code>leftBase</code> to <code>maxBlink</code>.  </p>
+
+<p><strong><code>negAmpVelRatioZero</code></strong><br>
+The amplitude velocity ratio calculated using interval from <code>maxBlink</code> to <code>rightZero</code>.  </p>
+
+<p><strong><code>posAmpVelRatioZero</code></strong><br>
+The amplitude velocity ratio calculated using interval from <code>leftZero</code> to <code>maxBlink</code>.   </p>
+
+<p><strong><code>negAmpVelRatioTent</code></strong><br>
+The amplitude velocity ratio calculated using the tent-peak and the slope of the right tent line.   </p>
+
+<p><strong><code>posAmpVelRatioTent</code></strong><br>
+The amplitude velocity ratio calculated using the tent-peak and the slope of the left tent line.   </p>
+
+<p><strong><code>'timeShutBase</code></strong><br>
 <strong><code>'timeShutZero</code></strong><br>
 <strong><code>timeShutTent</code></strong><br>
 <strong><code>closingTimeZero</code></strong><br>
@@ -662,16 +674,18 @@ Length of the interval in seconds between the maximum positive velocity (calcula
 <a id="the-blinkstatistics-structure" class="anchor" href="#the-blinkstatistics-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="blinkStatistics">The blinkStatistics structure</a>
 </h2>
 
-<p>The <code>blinkProperties</code> structure array holds basic ocular characteristics for a set of potential blinks. The <code>extractBlinkProperties</code> function returns this structure for the potential blinks of the used signal that meet specific quality criteria. Values that are undefined, have value <code>NaN</code>. header = {'mean', 'median', 'std', 'mad', 'goodMean', 'goodMedian', ...
-               'goodStd', 'goodMad'};The fields are:</p>
+<p>The <code>blinkProperties</code> structure array holds basic ocular characteristics for a set of potential blinks. The <code>extractBlinkProperties</code> function returns this structure for the potential blinks of the used signal that meet specific quality criteria. Each of the ocular indices is characterized by an 8-element vector giving the data set mean, median, standard deviation and median absolute deviation for all blinks followed by the statistics for "good" blinks. The exception to this is the number of blinksPerMinute, which has the total number of blinks per minute in the first entry of this vector and the blinks per minute of good blinks in the data set in entry 5 of the vector.</p>
 
 <p><strong><code>blinksPerMin</code></strong><br>
 Blinks per minute for the dataset.</p>
 
 <p><strong><code>durationB</code></strong><br>
-Length
-<strong><code>durationHB</code></strong><br>
-<strong><code>durationHZ</code></strong><br>
+Length of the blinks in seconds as calculated by (<code>rightBase</code> - <code>leftBase</code>)/<code>srate</code>.</p>
+
+<p><strong><code>durationHB</code></strong><br>
+Length of the blinks in seconds as calculated by the width of the blink at an amplitude half way between the <code>leftBase</code> and the <code>maxFrame</code>.</p>
+
+<p><strong><code>durationHZ</code></strong><br>
 <strong><code>durationT</code></strong><br>
 <strong><code>durationZ</code></strong><br>
 <strong><code>fileName</code></strong><br>
