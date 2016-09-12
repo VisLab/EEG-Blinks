@@ -674,31 +674,57 @@ The amplitude velocity ratio calculated using the tent-peak and the slope of the
 <a id="the-blinkstatistics-structure" class="anchor" href="#the-blinkstatistics-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="blinkStatistics">The blinkStatistics structure</a>
 </h2>
 
-<p>The <code>blinkProperties</code> structure array holds basic ocular characteristics for a set of potential blinks. The <code>extractBlinkProperties</code> function returns this structure for the potential blinks of the used signal that meet specific quality criteria. Each of the ocular indices is characterized by an 8-element vector giving the data set mean, median, standard deviation and median absolute deviation for all blinks followed by the statistics for "good" blinks. The exception to this is the number of blinksPerMinute, which has the total number of blinks per minute in the first entry of this vector and the blinks per minute of good blinks in the data set in entry 5 of the vector.</p>
+<p>The <code>blinkProperties</code> structure array holds basic ocular characteristics for a set of potential blinks. The <code>extractBlinkProperties</code> function returns this structure for the potential blinks of the used signal that meet specific quality criteria. Each of the ocular indices labeled "statistics" is characterized by an 8-element vector giving the data set mean, median, standard deviation and median absolute deviation for all blinks followed by the statistics for "good" blinks. The exception to this is the number of <code>blinksPerMinute</code>.</p>
 
 <p><strong><code>blinksPerMin</code></strong><br>
-Blinks per minute for the dataset.</p>
+Statistics for the number of blinks per minute for the dataset. Note: this entry has a special form for the 8-element statistics vector. The first entry of the vector contains the total number of blinks per minute, and the fifth entry contains the total number of good blinks per minute.</p>
 
 <p><strong><code>durationB</code></strong><br>
 Length of the blinks in seconds as calculated by (<code>rightBase</code> - <code>leftBase</code>)/<code>srate</code>.</p>
 
 <p><strong><code>durationHB</code></strong><br>
-Length of the blinks in seconds as calculated by the width of the blink at an amplitude half way between the <code>leftBase</code> and the <code>maxFrame</code>.</p>
+Statistics for the blink durations calculated by the width of the blink at an amplitude half way between the <code>leftBase</code> and the <code>maxFrame</code>.</p>
 
 <p><strong><code>durationHZ</code></strong><br>
-<strong><code>durationT</code></strong><br>
-<strong><code>durationZ</code></strong><br>
-<strong><code>fileName</code></strong><br>
-<strong><code>goodRatio</code></strong><br>
-<strong><code>header</code></strong><br>
-<strong><code>numberBlinks</code></strong><br>
-<strong><code>numberGoodBlinks</code></strong><br>
-<strong><code>nAVRZ</code></strong><br>
-<strong><code>pAVRZ</code></strong><br>
-<strong><code>seconds</code></strong><br>
-<strong><code>srate</code></strong><br>
-<strong><code>startTime</code></strong><br>
-<strong><code>status</code></strong><br>
+Statistics for the blink durations calculated in seconds based on the widths of the blinks at half of the maximum amplitude.</p>
+
+<p><strong><code>durationT</code></strong><br>
+Statistics for the blink duration calculated in seconds based on the widths of the intersection of the blink tent with the x-axis.</p>
+
+<p><strong><code>durationZ</code></strong><br>
+Staistics for the blink duration calculated in seconds based on the difference (<code>rightZero</code> - <code>leftZero</code>)/<code>srate</code>.</p>
+
+<p><strong><code>fileName</code></strong><br>
+The filename of the data set for which these statistics were calculated.</p>
+
+<p><strong><code>goodRatio</code></strong><br>
+The <code>goodRatio</code> for this data set.</p>
+
+<p><strong><code>header</code></strong><br>
+A cell array describing the meanings of the columns in the statistics vectors.</p>
+
+<p><strong><code>numberBlinks</code></strong><br>
+The total number of blinks in the data set.</p>
+
+<p><strong><code>numberGoodBlinks</code></strong><br>
+Total number of good blinks in the data set.</p>
+
+<p><strong><code>nAVRZ</code></strong><br>
+Statistics for the negative amplitude velocity ratio calculated from the <code>maxFrame</code> to the <code>rightZero</code> of each blink.</p>
+
+<p><strong><code>pAVRZ</code></strong><br>
+Statistics for the positive amplitude velocity ratio calculated from the <code>leftZero</code> to <code>maxFrame</code> of each blink.</p>
+
+<p><strong><code>seconds</code></strong><br>
+The length of the data set in seconds.</p>
+
+<p><strong><code>srate</code></strong><br>
+Sampling rate in Hz of the signal.</p>
+
+<p><strong><code>startTime</code></strong><br>
+Double value giving the days from January 0, 0000.</p>
+
+<p><strong><code>status</code></strong><br>
 String indicated the status of the blink calculation. A value of "success" means that blinks were successfully computed, although the results may be marginal. A value of "failed" means that the algorithm could not extract blinks from any of the candidate signals provide.</p>
 
 <p><strong><code>subjectID</code></strong><br>
