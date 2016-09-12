@@ -58,7 +58,6 @@
 <li><a href="#Landmarks">Calculate landmarks of potential blinks.</a></li>
 <li><a href="#SNR">Reject signals with low signal-to-noise (SNR) ratios.</a></li>
 <li><a href="#Used">Select the "best" candidate signal as the "used" signal.</a></li>
-<li><a href="#Maxima">Calculate blink maximum amplitude distributions to eliminate eye movements.</a></li>
 <li><a href="#Shapes">Calculate the blink properties and blink shapes for the "used" signal.</a></li>
 <li><a href="#Stats">Calculate the ocular indices for the "used" signal.</a></li>
 </ul>
@@ -282,7 +281,9 @@ A flag indicating whether to output status messages during execution and a summa
 <a id="extract-potential-blinks-of-each-candidate-signal" class="anchor" href="#extract-potential-blinks-of-each-candidate-signal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Extraction">Extract potential blinks of each candidate signal</a>
 </h2>
 
-<p>Each candidate signal is band-passed filtered in the interval [1, 20] Hz prior to blink detection. BLINKER then determines the intervals during which the signal is greater than 1.5 standard deviations above the overall signal mean. These intervals form the potential blinks. We consider only potential blinks that are longer than 50 ms and are at least 50 ms apart. These criteria eliminate many small rapid eye movements without appearing to eliminate actual blinks.</p>
+<p>Each candidate signal is band-passed filtered in the interval [1, 20] Hz prior to blink detection. BLINKER then determines the intervals during which the signal is greater than 1.5 standard deviations above the overall signal mean. These intervals form the potential blinks. We consider only potential blinks that are longer than 50 ms and are at least 50 ms apart. These criteria eliminate many small rapid eye movements without appearing to eliminate actual blinks.  </p>
+
+<p>When using independent components, BLINKER performs an additional step to eliminate ICs that do not correspond to eye movements. These steps require that eyeCatch's evaluation of eye similarity be above <code>ICSimilarityThreshold</code> and that the frontal hemisphere scalp map weight for a component dominant the rear hemisphere.</p>
 
 <p>Parameters related to this stage:  </p>
 
@@ -293,6 +294,14 @@ The lower edge of the band pass filter applied to each candidate signal prior to
 <p><strong><code>highCutoffHz</code></strong><br>
 The upper edge of the band pass filter applied to each candidate signal prior to detecting potential blinks. 
 [Nonnegative scalar (default 20).]</p>
+
+<p><strong><code>ICSimilarityThreshold</code></strong>
+Similarity threshold used by eyeCatch to designate an IC as a candidate blink IC.<br>
+[Scalar value in 0, 1.]</p>
+
+<p><strong><code>ICFOMThreshold</code></strong>
+Mean difference in IC scalp map amplitude of front versus rear hemispheres (used to select blink ICs)
+[Scalar numeric positive (default: 1).</p>
 
 <p><strong><code>srate</code></strong><br>
 A positive scalar giving the sampling rate of the signal in Hz. If an EEG structure is passed to <code>getBlinkerDefaults</code>, the default value is <code>EEG.srate</code>. Otherwise, the default 1.<br>
@@ -338,7 +347,7 @@ The range of blink amplitude ratios allowed for candidate signals.<br>
 
 <p>The next step is to select the best candidate signal to be used for downstream calculations. The best signal is the one with <code>goodRatio</code> above <code>goodRatioThreshold</code> that has the maximum number of "good" blinks. A good blink for these purposes has both left and right correlations above <code>correlationThresholdBottom</code>. If no signals have a <code>goodRatio</code> above the threshold, then BLINKER picks the signal with highest number of good blinks and marks the signal as marginal by making the "used" value negative.  If <code>keepSignals</code> is true, then BLINKER retails all of the signals that meet the BAR criteria in the <code>signalData</code> structure. If <code>keepSignals</code> is false and some signals meet the <code>goodRatio</code> threshold, then BLINKER only retains those signals. In any case, BLINKER only retains signals that have at least <code>minNumberGoodBlinks</code> good blinks for downstream analysis.</p>
 
-<p>The <code>goodRatio</code> is first determined by computing the median and the robust standard deviation of the "best" blinks (those with both R<sup>2</sup> values above <code>correlationThresholdTop</code>.</p>
+<p>To calculate the <code>goodRatio</code>, BLINKER computes the median and the robust standard deviation of the "best" blinks (those with both R<sup>2</sup> values above <code>correlationThresholdTop</code>). The <code>goodRatio</code> is the ratio of the number of "good" blinks to the total number of blinks within two robust standard deviations of the median of the best blinks.</p>
 
 <p><strong><code>correlationThresholdBottom</code></strong><br>
 Minimum correlation of blink with linear fits in order to be considered a "good" blink.<br>
@@ -361,8 +370,10 @@ The minimum number of good blinks a signal must have to be considered a candidat
 [Non negative scalar (default: 10).]</p>
 
 <h2>
-<a id="calculate-blink-maximum-amplitude-distributions-and-eliminate-out-of-range-signals" class="anchor" href="#calculate-blink-maximum-amplitude-distributions-and-eliminate-out-of-range-signals" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Maxima">Calculate blink maximum amplitude distributions and eliminate out of range signals</a>
+<a id="calculate-the-blink-properties-and-blink-shapes-for-the-used-signal" class="anchor" href="#calculate-the-blink-properties-and-blink-shapes-for-the-used-signal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Shapes">Calculate the blink properties and blink shapes for the "used" signal</a>
 </h2>
+
+<p>The <code>blinks</code> structure contains the positions of the potential blinks in the "used" signal. The next step is to eliminate extraneous eye movements from actual blinks and to calculate the shapes and other properties of these blinks. BLINKER uses the blink maximum amplitude distribution to do this. If a data set does not have a sufficient number of blinks (at least 20), BLINKER cannot get a good estimate of the distribution and the results are not reliable. Sometimes, however, reseachers have split a recording from a single session into multiple data sets for analysis. BLINKER provides tools for combining these pieces to obtain a more reliable estimate of the distribution. This section assumes that the data set has enough blinks for BLINKER to reliably estimate the maximum amplitude distribution.</p>
 
 <p>The distribution of blink maximum amplitudes is typically bell-shaped, as show in the figure below.<br>
 <img src="./images/Mission021S2007X2.png" alt="Example Show Max Distribution"> </p>
@@ -371,7 +382,13 @@ The minimum number of good blinks a signal must have to be considered a candidat
 
 <p>The maximum amplitude distribution criterion enforces the bell-shaped maximum distribution that normal blinks have around the median of the “best” blinks. This criteria eliminates blinks whose R<sup>2</sup> is low and whose amplitudes are far from the best blink median. By default, BLINKER eliminates “best blinks” more than five robust standard deviations from the median and “good” blinks more than two robust standard deviations away from this median. Here we define the robust standard deviation as 1.4826 times the median absolute deviation from the median. Fig. 3 displays the median of the “best” blinks with a gray vertical line and the locations that are two robust standard deviations from this median with dashed gray lines. </p>
 
-<p>The pAVR criterion captures the difference the sharp rising edge of saccades and the more curved rise of normal blinks. We have found empirically that blink candidates with pAVR &lt; 3 do not correspond to normal blinks, but rather saccades and certain short, fast eye movements.  </p>
+<p>To eliminate blinks that are outside the distribution, BLINKER applies a multi-stage z-score threshold method with cutoffs given in <code>zThresholds</code>. By default, "best" blinks must have amplitudes within 5 robust standard deviations of the "best" median, while other "good" blinks must have amplitudes withing 2 robust standard deviations of the "best" median.  </p>
+
+<p>The pAVR criterion captures the difference the sharp rising edge of saccades and the more curved rise of normal blinks. We have found empirically that blink candidates with pAVR &lt; 3 do not correspond to normal blinks, but rather saccades and certain short, fast eye movements. </p>
+
+<p>After eliminating potential blinks that do not meet these criteria, BLINKER calculates the shape information (<code>blinkFits</code>) and the properties (<code>blinkProperties</code>) of the actual blinks.</p>
+
+<p>If <code>showMaxDistribution</code> is true, BLINKER displays the maximum amplitude distribution for the data set as in the example above.</p>
 
 <p><strong>Parameters:</strong> </p>
 
@@ -391,29 +408,23 @@ Minimum correlation of blink with linear fits in order to be considered a "good"
 Minimum correlation of blink with linear fits in order to be considered a "better" blink.<br>
 [Non negative scalar between 0 and 1 (Default: 0.95).]</p>
 
-<p><strong><code>zThresholds</code></strong><br>
-Correlation and max z-score amplitude threshold pairs used for determining good blinks.<br>
-[Non negative vector with 2 columns and at least two rows. (Default: [0.90, 2; 0.98, 5].)]</p>
-
-<h2>
-<a id="calculate-the-blink-properties-and-blink-shapes-for-the-used-signal" class="anchor" href="#calculate-the-blink-properties-and-blink-shapes-for-the-used-signal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Shapes">Calculate the blink properties and blink shapes for the "used" signal.</a>
-</h2>
-
-<h2>
-<a id="calculate-the-ocular-indices-for-the-used-signal" class="anchor" href="#calculate-the-ocular-indices-for-the-used-signal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Stats">Calculate the ocular indices for the "used" signal.</a>
-</h2>
+<p><strong><code>showMaxDistribution</code></strong><br>
+Logical flag indicating whether to show a figure with a histogram of blink maxima.<br>
+[Logical (default: true)]</p>
 
 <p><strong><code>shutAmpFraction</code></strong>
 Fraction of the maximum blink amplitude to reach above zero to consider the eye shut.<br>
 [Scalar value in 0, 1.]</p>
 
-<p><strong><code>ICSimilarityThreshold</code></strong>
-Similarity threshold used by eyeCatch to designate an IC as a candidate blink IC.<br>
-[Scalar value in 0, 1.]</p>
+<p><strong><code>zThresholds</code></strong><br>
+Correlation and max z-score amplitude threshold pairs used for determining good blinks.<br>
+[Non negative vector with 2 columns and at least two rows. (Default: [0.90, 2; 0.98, 5].)]</p>
 
-<p><strong><code>ICFOMThreshold</code></strong>
-Mean difference in IC scalp map amplitude of front versus rear hemispheres (used to select blink ICs)
-[Scalar numeric positive (default: 1).]</p>
+<h2>
+<a id="calculate-the-ocular-indices-for-the-used-signal" class="anchor" href="#calculate-the-ocular-indices-for-the-used-signal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Stats">Calculate the ocular indices for the "used" signal.</a>
+</h2>
+
+<p>BLINKER then uses <code>blinks</code>, <code>blinkFits</code>, and <code>blinkProperties</code> to compute overall blink statistics for the data set and stores the results in <code>blinkStatistics</code>.  If <code>verbose</code> is true, BLINKER outputs a summary of these statistics to the command window.</p>
 
 <h1>
 <a id="blinker-structures" class="anchor" href="#blinker-structures" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>BLINKER structures</h1>
