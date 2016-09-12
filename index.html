@@ -614,7 +614,7 @@ Length of the blink in seconds calculated as the difference between <code>rightB
 <strong><code>peakTimeBlink</code></strong><br>
 <strong><code>peakTimeTent</code></strong><br>
 <strong><code>peakMaxBlink</code></strong><br>
-<strong><code>peakMaxTent</code></strong>  </p>
+<strong><code>penitential</code></strong>  </p>
 
 <h2>
 <a id="the-blinkstatistics-structure" class="anchor" href="#the-blinkstatistics-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="blinkStatistics">The blinkStatistics structure</a>
@@ -623,26 +623,29 @@ Length of the blink in seconds calculated as the difference between <code>rightB
 <p>The <code>blinkProperties</code> structure array holds basic ocular characteristics for a set of potential blinks. The <code>extractBlinkProperties</code> function returns this structure for the potential blinks of the used signal that meet specific quality criteria. Values that are undefined, have value <code>NaN</code>. header = {'mean', 'median', 'std', 'mad', 'goodMean', 'goodMedian', ...
                'goodStd', 'goodMad'};The fields are:</p>
 
-<p>'fileName', nan, ...
-**`subjectID', nan, 
-'task', nan, 
-'uniqueName', nan, ...</p>
-
-<p>'srate', nan, 
-'startTime', nan, ...</p>
-
-<p>'usedNumber', nan, 
-'usedLabel', nan, 
-'status', nan, ...
-            'seconds', nan, 
-'numberBlinks', nan, 
-'numberGoodBlinks', nan, ... ...</p>
-
-<p>'goodRatio', nan, 
-'header', nan, ...
-            'pAVRZ', nan, 'nAVRZ', nan, 'durationZ', nan, ...
-            'durationB', nan, 'durationT', nan, ...
-            'durationHZ', nan, 'durationHB', nan, 'blinksPerMin', nan);</p>
+<p><strong><code>blinksPerMin</code></strong><br>
+Blinks per minute for the dataset.
+<strong><code>durationB</code></strong><br>
+<strong><code>durationHB</code></strong><br>
+<strong><code>durationHZ</code></strong><br>
+<strong><code>durationT</code></strong><br>
+<strong><code>durationZ</code></strong><br>
+<strong><code>fileName</code></strong><br>
+<strong><code>goodRatio</code></strong><br>
+<strong><code>header</code></strong><br>
+<strong><code>numberBlinks</code></strong><br>
+<strong><code>numberGoodBlinks</code></strong><br>
+<strong><code>nAVRZ</code></strong><br>
+<strong><code>pAVRZ</code></strong><br>
+<strong><code>seconds</code></strong><br>
+<strong><code>srate</code></strong><br>
+<strong><code>startTime</code></strong><br>
+<strong><code>status</code></strong><br>
+<strong><code>subjectID</code></strong><br>
+<strong><code>task</code></strong><br>
+<strong><code>uniqueName</code></strong><br>
+<strong><code>usedLabel</code></strong><br>
+<strong><code>usedNumber</code></strong>  </p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/VisLab/EEG-Blinks">EEG-Blinks</a> is maintained by <a href="https://github.com/VisLab">VisLab</a>.</span>
