@@ -592,13 +592,27 @@ An integer giving the frame number of the intersection of the right tent line wi
 Length of the blink in seconds calculated as the difference between <code>rightBase</code> and <code>leftBase</code>.</p>
 
 <p><strong><code>durationZero</code></strong><br>
-<strong><code>durationTent</code></strong><br>
-<strong><code>durationHalfBase</code></strong><br>
-<strong><code>durationHalfZero</code></strong><br>
-<strong><code>interBlinkMaxAmp</code></strong><br>
-<strong><code>interBlinkMaxVelBase</code></strong><br>
-<strong><code>interBlinkMaxVelZero</code></strong><br>
-<strong><code>negAmpVelRatioBase</code></strong><br>
+Length of the blink in seconds calculated as the difference between <code>rightZero</code> and <code>leftZero</code>.  </p>
+
+<p><strong><code>durationTent</code></strong><br>
+Length of the blink in seconds calculated as the difference between <code>rightZero</code> and <code>leftZero</code>.  </p>
+
+<p><strong><code>durationHalfBase</code></strong><br>
+Length of the blink in seconds calculated as the difference between the frame marking the left half base amplitude and the first intersection of the horizontal line drawn from the blink value at that point to the down stroke of the blink.</p>
+
+<p><strong><code>durationHalfZero</code></strong><br>
+Length of the blink in seconds calculated as the difference between the frame marking the left half zero amplitude and the first intersection of the horizontal line drawn from the blink value at that point to the down stroke of the blink.</p>
+
+<p><strong><code>interBlinkMaxAmp</code></strong><br>
+Length of the interval in seconds between successive blink peaks.</p>
+
+<p><strong><code>interBlinkMaxVelBase</code></strong><br>
+Length of the interval in seconds between the maximum positive velocity (calculated from <code>leftBase</code>) of one blink and the next one. </p>
+
+<p><strong><code>interBlinkMaxVelZero</code></strong><br>
+Length of the interval in seconds between the maximum positive velocity (calculated from <code>leftZero</code>) of one blink and the next one. </p>
+
+<p><strong><code>negAmpVelRatioBase</code></strong><br>
 <strong><code>posAmpVelRatioBase</code></strong><br>
 <strong><code>negAmpVelRatioZero</code></strong><br>
 <strong><code>posAmpVelRatioZero</code></strong><br>
@@ -624,8 +638,10 @@ Length of the blink in seconds calculated as the difference between <code>rightB
                'goodStd', 'goodMad'};The fields are:</p>
 
 <p><strong><code>blinksPerMin</code></strong><br>
-Blinks per minute for the dataset.
-<strong><code>durationB</code></strong><br>
+Blinks per minute for the dataset.</p>
+
+<p><strong><code>durationB</code></strong><br>
+Length
 <strong><code>durationHB</code></strong><br>
 <strong><code>durationHZ</code></strong><br>
 <strong><code>durationT</code></strong><br>
