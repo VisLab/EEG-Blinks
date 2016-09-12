@@ -328,7 +328,7 @@ Number of robust standard deviations above the mean the signal for potential bli
 The range of blink amplitude ratios allowed for candidate signals.<br>
 [Two-element row vector of positive values (default: [3, 50]).] </p>
 
-<p><strong><code>correlationThresholdBottom</code></strong>
+<p><strong><code>correlationThresholdBottom</code></strong><br>
 Minimum correlation of blink with linear fits in order to be considered a "good" blink.<br>
 [Non negative scalar between 0 and 1 (Default: 0.90).]</p>
 
@@ -336,7 +336,7 @@ Minimum correlation of blink with linear fits in order to be considered a "good"
 The minimum value of <code>goodRatio</code> needed for a signal to be considered non-marginal.
 [Non negative scalar (default: 0.7).]</p>
 
-<p><strong><code>minGoodBlinks</code></strong>
+<p><strong><code>minGoodBlinks</code></strong><br>
 The minimum number of good blinks a signal must have to be considered a candidate signal.<br>
 [Non negative scalar (default: 10).]</p>
 
@@ -427,9 +427,9 @@ the potential blinks in the candidate signals.
  Sampling rate in Hz of the signal.</p>
 
 <p><strong><code>startTime</code></strong><br>
- Double value giving the days (to within) from xxx.</p>
+ Double value giving the days (to within) from January 0, 0000.</p>
 
-<p><strong><code>status</code></strong>
+<p><strong><code>status</code></strong><br>
  String indicated the status of the blink calculation. A value of "success" means that blinks were successfully computed, although the results may be marginal. A value of "failed" means that the algorithm could not extract blinks from any of the candidate signals provide.</p>
 
 <p><strong><code>subjectID</code></strong><br>
@@ -510,11 +510,11 @@ The frame number of the first maximum amplitude of this blink.
 A numeric value giving the maximum value of the blink.</p>
 
 <p><strong><code>leftOuter</code></strong><br>
-The frame number of the left outer reach of the blink.
+The frame number of the left outer reach of the blink (defined as the largest of 1 or the frame of the previous blink maximum).<br>
 [A positive numeric value.]</p>
 
 <p><strong><code>rightOuter</code></strong><br>
-The frame number of the right outer reach of the blink.
+The frame number of the right outer reach of the blink (defined as the smallest of the last frame or the frame of the next blink maximum).<br>
 [A positive numeric value.]</p>
 
 <p><strong><code>leftZero</code></strong><br>
@@ -541,7 +541,8 @@ The coordinate of the signal halfway (in height) between the blink maximum and t
 The coordinate of the signal halfway (in height) between the blink maximum and the right base value.<br>
 [A positive numeric value.]</p>
 
-<p><strong><code>leftZeroHalfHeight</code></strong>  </p>
+<p><strong><code>leftZeroHalfHeight</code></strong><br>
+The coordinate of the signal halfway (in height) between the blink maximum and the left zero value.  </p>
 
 <p><strong><code>rightZeroHalfHeight</code></strong>  </p>
 
@@ -550,11 +551,10 @@ The coordinate of the signal halfway (in height) between the blink maximum and t
 <p><strong><code>rightRange</code></strong>  </p>
 
 <p><strong><code>leftSlope</code></strong><br>
-[A negative value or NaN if the tent line doesn't exist.]</p>
+The slope of the left tent line or NaN if the tent line doesn't exist.</p>
 
 <p><strong><code>rightSlope</code></strong><br>
-Slope of the right blink tent line.
-[A negative value or NaN if the tent line doesn't exist.]</p>
+Slope of the right blink tent line or NaN if the tent line doesn't exist.</p>
 
 <p><strong><code>averLeftVelocity</code></strong>  </p>
 
