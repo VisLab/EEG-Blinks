@@ -20,7 +20,7 @@
 
     <section class="main-content">
       <h1>
-<a id="introduction-to-the-blinker-pipeline" class="anchor" href="#introduction-to-the-blinker-pipeline" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction to the BLINKER pipeline</h1>
+<a id="introduction-to-blinker" class="anchor" href="#introduction-to-blinker" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction to BLINKER</h1>
 
 <p>BLINKER and associated tools are an automated pipeline for detecting eye blinks in EEG and calculating various properties of these blinks. BLINKER takes as input an arbitrary number of signals, which can include ordinary EEG channels, EOG channels and independent components (IC), determines which signals have acceptable blinks and determining the optimal signal for determining blinks. BLINKER also has facilities for merging blinks calculating from different source signals and for plotting individual blinks to facilitate manual evaluation and synchronization of EEG with video and eye tracking. BLINKER is designed to be run in a completely automated way. </p>
 
@@ -657,11 +657,22 @@ Length
 <strong><code>srate</code></strong><br>
 <strong><code>startTime</code></strong><br>
 <strong><code>status</code></strong><br>
-<strong><code>subjectID</code></strong><br>
-<strong><code>task</code></strong><br>
-<strong><code>uniqueName</code></strong><br>
-<strong><code>usedLabel</code></strong><br>
-<strong><code>usedNumber</code></strong>  </p>
+String indicated the status of the blink calculation. A value of "success" means that blinks were successfully computed, although the results may be marginal. A value of "failed" means that the algorithm could not extract blinks from any of the candidate signals provide.</p>
+
+<p><strong><code>subjectID</code></strong><br>
+String identifying the subject from which the dataset was recorded. This field is used for display purposes and for combining datasets taken from a single subject in one session to improve estimates of blink maximum distribution.</p>
+
+<p><strong><code>task</code></strong><br>
+String identifying the task performed by the subject for this dataset.</p>
+
+<p><strong><code>uniqueName</code></strong><br>
+String uniquely identifying this data set.</p>
+
+<p><strong><code>usedLabel</code></strong><br>
+The <code>signalLabel</code> of the "best" signal.</p>
+
+<p><strong><code>usedNumber</code></strong><br>
+The <code>signalNumber</code> of the "best" signal.</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/VisLab/EEG-Blinks">EEG-Blinks</a> is maintained by <a href="https://github.com/VisLab">VisLab</a>.</span>
