@@ -567,11 +567,14 @@ The coordinate of the signal halfway (in height) between the blink maximum and t
 <p><strong><code>leftZeroHalfHeight</code></strong><br>
 The coordinate of the signal halfway (in height) between the blink maximum and the left zero value.  </p>
 
-<p><strong><code>rightZeroHalfHeight</code></strong>  </p>
+<p><strong><code>rightZeroHalfHeight</code></strong><br>
+The coordinate of the signal halfway (in height) between the blink maximum and the right zero value.  </p>
 
-<p><strong><code>leftRange</code></strong>  </p>
+<p><strong><code>leftRange</code></strong><br>
+A two-element row vector indication the interval in frames between 10% above the <code>leftBase</code> and 10% below the blink maximum.</p>
 
-<p><strong><code>rightRange</code></strong>  </p>
+<p><strong><code>rightRange</code></strong><br>
+A two-element row vector indication the interval in frames between 10% below the blink maximum and 10% above the <code>rightBase</code>.</p>
 
 <p><strong><code>leftSlope</code></strong><br>
 The slope of the left tent line or NaN if the tent line doesn't exist.</p>
@@ -579,9 +582,11 @@ The slope of the left tent line or NaN if the tent line doesn't exist.</p>
 <p><strong><code>rightSlope</code></strong><br>
 Slope of the right blink tent line or NaN if the tent line doesn't exist.</p>
 
-<p><strong><code>averLeftVelocity</code></strong>  </p>
+<p><strong><code>averLeftVelocity</code></strong><br>
+The velocity as estimated by the left tent line.</p>
 
-<p><strong><code>averRightVelocity</code></strong>  </p>
+<p><strong><code>averRightVelocity</code></strong><br>
+The velocity as estimated by the right tent line.</p>
 
 <p><strong><code>leftR2</code></strong><br>
 The correlation of the left tent line with the 80% blink upstroke. 
