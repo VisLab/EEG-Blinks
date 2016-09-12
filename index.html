@@ -312,7 +312,7 @@ Number of robust standard deviations above the mean the signal for potential bli
 
 <p>The <code>maxValue</code> the maximum value in the interval for this blink occurs at frame 100786 (the <code>maxFrame</code>), which is 393.695 seconds from the beginning of the data set. If two or more points in the interval achieve the maximum value, the <code>maxFrame</code> is the first. The <code>upStroke</code> is the interval from the last zero crossing before <code>maxFrame</code> to the <code>maxFrame</code>.  The <code>downStroke</code> is the interval after the <code>maxFrame</code> to the first zero crossing after <code>maxFrame</code>. The <code>leftBase</code> (frame 100755 at time 393.57 seconds for the example) marks the start of the <code>upStroke</code>, and the <code>rightBase</code> marks the end of the <code>downStroke</code>. Two other landmarks of interest are the <code>leftZero</code>, which is the frame at which the <code>upStroke</code> crosses 0 and the <code>rightZero</code>, which is the frame at which the <code>downStroke</code> crosses zero. </p>
 
-<p>BLINKER computes for each potential blink in a candidate signal the best linear fits for the inner 80% of the up-stroke and down-stroke, respectively. The quality (R2) of the correlation of these lines (denoted by <code>leftR2</code> and <code>rightR2</code>, respectively) with the actual blink trajectory is a measure of the closeness of the potential blink to a stereotypical blink. </p>
+<p>BLINKER computes for each potential blink in a candidate signal the best linear fits for the inner 80% of the up-stroke and down-stroke, respectively. The quality (R<sup>2</sup>) of the correlation of these lines (denoted by <code>leftR2</code> and <code>rightR2</code>, respectively) with the actual blink trajectory is a measure of the closeness of the potential blink to a stereotypical blink. </p>
 
 <p>BLINKER computes the intersection of these fit two lines (the <code>yIntersect</code> at frame <code>xIntersect</code>) and displays the perpendicular line using a thin black line. This tent peak point is slightly forward of and above the maximum of the actual blink trajectory (the blink peak) in a stereotypical blink. The values left and right R<sup>2</sup>, as well as the relative position of the tent peak to the blink peak, provide simple tests of the how closely the blink resembles a stereotypical blink. </p>
 
@@ -347,23 +347,23 @@ The minimum number of good blinks a signal must have to be considered a candidat
 <p>The distribution of blink maximum amplitudes is typically bell-shaped, as show in the figure below.<br>
 <img src="./images/Mission021S2007X2.png" alt="Example Show Max Distribution"> </p>
 
-<p>The green line shows the distribution of maximum amplitudes of all potential blinks, and the thick light gray line shows the distribution of maximum amplitudes of the “good” blinks (up-stroke and down-stroke R2 &gt; 0.90). The medium thick gray line shows the distribution of maximum amplitudes of the “better” blinks (up-stroke and down-stroke R2 &gt; 0.95), and the black line shows the distribution of maximum amplitudes of the “best” blinks (up-stroke and down-stroke R2 &gt; 0.98). The magenta line shows the blinks selected by BLINKER.  These “used” blinks have up-stroke and down-stroke R2 &gt; 0.90 and satisfy the maximum amplitude distribution criterion and the pAVR criterion.  These later criteria allow BLINKER to separate normal blinks from eye movements. </p>
+<p>The green line shows the distribution of maximum amplitudes of all potential blinks, and the thick light gray line shows the distribution of maximum amplitudes of the “good” blinks (up-stroke and down-stroke R<sup>2</sup> &gt; 0.90). The medium thick gray line shows the distribution of maximum amplitudes of the “better” blinks (up-stroke and down-stroke R<sup>2</sup> &gt; 0.95), and the black line shows the distribution of maximum amplitudes of the “best” blinks (up-stroke and down-stroke R<sup>2</sup> &gt; 0.98). The magenta line shows the blinks selected by BLINKER.  These “used” blinks have up-stroke and down-stroke R<sup>2</sup> &gt; 0.90 and satisfy the maximum amplitude distribution criterion and the pAVR criterion.  These later criteria allow BLINKER to separate normal blinks from eye movements. </p>
 
-<p>The maximum amplitude distribution criterion enforces the bell-shaped maximum distribution that normal blinks have around the median of the “best” blinks. This criteria eliminates blinks whose R2 is low and whose amplitudes are far from the best blink median. By default, BLINKER eliminates “best blinks” more than five robust standard deviations from the median and “good” blinks more than two robust standard deviations away from this median. Here we define the robust standard deviation as 1.4826 times the median absolute deviation from the median. Fig. 3 displays the median of the “best” blinks with a gray vertical line and the locations that are two robust standard deviations from this median with dashed gray lines. </p>
+<p>The maximum amplitude distribution criterion enforces the bell-shaped maximum distribution that normal blinks have around the median of the “best” blinks. This criteria eliminates blinks whose R<sup>2</sup> is low and whose amplitudes are far from the best blink median. By default, BLINKER eliminates “best blinks” more than five robust standard deviations from the median and “good” blinks more than two robust standard deviations away from this median. Here we define the robust standard deviation as 1.4826 times the median absolute deviation from the median. Fig. 3 displays the median of the “best” blinks with a gray vertical line and the locations that are two robust standard deviations from this median with dashed gray lines. </p>
 
 <p>The pAVR criterion captures the difference the sharp rising edge of saccades and the more curved rise of normal blinks. We have found empirically that blink candidates with pAVR &lt; 3 do not correspond to normal blinks, but rather saccades and certain short, fast eye movements.  </p>
 
 <p><strong>Parameters:</strong> </p>
 
-<p><strong><code>pAVRThreshold</code></strong>
-The minimum value of pAVR needed to be a blink rather than an eye movement.
+<p><strong><code>pAVRThreshold</code></strong><br>
+The minimum value of pAVR needed to be a blink rather than an eye movement.<br>
 [Positive scalar (default: 3).]</p>
 
-<p><strong><code>correlationThresholdTop</code></strong>
+<p><strong><code>correlationThresholdTop</code></strong><br>
 Minimum correlation of blink with linear fits in order to be considered a "best" blink.<br>
 [Non negative scalar between 0 and 1 (Default: 0.98).]</p>
 
-<p><strong><code>correlationThresholdBottom</code></strong>
+<p><strong><code>correlationThresholdBottom</code></strong><br>
 Minimum correlation of blink with linear fits in order to be considered a "good" blink.<br>
 [Non negative scalar between 0 and 1 (Default: 0.90).]</p>
 
@@ -371,19 +371,17 @@ Minimum correlation of blink with linear fits in order to be considered a "good"
 Minimum correlation of blink with linear fits in order to be considered a "better" blink.<br>
 [Non negative scalar between 0 and 1 (Default: 0.95).]</p>
 
-<pre><code>'zThresholds', ...
- getRules([0.90, 2; 0.98, 5], {'numeric'}, {'positive', 'ncols', 2}, ...
- 'Rows contain correlation and max z-score threshold pairs for determining good blinks'), ...
-</code></pre>
+<p><strong><code>zThresholds</code></strong><br>
+Correlation and max z-score amplitude threshold pairs used for determining good blinks.<br>
+[Non negative vector with 2 columns and at least two rows. (Default: [0.90, 2; 0.98, 5].)]</p>
 
 <h2>
 <a id="select-the-best-candidate-signal-as-the-used-signal" class="anchor" href="#select-the-best-candidate-signal-as-the-used-signal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Used">Select the "best" candidate signal as the "used" signal.</a>
 </h2>
 
 <p><strong><code>keepSignals</code></strong>
-     getRules(false, {'logical'}, {}, ...
-       ['Keep signals that pass the blink amplitude ratio test' ...
-       ' regardless of good ratio (for combination)']),  ...  </p>
+Flag indicating that BLINKER should retain all candidate signals that pass the blink amplitude ratio test regardless of their good ratios. This setting is useful when multiple datasets for the same session are to be combined downstream to determine the "best" signal.<br>
+[Logical (default: false).] </p>
 
 <h2>
 <a id="calculate-the-blink-properties-and-blink-shapes-for-the-used-signal" class="anchor" href="#calculate-the-blink-properties-and-blink-shapes-for-the-used-signal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="Shapes">Calculate the blink properties and blink shapes for the "used" signal.</a>
@@ -394,62 +392,57 @@ Minimum correlation of blink with linear fits in order to be considered a "bette
 </h2>
 
 <p><strong><code>shutAmpFraction</code></strong>
-      getRules(0.90, {'numeric'}, {'scalar', 'nonnegative', '&lt;=', 1}, ...
-       'Fraction of maximum amplitude to reach for time shut'),  ...</p>
-
-<p><strong><code>zThresholds</code></strong>
-     getRules([0.90, 2; 0.98, 5], {'numeric'}, {'positive', 'ncols', 2}, ...
-     'Rows contain correlation and max z-score threshold pairs for determining good blinks'), ...</p>
+Fraction of the maximum blink amplitude to reach above zero to consider the eye shut.<br>
+[Scalar value in 0, 1.]</p>
 
 <p><strong><code>ICSimilarityThreshold</code></strong>
-     getRules(0.85, {'numeric'}, {'nonnegative', '&lt;=', 1}, ...
-     'How similar and IC has to be to an eye IC to be a candidate'), ...</p>
+Similarity threshold used by eyeCatch to designate an IC as a candidate blink IC.<br>
+[Scalar value in 0, 1.]</p>
 
 <p><strong><code>ICFOMThreshold</code></strong>
 Mean difference in IC scalp map amplitude of front versus rear hemispheres (used to select blink ICs)
-[Scalar numeric positive (default: 1)]</p>
+[Scalar numeric positive (default: 1).]</p>
 
 <h1>
 <a id="blinker-structures" class="anchor" href="#blinker-structures" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>BLINKER structures</h1>
 
-<p>![BLINKER menu]</p>
+<p>BLINKER stores blink information in four major structures: <a href="#blinks">blinks</a>, <a href="#blinkFits">blinkFits</a>, <a href="#blinkProperties">blinkProperties</a>, and <a href="#blinkStatistics">blinkStatistics</a>. This section describes these structures in more detail.</p>
 
 <h2>
 <a id="the-blinks-structure" class="anchor" href="#the-blinks-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="blinks">The blinks structure</a>
 </h2>
 
 <p>The <code>blinks</code> structure holds basic information about the dataset, the candidate signals and the positions of
-the potential blinks in the candidate signals. </p>
-
-<p><strong><code>fileName</code></strong>
- String with the full path name of the file from which the blinks were computed</p>
-
-<p><strong><code>srate</code></strong>
- Sampling rate in Hz of the signal</p>
-
-<p><strong><code>subjectID</code></strong>
- String identifying the subject from which the dataset was recorded. This field is used for display purposes and for combining datasets taken from a single subject in one session to improve estimates of blink maximum distribution.</p>
-
-<p><strong><code>experiment</code></strong>
+the potential blinks in the candidate signals. 
+<strong><code>experiment</code></strong><br>
  String identifying the experiment or data collection that this dataset is part of.</p>
 
-<p><strong><code>uniqueName</code></strong>
- String uniquely identifying this dataset within the context of the analysis. Usually this will be a combination of the experiment, subject, task, replicate, and other identifying information. This string is used for display purposes and for lookup of datasets within a combined analysis.</p>
+<p><strong><code>fileName</code></strong><br>
+ String with the full path name of the file from which the blinks were computed.</p>
 
-<p><strong><code>task</code></strong>
- String identifying the task performed by the subject for this dataset.</p>
-
-<p><strong><code>startTime</code></strong>
- Double value giving the days (to within) from xxx.</p>
-
-<p><strong><code>signalData</code></strong>
+<p><strong><code>signalData</code></strong><br>
  Structure with details of the candidate signals and potential blink positions.</p>
 
-<p><strong><code>usedSignal</code></strong>
- Integer identifying the signal that is selected as the "best" signal for blinks. Usually this will be a channel number within the original dataset or the number of an IC within an independent component decomposition associated with the dataset. A negative value indicates that the results of the calculation were marginal and that the signal may not have captured the blinks reliability.</p>
+<p><strong><code>srate</code></strong><br>
+ Sampling rate in Hz of the signal.</p>
+
+<p><strong><code>startTime</code></strong><br>
+ Double value giving the days (to within) from xxx.</p>
 
 <p><strong><code>status</code></strong>
  String indicated the status of the blink calculation. A value of "success" means that blinks were successfully computed, although the results may be marginal. A value of "failed" means that the algorithm could not extract blinks from any of the candidate signals provide.</p>
+
+<p><strong><code>subjectID</code></strong><br>
+ String identifying the subject from which the dataset was recorded. This field is used for display purposes and for combining datasets taken from a single subject in one session to improve estimates of blink maximum distribution.</p>
+
+<p><strong><code>task</code></strong><br>
+ String identifying the task performed by the subject for this dataset.</p>
+
+<p><strong><code>uniqueName</code></strong><br>
+ String uniquely identifying this dataset within the context of the analysis. Usually this will be a combination of the experiment, subject, task, replicate, and other identifying information. This string is used for display purposes and for lookup of datasets within a combined analysis.</p>
+
+<p><strong><code>usedSignal</code></strong><br>
+ Integer identifying the signal that is selected as the "best" signal for blinks. Usually this will be a channel number within the original dataset or the number of an IC within an independent component decomposition associated with the dataset. A negative value indicates that the results of the calculation were marginal and that the signal may not have captured the blinks reliability.</p>
 
 <h3>
 <a id="the-signaldata-substructure-of-blinks" class="anchor" href="#the-signaldata-substructure-of-blinks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="signalData">The signalData substructure of blinks</a>
@@ -457,16 +450,24 @@ the potential blinks in the candidate signals. </p>
 
 <p>The <code>signalData</code> is a structure array containing information about candidate signals for the dataset. The individual fields are:</p>
 
-<p><strong><code>signalType</code></strong>
- String indicating the type of signal this is. Usually the <code>signalType</code> will indicate how the initial candidate signals were specified and will have a value 'SignalNumbers', 'SignalLabels', `ICs'. </p>
+<p><strong><code>bestMedian</code></strong><br>
+A positive value giving the median blink maximum amplitude of the best candidate blinks. These blinks must have
+left and right R^2 values at greater than <code>correlationThresholdTop</code> (0.98 by default).</p>
 
-<p><strong><code>signalNumber</code></strong>
-A unique integer identifier of the signal within the dataset as a whole (for example the channel number of the IC number.)
-[A positive integer.]</p>
+<p><strong><code>bestRobustStd</code></strong><br>
+A positive number giving the 1.486 times the median absolute deviation from the median (mad) of the best candidate blinks. These blinks must have left and right R^2 values at greater than <code>correlationThresholdTop</code> (0.98 by default).</p>
 
-<p><strong><code>signalLabel</code></strong>
-A unique identifier of the signal within the dataset as a whole (for example the channel label). BLINKER automatically creates labels for independent components: 'IC1', 'IC2', etc.
-[A string.]</p>
+<p><strong><code>blinkAmpRatio</code></strong><br>
+A positive value indicating the blink-amplitude ratio for this signal.</p>
+
+<p><strong><code>blinkPositions</code></strong><br>
+A 2 x n array with the frame numbers of the starts and ends of intervals defining the portion of the n potential blinks that exceeds the threshold. The blink maximum should be in this interval.</p>
+
+<p><strong><code>cutoff</code></strong><br>
+A positive value estimating the boundary between the blink maximum distributions of the "good" blink candidates and the other blink candidates. If this value is well away from the <code>bestMedian</code>, the dataset is likely to have  good separation between blinks and eye movements.</p>
+
+<p><strong><code>goodRatio</code></strong><br>
+A positive numeric value between 0 and 1 indicating the fraction of blinks whose maximum amplitude is within two robust standard deviations of the median of the best blinks that are "good" blinks. This is a measure of how badly eye movements confound the maximum amplitude distribution.</p>
 
 <p><strong><code>numberBlinks</code></strong><br>
 The number of potential blinks detected in this signal.
@@ -477,27 +478,19 @@ An integer giving the number of "good" potential blinks detected in this signal.
 left and right R^2 values at greater than <code>correlationThresholdBottom</code> (0.90 by default).
 [A nonnegative integer.]</p>
 
-<p><strong><code>blinkAmpRatio</code></strong><br>
-A positive value indicating the blink-amplitude ratio for this signal.</p>
-
-<p><strong><code>cutoff</code></strong><br>
-A positive value estimating the boundary between the blink maximum distributions of the "good" blink candidates and the other blink candidates. If this value is well away from the <code>bestMedian</code>, the dataset is likely to have  good separation between blinks and eye movements.</p>
-
-<p><strong><code>bestMedian</code></strong><br>
-A positive value giving the median blink maximum amplitude of the best candidate blinks. These blinks must have
-left and right R^2 values at greater than <code>correlationThresholdTop</code> (0.98 by default).</p>
-
-<p><strong><code>bestRobustStd</code></strong><br>
-A positive number giving the 1.486 times the median absolute deviation from the median (mad) of the best candidate blinks. These blinks must have left and right R^2 values at greater than <code>correlationThresholdTop</code> (0.98 by default).</p>
-
-<p><strong><code>goodRatio</code></strong><br>
-A positive numeric value between 0 and 1 indicating the fraction of blinks whose maximum amplitude is within two robust standard deviations of the median of the best blinks that are "good" blinks. This is a measure of how badly eye movements confound the maximum amplitude distribution.</p>
-
 <p><strong><code>signal</code></strong><br>
 The timeseries for this signal.</p>
 
-<p><strong><code>blinkPositions</code></strong><br>
-A 2 x n array with the frame numbers of the starts and ends of intervals defining the portion of the n potential blinks that exceeds the threshold. The blink maximum should be in this interval.</p>
+<p><strong><code>signalLabel</code></strong><br>
+A unique identifier of the signal within the dataset as a whole (for example the channel label). BLINKER automatically creates labels for independent components: 'IC1', 'IC2', etc.
+[A string.]</p>
+
+<p><strong><code>signalNumber</code></strong><br>
+A unique integer identifier of the signal within the dataset as a whole (for example the channel number of the IC number.)
+[A positive integer.]</p>
+
+<p><strong><code>signalType</code></strong><br>
+ String indicating the type of signal this is. Usually the <code>signalType</code> will indicate how the initial candidate signals were specified and will have a value 'SignalNumbers', 'SignalLabels', `ICs'. </p>
 
 <h2>
 <a id="the-blinkfits-structure" class="anchor" href="#the-blinkfits-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="blinkFits">The blinkFits structure</a>
