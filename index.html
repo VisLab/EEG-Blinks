@@ -659,16 +659,36 @@ The amplitude velocity ratio calculated using the tent-peak and the slope of the
 The amplitude velocity ratio calculated using the tent-peak and the slope of the left tent line.   </p>
 
 <p><strong><code>'timeShutBase</code></strong><br>
+Time in seconds that the blink is at least 90% of its amplitude from the <code>leftBase</code>.
 <strong><code>'timeShutZero</code></strong><br>
-<strong><code>timeShutTent</code></strong><br>
-<strong><code>closingTimeZero</code></strong><br>
-<strong><code>reopeningTimeZero</code></strong><br>
-<strong><code>closingTimeTent</code></strong><br>
-<strong><code>reopeningTimeTent</code></strong><br>
-<strong><code>peakTimeBlink</code></strong><br>
-<strong><code>peakTimeTent</code></strong><br>
-<strong><code>peakMaxBlink</code></strong><br>
-<strong><code>penitential</code></strong>  </p>
+Time in seconds that the blink is at least 90% of its amplitude from the <code>leftZero</code>.</p>
+
+<p><strong><code>timeShutTent</code></strong><br>
+TIme in seconds that the blink is at least 90% of the tent peak height.</p>
+
+<p><strong><code>closingTimeZero</code></strong><br>
+Time in seconds between the <code>leftZero</code> frame and the <code>maxFrame</code>.</p>
+
+<p><strong><code>reopeningTimeZero</code></strong><br>
+Time in seconds between the <code>maxFrame</code> and the <code>rightZero</code> frame.</p>
+
+<p><strong><code>closingTimeTent</code></strong><br>
+Time in seconds between the <code>LeftXIntercept</code> and the <code>xIntersect</code> frames that define the tent.</p>
+
+<p><strong><code>reopeningTimeTent</code></strong><br>
+Time in seconds between the <code>xIntersect</code> and the <code>RightXIntercept</code> frames that define the tent.</p>
+
+<p><strong><code>peakTimeBlink</code></strong><br>
+Time in seconds from the start of the file of the maximum of the blink.</p>
+
+<p><strong><code>peakTimeTent</code></strong><br>
+Time in seconds from the start of the file of the peak of the tent.</p>
+
+<p><strong><code>peakMaxBlink</code></strong><br>
+Maximum amplitude of the blink.</p>
+
+<p><strong><code>peakMaxTent</code></strong><br>
+Maximum height of the tent peak.</p>
 
 <h2>
 <a id="the-blinkstatistics-structure" class="anchor" href="#the-blinkstatistics-structure" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="blinkStatistics">The blinkStatistics structure</a>
