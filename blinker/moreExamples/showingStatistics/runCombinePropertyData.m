@@ -1,22 +1,22 @@
 %% Script to combine the blink properties of all datasets in a collection
 % This script is useful to computing overall histograms and distributions
 %% BCIT counts
-% experiment = 'BCITLevel0';
-% blinkDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
-% typeBlinks = 'AllUnrefNewBothBlinks';
-% excludedTasks = {};
-% propertiesDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
-% propertiesFile = 'BCITLevel0AllUnrefNewBothBlinksProperties.mat';
-% blinkDirInd = 'O:\ARL_Data\BCITBlinksNewRefactored\BCITLevel0AllUnrefNewBoth';
+experiment = 'BCITLevel0';
+blinkDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
+typeBlinks = 'AllUnrefNewBothBlinks';
+excludedTasks = {};
+propertiesDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
+propertiesFile = 'BCITLevel0AllUnrefNewBothBlinksProperties.mat';
+blinkDirInd = 'O:\ARL_Data\BCITBlinksNewRefactored\AllUnrefNewBoth';
 
 %% BCI2000 counts
-experiment = 'BCI2000';
-blinkDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';
-excludedTasks = {'EyesOpen', 'EyesClosed'};
-typeBlinks = 'AllMastNewBothCombined';
-propertiesFile = 'BCI2000AllMastNewBothCombinedProperties.mat';
-propertiesDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';
-blinkDirInd = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored\AllMastNewBothCombined';
+% experiment = 'BCI2000';
+% blinkDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';
+% excludedTasks = {'EyesOpen', 'EyesClosed'};
+% typeBlinks = 'AllMastNewBothCombined';
+% propertiesFile = 'BCI2000AllMastNewBothCombinedProperties.mat';
+% propertiesDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';
+% blinkDirInd = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored\AllMastNewBothCombined';
 
 %% Shooter counts
 % blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';

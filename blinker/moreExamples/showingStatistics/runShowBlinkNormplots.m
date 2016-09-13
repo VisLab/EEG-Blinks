@@ -23,9 +23,9 @@ experiments(4).summaryFile = 'ShooterAllMastNewBothCombinedSummary.mat';
 
 %% Load the summary files
 for k = 1:numExp
-    clear blinkSummary;
+    clear blinkStatistcs;
     load([experiments(k).summaryDir filesep experiments(k).summaryFile]);
-    experiments(k).blinkSummary = blinkSummary;
+    experiments(k).blinkSummary = blinkStatisticsSummary;
 end
 
 %% Set up the colors for the different datasets

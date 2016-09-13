@@ -6,17 +6,17 @@
 % propertiesFile = 'NCTU_LKAllMastNewBothProperties.mat';
 % histogramFile = 'NCTU_LKAllMastNewBothHistograms.mat';
 %% BCIT Examples
-% propertiesDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
-% propertiesFile = 'BCITLevel0AllUnrefNewBothBlinksProperties.mat';
-% histogramFile = 'BCITLevel0AllUnrefNewBothBlinksHistograms.mat';
+propertiesDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
+propertiesFile = 'BCITLevel0AllUnrefNewBothBlinksProperties.mat';
+histogramFile = 'BCITLevel0AllUnrefNewBothBlinksHistograms.mat';
 %% BCI2000 counts
 % propertiesFile = 'BCI2000AllMastNewBothCombinedProperties.mat';
 % propertiesDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';
 % histogramFile = 'BCI2000AllMastNewBothCombinedHistograms.mat';
 %% Shooter blinks
-propertiesDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
-propertiesFile = 'ShooterAllMastNewBothCombinedProperties.mat';
-histogramFile = 'ShooterAllMastNewBothCombinedHistograms.mat';
+% propertiesDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
+% propertiesFile = 'ShooterAllMastNewBothCombinedProperties.mat';
+% histogramFile = 'ShooterAllMastNewBothCombinedHistograms.mat';
 
 %% Read in the blink data for this collection
 load([propertiesDir filesep propertiesFile]);

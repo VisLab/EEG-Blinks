@@ -1,18 +1,18 @@
 %% Calculate the blink duration statistics from a property summary file
 % Run a script like runCombinePropertyData first to get the combined
-% property file
+% property file.
 
 %% NCTU blinks
 % propertiesDir = 'O:\ARL_Data\NCTU\NCTUBlinksNewRefactored';
 % propertiesFile = 'NCTU_LKAllMastNewBothProperties.mat';
 
 %% BCIT Examples
-% propertiesDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
-% propertiesFile = 'BCITLevel0AllUnrefNewBothBlinksProperties.mat';
+propertiesDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
+propertiesFile = 'BCITLevel0AllUnrefNewBothBlinksProperties.mat';
 
 %% BCI2000 counts
-propertiesFile = 'BCI2000AllMastNewBothCombinedProperties.mat';
-propertiesDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';
+% propertiesFile = 'BCI2000AllMastNewBothCombinedProperties.mat';
+% propertiesDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';
 
 %% Shooter blinks
 % propertiesDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
