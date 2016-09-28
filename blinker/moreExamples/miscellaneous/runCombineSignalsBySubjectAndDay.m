@@ -27,7 +27,7 @@ fileListName = 'ShooterFileList.mat';
 % fileListName = 'BCI2000FileList.mat';
 
 %% Read in the files and make the directories
-typeBlinksCombined = [typeBlinks 'Combined'];
+typeBlinksCombined = [typeBlinks 'CombinedWithDate'];
 blinkIndir = [blinkDir filesep typeBlinks];
 blinkOutdir = [blinkDir filesep typeBlinksCombined];
 if ~exist(blinkOutdir, 'dir')
@@ -39,12 +39,12 @@ blinkFileList = [blinkDir filesep fileListName];
 load(blinkFileList);
 
 %% Calculate the remap
-[blinkRemap, signalMap] = getRemapBySubject(blinkIndir, blinkFiles, typeBlinks, ...
+[blinkRemap, signalMap] = getRemapBySubjectAndDay(blinkIndir, blinkFiles, typeBlinks, ...
     excludedTasks, correlationTop, correlationBottom, cutoffRatioThreshold);
 
 %% Now remap
-combinedFile = [experiment 'BlinksNew' typeBlinks 'CombinedMaps.mat'];
+combinedFile = [experiment 'BlinksNew' typeBlinks 'CombinedMapsWithDate.mat'];
 save ([blinkDir filesep combinedFile], 'blinkRemap', 'signalMap', '-v7.3');
 
 %% Now remap
-%remapBySubject(blinkIndir, blinkOutdir, blinkRemap);
+remapBySubjectAndDay(blinkIndir, blinkOutdir, blinkRemap);

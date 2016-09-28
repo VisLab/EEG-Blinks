@@ -1,7 +1,8 @@
-function [blinkRemap, signalMap] = getRemapBySubject(blinkIndir, blinkFiles, ...
+function [blinkRemap, signalMap] = getRemapBySubjectAndDay(blinkIndir, blinkFiles, ...
     typeBlinks, excludedTasks, correlationTop, correlationBottom, cutoffRatioThreshold)
+
 %% Calculate blinkRemap structure to select right signal based on amplitude
-%  using the subject for remap information
+% using the subject and day for the combination
 %
 % Parameters
 %    blinkIndir     directory of blink structures to be combined
@@ -18,30 +19,53 @@ function [blinkRemap, signalMap] = getRemapBySubject(blinkIndir, blinkFiles, ...
 %    signalMap   -  channel number for subject
 %   
 
-%% Set up the subject and task masks
-    subjectIDs = {blinkFiles.subjectID};
-    tasks = {blinkFiles.task};
-    taskMask = true(size(subjectIDs));
-    for k = 1:length(excludedTasks)
-        taskMask = taskMask & ~strcmpi(tasks, excludedTasks{k});
-    end;
-    uniqueSubjects = unique(subjectIDs);
+%% Set up the subject, task and day masks
+subjectIDs = {blinkFiles.subjectID};
+tasks = {blinkFiles.task};
+startDates = {blinkFiles.startDate};
+taskMask = true(size(subjectIDs));
+for k = 1:length(excludedTasks)
+    taskMask = taskMask & ~strcmpi(tasks, excludedTasks{k});
+end;
+uniqueSubjects = unique(subjectIDs);
+uniqueDays = unique(startDates);
 
-    %% Create the remap structure for the subjects
-    blinkRemap(length(uniqueSubjects)) = getRemapStructure();
-    for k = 1:length(uniqueSubjects)-1
-        blinkRemap(k) = blinkRemap(length(uniqueSubjects));
-    end
+%% Unique subject map gives the start dates of the available items
+uniqueSubjectMap = containers.Map('KeyType', 'char', 'ValueType', 'any');
+totalCombinations = 0;
+for k = 1:length(uniqueSubjects)
+    thisSubjectMask = strcmpi(subjectIDs, uniqueSubjects{k});
+    theseStartDates = unique(startDates(thisSubjectMask));
+    totalCombinations = totalCombinations + length(theseStartDates);
+    uniqueSubjectMap(uniqueSubjects{k}) = theseStartDates;
+end
 
-    %% Now process to compute the remap
-    for k = 1:length(uniqueSubjects)
-        fprintf('Processing subject %s\n', uniqueSubjects{k});
-        blinkRemap(k).subjectID = uniqueSubjects{k};
-        theseTasks = strcmpi(subjectIDs, uniqueSubjects{k}) & taskMask;
+%% Create the remap structure for the subjects
+blinkRemap(totalCombinations) = getRemapStructure();
+for k = 1:totalCombinations-1
+    blinkRemap(k) = blinkRemap(length(uniqueSubjects));
+end
+
+%% Now process to compute the remap
+kN = 0;   % Keeps count of current remap
+for k = 1:length(uniqueSubjects)
+    thisSubject = uniqueSubjects{k};
+    fprintf('\nProcessing subject %s\n', thisSubject);
+    theseDates = uniqueSubjectMap(thisSubject);
+    for kD = 1:length(theseDates)
+        kN = kN + 1;
+        thisDate = theseDates{kD};
+        fprintf('     Date: %s\n', thisDate);
+        blinkRemap(kN).subjectID = thisSubject;
+        blinkRemap(kN).startDate = thisDate;
+        theseTasks = strcmpi(subjectIDs, thisSubject) & ...
+                             strcmpi(startDates, thisDate) & taskMask;
         theseBlinkFiles = blinkFiles(theseTasks);
         blinkStructures = cell(length(theseBlinkFiles), 1);
         signalMap = containers.Map('KeyType', 'char', 'ValueType', 'any');
         blinkIndices = zeros(length(theseBlinkFiles) + 1, 1);
+        
+        %% Find the blinkStructures for this subject and date
         for n = 1:length(blinkStructures)
             try
                 blinks = []; blinkFits = []; blinkProperties =[]; params = []; %#ok<*NASGU>
@@ -73,7 +97,7 @@ function [blinkRemap, signalMap] = getRemapBySubject(blinkIndir, blinkFiles, ...
                 signalMap(sData(m).signalLabel) = thisList;
             end
         end
-
+             
         %% Now consolidate the blinks and compute the distributions
         theKeys = keys(signalMap);
         blinkRemap(k).signalLabels = theKeys;
@@ -97,12 +121,12 @@ function [blinkRemap, signalMap] = getRemapBySubject(blinkIndir, blinkFiles, ...
                 sData = blinkStructures{j}.signalData;
                 indices = cellfun(@double, {sData.signalNumber});
                 pos = find(indices == thisList(j), 1, 'first');
-
+                
                 blinkFits = fitBlinks(sData(pos).signal, sData(pos).blinkPositions);
                 if isempty(blinkFits)
                     continue;
                 end
-
+                
                 %% Now calculate the cutoff ratios
                 maxValues = cellfun(@double, {blinkFits.maxValue});
                 leftR2 = cellfun(@double, {blinkFits.leftR2});
@@ -113,8 +137,8 @@ function [blinkRemap, signalMap] = getRemapBySubject(blinkIndir, blinkFiles, ...
                 goodMask = leftR2 >= correlationBottom & ...
                     rightR2 >= correlationBottom & ~indicesNaN;
                 if length(bestMask) ~= length(maxValues)
-%                     fprintf('Warning %s does not match top mask %d all %d\n', ...
-%                         theseBlinks(j).fileName, length(bestMask), length(maxValues));
+                    %                     fprintf('Warning %s does not match top mask %d all %d\n', ...
+                    %                         theseBlinks(j).fileName, length(bestMask), length(maxValues));
                     continue;
                 end
                 maxValues = maxValues(~indicesNaN);
@@ -148,7 +172,7 @@ function [blinkRemap, signalMap] = getRemapBySubject(blinkIndir, blinkFiles, ...
             cutoffs(n) = (bestMedians(n)*worstRobustStds + ...
                 worstMedians*bestRobustStds(n))/...
                 (bestRobustStds(n) + worstRobustStds);
-
+            
             all = sum(combinedMaxValues <= bestMedians(n) + 2*bestRobustStds(n) & ...
                 combinedMaxValues >= bestMedians(n) - 2*bestRobustStds(n));
             if all == 0
@@ -159,54 +183,56 @@ function [blinkRemap, signalMap] = getRemapBySubject(blinkIndir, blinkFiles, ...
                     sum(goodValues <= bestMedians(n) + 2*bestRobustStds(n) & ...
                     goodValues >= bestMedians(n) - 2*bestRobustStds(n))/all;
             end
-
+            
             %% Now calculate the ratios of good blinks to all blinks
             numberBlinks(n) = numValues;
         end
-        blinkRemap(k).cutoffs = cutoffs;
-        blinkRemap(k).bestMedians = bestMedians;
-        blinkRemap(k).bestRobustStds = bestRobustStds;
-        blinkRemap(k).goodRatios = goodRatios;
-        blinkRemap(k).numberBlinks = numberBlinks;
-        blinkRemap(k).goodCounts = goodCounts;
         
-
+        blinkRemap(kN).cutoffs = cutoffs;
+        blinkRemap(kN).bestMedians = bestMedians;
+        blinkRemap(kN).bestRobustStds = bestRobustStds;
+        blinkRemap(kN).goodRatios = goodRatios;
+        blinkRemap(kN).numberBlinks = numberBlinks;
+        blinkRemap(kN).goodCounts = goodCounts;
+        
         cutoffMask = goodRatios >= cutoffRatioThreshold;
         if sum(cutoffMask) > 0
             goodCandidates = goodCounts(cutoffMask);
             goodKeys = theKeys(cutoffMask);
             [~, maxInd] = max(goodCandidates);
-            blinkRemap(k).usedSignal = goodKeys{maxInd};
-            blinkRemap(k).usedSign = 1;
+            blinkRemap(kN).usedSignal = goodKeys{maxInd};
+            blinkRemap(kN).usedSign = 1;
         else
             [~, maxInd] = max(goodCounts);
-            blinkRemap(k).usedSignal = theKeys{maxInd};
-            blinkRemap(k).usedSign = -1;
+            blinkRemap(kN).usedSignal = theKeys{maxInd};
+            blinkRemap(kN).usedSign = -1;
         end
-
     end
+end
 
-    %% Output the selected channel
-    for k = 1:length(uniqueSubjects)
-        if isempty(blinkRemap(k).usedSignal)
-            goodRatios = blinkRemap(k).goodRatios;
-            [~, pos] = max(goodRatios);
-        else
-            pos = find(strcmpi(blinkRemap(k).signalLabels, ...
-                blinkRemap(k).usedSignal), 1, 'first');
-        end
-        if isempty(pos)
-            fprintf('%s failed\n', uniqueSubjects{k}); 
-            continue;
-        end
-        used = blinkRemap(k).signalLabels{pos};
-        fprintf('%s: %s ratio=%g total=%g  good=%g\n', uniqueSubjects{k}, ...
-            used, blinkRemap(k).goodRatios(pos), ...
-            blinkRemap(k).numberBlinks(pos), blinkRemap(k).goodCounts(pos));
+%% Output the selected channel
+for kN = 1:length(blinkRemap)
+    if isempty(blinkRemap(kN).usedSignal)
+        goodRatios = blinkRemap(kN).goodRatios;
+        [~, pos] = max(goodRatios);
+    else
+        pos = find(strcmpi(blinkRemap(kN).signalLabels, ...
+            blinkRemap(kN).usedSignal), 1, 'first');
     end
+    if isempty(pos)
+        fprintf('Subject %s failed on day %s\n', blinkRemap(kN).subjectID, ...
+                blinkRemap(kN).startDate);
+        continue;
+    end
+    used = blinkRemap(kN).signalLabels{pos};
+    fprintf('Subject %s date %s: ratio=%g total=%g  good=%g\n', ...
+        blinkRemap(kN).subjectID, blinkRemap(kN).startDate, ...
+        used, blinkRemap(kN).goodRatios(pos), ...
+        blinkRemap(kN).numberBlinks(pos), blinkRemap(kN).goodCounts(pos));
+end
 
     function s = getRemapStructure()
-        s = struct('subjectID', nan,  ...
+        s = struct('subjectID', nan,  'startDate', [], ...
             'signalLabels', nan,  'cutoffs', nan, 'bestMedians', nan, ...
             'bestRobustStds', nan, 'goodRatios', nan, 'goodCounts', nan, ...
             'numberBlinks', nan, 'usedSignal', nan, 'usedSign', nan);
