@@ -139,7 +139,10 @@ uilist = { ...
 
 %% Call the GUI
 [~, ~, ~, outStruct] = inputgui( geometry, uilist);
-
+if isempty(outStruct) % Cancel was hit
+    okay = false;
+    return;
+end
 %% Massage the GUI return values to fit BLINKER's expectations
 outStruct.signalTypeIndicator = signalTypeMenu{outStruct.signalTypeIndicator};
 outStruct.dumpBlinkerStructures = logical(outStruct.dumpBlinkerStructures);

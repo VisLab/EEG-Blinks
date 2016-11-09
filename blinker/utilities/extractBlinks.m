@@ -43,7 +43,7 @@ for k = 1:length(params.signalNumbers)
 end
 
 %% Process each signal
-for k = 1:length(params.signalNumbers)
+parfor k = 1:length(params.signalNumbers)
     try
         blinkFits = fitBlinks(signalData(k).signal, signalData(k).blinkPositions);
         if isempty(blinkFits)

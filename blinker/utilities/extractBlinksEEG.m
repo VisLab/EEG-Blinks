@@ -21,8 +21,14 @@ if ~isempty(errors)
 end
     
 %% Extract the candidate signals
+if params.verbose
+    fprintf('Extracting candidate signals...\n');
+end
 [candidateSignals, signalType, signalNumbers, ...
                 signalLabels, params] = getCandidateSignals(EEG, params);
 params.signalNumbers = signalNumbers;
 params.signalLabels = signalLabels;
+if params.verbose
+    fprintf('Extracting blinks from the candidate signals... be patient....\n');
+end
 [blinks, params] = extractBlinks(candidateSignals, signalType, params);
