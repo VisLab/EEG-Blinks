@@ -1,0 +1,8 @@
+title: EEG-Blinks
+description: "BLINKER: Automated blink detector for EEG"
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-cayman
+
+gems:
+  - jekyll-mentions
