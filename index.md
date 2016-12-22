@@ -6,7 +6,7 @@ The major sections of this document are:
 * <a name="Introduction">Introduction</a> 
   * [Requirements](#Requirements)  
   * [Citing BLINKER](#Citing)  
-  * [Sponsorship](#Sponsored)
+  * [Sponsorship](#Sponsor)
   * [Installation](#Installing)  
 * [Running BLINKER as an EEGLAB plugin](#Plugin)  
 * [Running BLINKER as a script](#Script)  
