@@ -1,27 +1,28 @@
 # Introduction to BLINKER
 BLINKER and associated tools form an automated pipeline for detecting eye blinks in EEG and calculating various properties of these blinks. BLINKER takes as input an arbitrary number of signals, which can include ordinary EEG channels, EOG channels and independent components (IC), determines which signals have acceptable blinks, and then selects the "best" candidate blink signal to further characterize blink shapes and properties. BLINKER also has facilities for merging blinks calculated from different source signals and for plotting individual blinks to facilitate manual evaluation and synchronization of EEG with video and eye tracking. BLINKER is designed to be run in a completely automated way. 
 
-The major sections of this document are:
+The major sections of this document are:  
+
 * <a name="Introduction">Introduction</a> 
-    * [Requirements](#Requirements)  
-    * [Citation](#Citing)   
-    * [Installation](#Installing)
-* [Running BLINKER as an EEGLAB plugin](#Plugin)
-* [Running as a script](#Script)
-    * [Parameters describing data set metadata.](#Metadata)  
-    * [Parameters describing what to save or display.](#Save)
-* The BLINKER algorithm
-    * [Extract potential blinks of each candidate signal.](#Extraction)
-    * [Calculate landmarks of potential blinks.](#Landmarks)
-    * [Reject signals with low signal-to-noise (SNR) ratios.](#SNR)
-    * [Select the "best" candidate signal as the "used" signal.](#Used)
-    * [Calculate the blink properties and blink shapes for the "used" signal.](#Shapes)
-    * [Calculate the ocular indices for the "used" signal.](#Stats)
-* Description of BLINKER structures
-    * [The blinks structure](#blinks)  
-    * [The blinkFits structure](#blinkFits)
-    * [The blinkProperties structure](#blinkProperties)
-    * [The blinkStatistics structure](#blinkStatistics)
+  * [Requirements](#Requirements)  
+  * [Citation](#Citing)   
+  * [Installation](#Installing)  
+* [Running BLINKER as an EEGLAB plugin](#Plugin)  
+* [Running as a script](#Script)  
+  * [Parameters describing data set metadata.](#Metadata)  
+  * [Parameters describing what to save or display.](#Save)  
+* The BLINKER algorithm  
+  * [Extract potential blinks of each candidate signal.](#Extraction)  
+  * [Calculate landmarks of potential blinks.](#Landmarks)  
+  * [Reject signals with low signal-to-noise (SNR) ratios.](#SNR)  
+  * [Select the "best" candidate signal as the "used" signal.](#Used)  
+  * [Calculate the blink properties and blink shapes for the "used" signal.](#Shapes)  
+  * [Calculate the ocular indices for the "used" signal.](#Stats)  
+* Description of BLINKER structures  
+  * [The blinks structure](#blinks)   
+  * [The blinkFits structure](#blinkFits)  
+  * [The blinkProperties structure](#blinkProperties)  
+  * [The blinkStatistics structure](#blinkStatistics)  
 
 
 ### <a name="Requirements">Requirements</a>
