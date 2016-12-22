@@ -8,7 +8,7 @@ The major sections of this document are:
   * [Citation](#Citing)   
   * [Installation](#Installing)  
 * [Running BLINKER as an EEGLAB plugin](#Plugin)  
-* [Running as a script](#Script)  
+* [Running BLINKER as a script](#Script)  
   * [Parameters describing data set metadata.](#Metadata)  
   * [Parameters describing what to save or display.](#Save)  
 * The BLINKER algorithm  
@@ -32,11 +32,12 @@ on signals.
 ### <a name="Citing">Citing BLINKER</a>
 BLINKER is freely available under the GNU General Public License. 
 Please cite the following publication if using:  
+
 > Kleifges K, Bigdely-Shamlo N, Kerick S, and Robbins KA  
 > BLINKER: Large-scale automated analysis of ocular indices extracted from EEG  
->  
+> (Submitted)
 
-### <a name="Installation">Installation</a>
+### <a name="Installing">Installation</a>
 The BLINKER pipeline can be run in two ways --- as a standalone toolbox or as an EEGLAB plugin. To run in standalone mode, simply download the BLINKER code, found in the EEG-Blinks github repository, and add the `blinker` directory and all of its subdirectories to the MATLAB path. Regardless of how you run BLINKER, EEGLAB will need to be in your path.
 
 ## <a name="Plugin">BLINKER as an EEGLAB plugin</a>
