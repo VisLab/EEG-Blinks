@@ -40,7 +40,6 @@ Please cite the following publication if using:
 ### <a name="Installing">Installation</a>
 The BLINKER pipeline can be run in two ways --- as a standalone toolbox or as an EEGLAB plugin. To run in standalone mode, simply download the BLINKER code, found in the EEG-Blinks github repository, and add the `blinker` directory and all of its subdirectories to the MATLAB path. Regardless of how you run BLINKER, EEGLAB will need to be in your path.
 
-## <a name="Plugin">BLINKER as an EEGLAB plugin</a>
 You can install BLINKER as an EEGLAB plugin by unzipping the `blinker1.0.0` directory into the plugins directory of your EEGLAB installation. When you start EEGLAB, BLINKER will be available.
 
 ## Running the BLINKER pipeline from EEGLAB
