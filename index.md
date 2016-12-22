@@ -5,7 +5,8 @@ The major sections of this document are:
 
 * <a name="Introduction">Introduction</a> 
   * [Requirements](#Requirements)  
-  * [Citing BLINKER](#Citing)   
+  * [Citing BLINKER](#Citing)  
+  * [Sponsorship](#Sponsored)
   * [Installation](#Installing)  
 * [Running BLINKER as an EEGLAB plugin](#Plugin)  
 * [Running BLINKER as a script](#Script)  
@@ -37,12 +38,15 @@ Please cite the following publication if using:
 > BLINKER: Large-scale automated analysis of ocular indices extracted from EEG  
 > (Submitted)
 
+### <a name="Sponsor">Sponsorship</a>
+This research was sponsored by the Army Research Laboratory and was accomplished under Cooperative Agreement Number W911NF-10-2-0022. 
+
 ### <a name="Installing">Installation</a>
 The BLINKER pipeline can be run in two ways --- as a standalone toolbox or as an EEGLAB plugin. To run in standalone mode, simply download the BLINKER code, found in the EEG-Blinks github repository, and add the `blinker` directory and all of its subdirectories to the MATLAB path. Regardless of how you run BLINKER, EEGLAB will need to be in your path.
 
 You can install BLINKER as an EEGLAB plugin by unzipping the `blinker1.0.0` directory into the plugins directory of your EEGLAB installation. When you start EEGLAB, BLINKER will be available.
 
-## Running the BLINKER pipeline from EEGLAB
+## <a name="Plugin">Running the BLINKER pipeline from EEGLAB</a>
 Load an EEG dataset to be processed using the `Load dataset` submenu under the `File` menu of EEGLAB. The BLINKER pipeline 
 can be found under the EEGLAB Tools submenu:  
 ![EEGLAB menu](./images/EEGLAB_Menu.png)  
