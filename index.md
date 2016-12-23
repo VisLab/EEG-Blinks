@@ -94,7 +94,7 @@ The following example starts with a default `params` structure and then override
 > `params.verbose = false;`  
 > `params.excludeLabels = {'a1', 'a2', 'vehicle position'};`  
 > `[EEG, com, blinks, blinkFits, blinkProperties, blinkStatistics, params] = ...`  
-> `&nbsp; &nbsp; &nbsp; pop_blinker(EEG, params);`  
+>     `pop_blinker(EEG, params);`  
 
 
 ### <a name="Metadata">Parameters describing data set metadata</a>
