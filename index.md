@@ -55,7 +55,7 @@ After selecting the "Run Blinker" option, you will see a menu that allows you to
 
 ![BLINKER menu](./images/BLINKER_Plugin.png) 
 
-## <a name="Script">Running BLINKER as a script in batch processing mode</a>
+## <a name="Script">Running BLINKER as a script</a>
 While it is possible to run BLINKER as a plugin from EEGLAB, BLINKER is meant to be run in batch processing mode to analyze large collections of EEG. While it is possible to run BLINKER using the low-level functions, the easiest way to run BLINKER is to put your EEG dataset into an EEGLAB EEG structure.
 
 **Example**  
@@ -190,7 +190,6 @@ This section discusses the algorithm and the setting of the various parameters.
 1. [Calculate landmarks of potential blinks.](#Landmarks)
 1. [Reject signals with low signal-to-noise (SNR) ratios.](#SNR)
 1. [Select the "best" candidate signal as the "used" signal.](#Used)
-1. [Calculate blink maximum amplitude distributions to eliminate eye movements.](#Maxima)
 1. [Calculate the blink properties and blink shapes for the "used" signal.](#Shapes)
 1. [Calculate the ocular indices for the "used" signal.](#Stats)
 
