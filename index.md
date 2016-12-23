@@ -89,12 +89,12 @@ The following example starts with a default `params` structure and then override
 > `params.dumpBlinkerStructures = true;`  
 > `params.dumpBlinkImages = false;`  
 > `params.dumpBlinkPositions = false;`  
-> `params.keepSignals = false;`  
+> `params.keepSignals = false;`   
 > `params.showMaxDistribution = false;`  
 > `params.verbose = false;`  
 > `params.excludeLabels = {'a1', 'a2', 'vehicle position'};`  
-> `[EEG, com, blinks, blinkFits, blinkProperties, blinkStatistics, params] = ...`
-> `    pop_blinker(EEG, params);`  
+> `[EEG, com, blinks, blinkFits, blinkProperties, blinkStatistics, params] = ...`  
+> `&nbsp; &nbsp; &nbsp; pop_blinker(EEG, params);`  
 
 
 ### <a name="Metadata">Parameters describing data set metadata</a>
