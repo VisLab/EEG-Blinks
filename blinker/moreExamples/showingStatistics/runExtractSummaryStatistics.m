@@ -5,64 +5,41 @@
 % pop_blinker.  The goal is to put all of the statistics for the collection
 % into a single file for display and analysis purposes.
 %
+% BLINKER extracts blinks and ocular indices from time series. 
+% Copyright (C) 2016  Kay A. Robbins, Kelly Kleifgas, UTSA
+% 
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-%% BCIT counts
-experiment = 'BCITLevel0';
-blinkDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
-excludedTasks = {};
-typeBlinks = 'AllUnrefNewBoth';
-summaryDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
-summaryFile = 'BCITLevel0AllUnrefNewBothBlinksSummary.mat';
-blinkFileList = [blinkDir filesep experiment 'FileList.mat'];
-blinkDirInd = 'O:\ARL_Data\BCITBlinksNewRefactored\AllUnrefNewBoth';
-
-%% BCI2000 counts
-% experiment = 'BCI2000';
-% blinkDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';
-% excludedTasks = {'EyesOpen', 'EyesClosed'};
-% typeBlinks = 'AllMastNewBothCombined';
-% summaryFile = 'BCI2000AllMastNewBothCombinedSummary.mat';
-% summaryDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';
-% blinkFileList = [blinkDir filesep experiment 'FileList.mat'];
-% blinkDirInd = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored\AllMastNewBothCombined';
-
-%% Shooter counts
-% blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
-% experiment = 'Shooter';
-% excludedTasks = {'EC', 'EO'};
-% typeBlinks = 'AllMastNewBothCombined';
-% summaryDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
-% summaryFile = 'ShooterAllMastNewBothCombinedSummary.mat';
-% blinkFileList = [blinkDir filesep experiment 'FileList.mat'];
-% blinkDirInd = [blinkDir filesep typeBlinks];
-
-%% NCTU counts
-% blinkDir = 'O:\ARL_Data\NCTU\NCTUBlinksNewRefactored';
-% experiment = 'NCTU_LK';
+%% Setup to generate summary for the VEP data
+% blinkDirInd = 'O:\ARL_Data\VEP\BlinkOutput\AllUnRef';
+% blinkFileList = 'O:\ARL_Data\VEP\BlinkOutput\vep_blinkFileInfo';
+% typeBlinks = 'AllUnRef';
 % excludedTasks = {};
-% typeBlinks = 'AllMastNewBoth';
-% summaryDir = 'O:\ARL_Data\NCTU\NCTUBlinksNewRefactored';
-% summaryFile = 'NCTU_LKAllMastNewBothSummary.mat';
-% blinkFileList = [blinkDir filesep experiment 'FileList.mat'];
-% blinkDirInd = [blinkDir filesep typeBlinks];
+% summaryFile = 'O:\ARL_Data\VEP\BlinkOutput\vep_oddball_ALLUnRef_summary.mat';
 
-%% Get the files from the base directory
-inList = dir(blinkDirInd);
-dirNames = {inList(:).name};
-dirTypes = [inList(:).isdir];
-fileNames = dirNames(~dirTypes);
-numberActualFiles = length(fileNames);
+%% Setup to generate summary for the Shooter combined data
+blinkDirInd = 'O:\ARL_Data\Shooter\BlinkOutput\AllMastRefCombined';
+blinkFileList = 'O:\ARL_Data\Shooter\BlinkOutput\shooter_blinkFileInfo';
+typeBlinks = 'AllMastRefCombined';
+excludedTasks = {'EC', 'EO'};
+summaryFile = 'O:\ARL_Data\Shooter\BlinkOutput\shooter_AllMastRefCombined_summary.mat';
 
-%% Load the baseline blink file list
+%% Load the blink file information and find the information
 load(blinkFileList);
-
-%% Set up the mapping
 numberFiles = length(blinkFiles);
-fileMap = containers.Map('KeyType', 'char', 'ValueType', 'any');
-for k = 1:numberActualFiles
-    fileMap(fileNames{k}) = k;
-end
+[blinkFilePaths, fileMask] = getBlinkFilePaths(blinkDirInd, blinkFiles, ...
+    typeBlinks, excludedTasks);
 
 %% Fill in an empty structure for efficiency
 blinkStatisticsSummary(numberFiles) = extractBlinkStatistics();
@@ -73,36 +50,27 @@ end
 %% Now read in the individual files and process
 mapGood = containers.Map('KeyType', 'char', 'ValueType', 'any');
 mapMarginal = containers.Map('KeyType', 'char', 'ValueType', 'any');
-fileMask = true(numberFiles, 1);
 nanMask = false(numberFiles, 1);
 
 for k = 1:numberFiles
     clear blinks blinkFits blinkProperties blinkStatistics params;
-    thisFile = [blinkFiles(k).blinkFileName '_' typeBlinks '.mat'];
-    if ~isKey(fileMap, thisFile)
-        fileMask(k) = false;
-        warning('---%s does not have a blink file\n', thisFile); 
+    if ~fileMask(k)
         continue;
     end
-    actualPos = fileMap(thisFile);
-    fileName = [blinkDirInd filesep thisFile];
-    fprintf('Loading %s...\n', thisFile);
-    load (fileName);
+
+    fprintf('Loading %s...\n', blinkFilePaths{k});
+    load (blinkFilePaths{k});
     if ~exist('blinks', 'var')
         fileMask(k) = false;
-        warning('---%s does not contain blink structures\n', fileName);
-        continue;
-    elseif sum(strcmpi(excludedTasks, blinks.task)) > 0
-        fileMask(k) = false;
-        warning('---%s has excluded task %s\n', fileName, blinks.task);
+        warning('---%s does not contain blink structures\n', blinkFilePaths{k});
         continue;
     elseif isnan(blinks.usedSignal) || isempty(blinks.usedSignal)
         nanMask(k) = true;
-        warning('---%s does not have blinks\n', fileName);
+        warning('---%s does not have blinks\n', blinkFilePaths{k});
         continue;
     elseif ~exist('blinkStatistics', 'var') || isempty(blinkStatistics)
         nanMask(k) = true;
-        warning('---%s does not have blinkStatistics\n', fileName);
+        warning('---%s does not have blinkStatistics\n', blinkFilePaths{k});
         continue;
     end
     blinkStatisticsSummary(k) = blinkStatistics;
@@ -130,7 +98,6 @@ for k = 1:numberFiles
     end
 end
 
-
-%% Save the file
-save([summaryDir filesep summaryFile], ...
-    'blinkStatisticsSummary', 'mapGood', 'mapMarginal', 'nanMask', 'fileMask', '-v7.3');
+%% Save the file for later analysis
+save(summaryFile, 'blinkStatisticsSummary', 'mapGood', 'mapMarginal', ...
+    'nanMask', 'fileMask', '-v7.3');

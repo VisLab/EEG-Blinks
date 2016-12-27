@@ -1,30 +1,66 @@
 %% Calculate ocular index histograms for a data collection.
 % The script assumes that a summary properties file has been computed
 % for the data 
-%% NCTU blinks
-% propertiesDir = 'O:\ARL_Data\NCTU\NCTUBlinksNewRefactored';
-% propertiesFile = 'NCTU_LKAllMastNewBothProperties.mat';
-% histogramFile = 'NCTU_LKAllMastNewBothHistograms.mat';
-%% BCIT Examples
-propertiesDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
-propertiesFile = 'BCITLevel0AllUnrefNewBothBlinksProperties.mat';
-histogramFile = 'BCITLevel0AllUnrefNewBothBlinksHistograms.mat';
-%% BCI2000 counts
-% propertiesFile = 'BCI2000AllMastNewBothCombinedProperties.mat';
-% propertiesDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';
-% histogramFile = 'BCI2000AllMastNewBothCombinedHistograms.mat';
-%% Shooter blinks
-% propertiesDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
-% propertiesFile = 'ShooterAllMastNewBothCombinedProperties.mat';
-% histogramFile = 'ShooterAllMastNewBothCombinedHistograms.mat';
 
-%% Read in the blink data for this collection
-load([propertiesDir filesep propertiesFile]);
+%
+% BLINKER extracts blinks and ocular indices from time series. 
+% Copyright (C) 2016  Kay A. Robbins, Kelly Kleifgas, UTSA
+% 
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+%% Setup the summary for the VEP data
+% blinkDirInd = 'O:\ARL_Data\VEP\BlinkOutput\AllUnRef';
+% blinkFileList = 'O:\ARL_Data\VEP\BlinkOutput\vep_blinkFileInfo';
+% typeBlinks = 'AllUnRef';
+% excludedTasks = {};
+% summaryFile = 'O:\ARL_Data\VEP\BlinkOutput\vep_oddball_ALLUnRef_summary.mat';
+% histogramFile = 'O:\ARL_Data\VEP\BlinkOutput\vep_oddball_ALLUnRef_histogram.mat';
+% experimentName = 'vep';
+
+%% Setup for the shooter data from combined distributions
+blinkDirInd = 'O:\ARL_Data\Shooter\BlinkOutput\AllMastRefCombined';
+blinkFileList = 'O:\ARL_Data\Shooter\BlinkOutput\shooter_blinkFileInfo';
+typeBlinks = 'AllMastRefCombined';
+excludedTasks = {'EC', 'EO'};
+summaryFile = 'O:\ARL_Data\Shooter\BlinkOutput\shooter_AllMastRefCombined_summary.mat';
+histogramFile = 'O:\ARL_Data\Shooter\BlinkOutput\shooter_AllMastRefCombined_histogram.mat';
+experimentName = 'shooter';
+   
+%% Load the blink file information and find the information
+load(blinkFileList);
+numberFiles = length(blinkFiles);
+[blinkFilePaths, fileMask] = getBlinkFilePaths(blinkDirInd, blinkFiles, ...
+    typeBlinks, {});
+
+%% Load the blink property files
+bProperties = cell(numberFiles, 1);
+totalBlinks = 0;
+for k = 1:length(bProperties)
+    clear blinks blinkFits blinkProperties blinkStatistics params;
+    if ~fileMask(k)
+        bProperties{k} = NaN;
+        continue;
+    end
+    load(blinkFilePaths{k});
+    if strcmpi(excludedTasks, blinks.task)
+        continue;
+    end
+    bProperties{k} = blinkProperties;
+    totalBlinks = totalBlinks + length(blinkProperties);
+end
 %% Remove the bad files
-bProperties(badFiles) = [];
-bNames(badFiles) = [];
-marginalMask(badFiles) = [];
+bProperties(~fileMask) = [];
 
 %% 
 theTypes = {'durationHalfBase', 'durationHalfZero', 'durationZero', ...
@@ -50,9 +86,13 @@ for k = 1:numberTypes
     startInd = 1;
     for n = 1:length(bProperties) 
        theseProperties = bProperties{n};
+       if isempty(theseProperties)
+           continue;
+       end
        values = cellfun(@double, {theseProperties.(theTypes{k})});
        endInd = startInd + length(values) - 1;
        allValues(startInd:endInd) = values;
+       startInd = endInd + 1;
     end
     dataBlinks{k} = allValues;
     bins = linspace(limits(k, 1), limits(k, 2), limits(k, 3));
@@ -63,4 +103,4 @@ end
 blinkHistograms = theHist;
 
 %% Save the histogram file
-save([propertiesDir filesep histogramFile], 'blinkHistograms',  '-v7.3');
+save(histogramFile, 'blinkHistograms', 'experimentName', '-v7.3');

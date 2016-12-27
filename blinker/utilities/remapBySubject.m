@@ -13,6 +13,22 @@ function [] = remapBySubject(blinkIndir, blinkOutdir, blinkRemap)
 % the remap function can work with all of the signals that pass the
 % blink amplitute ratio test.
 %
+%
+% BLINKER extracts blinks and ocular indices from time series. 
+% Copyright (C) 2016  Kay A. Robbins, Kelly Kleifgas, UTSA
+% 
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %% Find the list of input files
 inList = dir(blinkIndir);
@@ -23,17 +39,19 @@ fileNames = dirNames(~dirTypes);
 %% Now create the new blinks file
 subjects = {blinkRemap.subjectID};
 for k = 1:length(fileNames)
-    blinks = []; blinkFits = []; blinkProperties = []; params = []; %#ok<*NASGU>
+    
     fprintf('Processing %s\n', fileNames{k});
     [thePath, theName, theExt] = fileparts(fileNames{k});
     inName = [blinkIndir filesep theName theExt];
     outName = [blinkOutdir filesep theName 'Combined.mat'];
     try
-       blinks = []; blinkFits = []; blinkProperties = []; params = [];
+       blinks = []; blinkFits = []; blinkProperties = [];  %#ok<NASGU>
+       blinkStatistics = []; params = [];  %#ok<NASGU>
        lTemp = load(inName);
        blinks = lTemp.blinks;
        blinkFits = lTemp.blinkFits;
        blinkProperties = lTemp.blinkProperties;
+       blinkStatistics = lTemp.blinkStatistics;
        params = lTemp.params;
  
     catch mex
@@ -52,6 +70,7 @@ for k = 1:length(fileNames)
         blinks.usedSignal = NaN; %#ok<*SAGROW>
         blinkProperties = [];
         blinkFits = [];
+        blinkStatistics = [];
         blinks.status = ['Recombined failed old[' blinks.status ']'];
         saveFiles(outName);
         warning('---%s: %s', outName, blinks.status);
@@ -73,6 +92,8 @@ for k = 1:length(fileNames)
             sData.blinkAmplitudeRatio = NaN;
             [blinkProperties, blinkFits] = ...
                 extractBlinkProperties(sData, params); %#ok<*ASGLU>
+            blinkStatistics = extractBlinkStatistics(blinks, blinkFits, ...
+                                              blinkProperties, params);
             fprintf('---%s: changed from %d to %d\n', ...
                 inName, blinks.usedSignal, sData.signalNumber);
         end
@@ -80,8 +101,9 @@ for k = 1:length(fileNames)
         blinks.usedSignal = rmap.usedSign*sData.signalNumber;
     else
         blinks.usedSignal = NaN; %#ok<*SAGROW>
-        blinkProperties = [];
-        blinkFits = [];
+        blinkProperties = []; %#ok<NASGU>
+        blinkFits = []; %#ok<NASGU>
+        blinkStatistics = []; %#ok<NASGU>
         blinks.status = ['Recombined failed old[' blinks.status ']'];
         warning('---%s: %s', inName, blinks.status);
     end
@@ -89,6 +111,7 @@ for k = 1:length(fileNames)
 end
 
    function [] = saveFiles(fileName)
-       save(fileName, 'blinks', 'blinkFits',  'blinkProperties', 'params', '-v7.3');
+       save(fileName, 'blinks', 'blinkFits',  'blinkProperties', ...
+            'blinkStatistics', 'params', '-v7.3');
    end
 end

@@ -1,11 +1,34 @@
-
 function blinkStatistics = ...
          extractBlinkStatistics(blinks, blinkFits, blinkProperties, params)
+%% Extract blink statistics structure from the blink fits and properties
+%
+% Parameters:
+%    blinks    structure containing dataset overall bink information
+%    blinkFits structure containing landmarks of the individual blinks
+%    blinkProperties  structure containing properties of individual blinks
+%    params    structure with the parameters needed to compute statistics
+%    blinkStatistics  (output) structure with the summary 
+%
+% BLINKER extracts blinks and ocular indices from time series. 
+% Copyright (C) 2016  Kay A. Robbins, Kelly Kleifgas, UTSA
+% 
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %% Make sure enough arguments
     if nargin == 0
-         blinkStatistics = getStatisticsStructure();
-         return;
+        blinkStatistics = getStatisticsStructure();
+        return;
     elseif nargin < 3
         error('getSummaryStatistics:NotEnoughArguments', ...
             'Must be called with at least 3 arguments');
@@ -14,13 +37,13 @@ function blinkStatistics = ...
     else
         correlationThreshold = params.correlationThresholdTop;
     end
-    
-%% Check to make sure that the structures are non-empty
-if isempty(blinks) || isempty(blinkFits) || isempty(blinkProperties) || ...
-        length(blinkFits) ~= length(blinkProperties)
-    blinkStatistics = [];
-    return;
-end
+
+    %% Check to make sure that the structures are non-empty
+    if isempty(blinks) || isempty(blinkFits) || isempty(blinkProperties) || ...
+            length(blinkFits) ~= length(blinkProperties)
+        blinkStatistics = [];
+        return;
+    end
 
     %% Get an empty statistics structure and put in metadata
     blinkStatistics = getStatisticsStructure();
@@ -32,7 +55,7 @@ end
     blinkStatistics.uniqueName = blinks.uniqueName;
     blinkStatistics.usedNumber = abs(blinks.usedSignal);
     blinkStatistics.header = getHeader();
-    
+
     %% Now the summary fields
     if isnan(blinks.usedSignal)
         blinkStatistics.status = 'failed';
@@ -40,7 +63,7 @@ end
         return;
     end
     sData = blinks.signalData;
-    signalNumbers = cellfun(@double, {sData.signalNumber});    
+    signalNumbers = cellfun(@double, {sData.signalNumber});
     pos = find(signalNumbers == abs(blinks.usedSignal), 1, 'first');
     if isempty(pos)
         blinkStatistics.status = 'failed';
@@ -87,9 +110,9 @@ end
             'durationB', nan, 'durationT', nan, ...
             'durationHZ', nan, 'durationHB', nan, 'blinksPerMin', nan);
     end
-    
+
     function header = getHeader()
         header = {'mean', 'median', 'std', 'mad', 'goodMean', 'goodMedian', ...
-               'goodStd', 'goodMad'};
+            'goodStd', 'goodMad'};
     end
 end

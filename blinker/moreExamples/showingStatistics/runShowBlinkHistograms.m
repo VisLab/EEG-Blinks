@@ -1,24 +1,39 @@
-numExp = 4;
-experiments = cell(numExp, 1);
-experiments{1} = ['O:\ARL_Data\BCITBlinksNewRefactored' filesep ...
-                  'BCITLevel0AllUnrefNewBothBlinksHistograms.mat']; 
-experiments{2} = ['O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored' filesep ...
-                  'BCI2000AllMastNewBothCombinedHistograms.mat'];
-experiments{3} = ['O:\ARL_Data\NCTU\NCTUBlinksNewRefactored' filesep ...
-                  'NCTU_LKAllMastNewBothHistograms.mat'];
-experiments{4} = ['O:\ARL_Data\Shooter\ShooterBlinksNewRefactored' filesep ...
-                  'ShooterAllMastNewBothCombinedHistograms.mat'];
-experimentNames = {'ARL-BCIT', 'BCI-2000', 'NCTU-LK', 'ARL-Shoot'};
+%% Display histograms of individual blink properties
+%
+% This script assumes that a histogram summary for the collection has been
+% computed using runExtractBlinkHistograms. 
+%
+% BLINKER extracts blinks and ocular indices from time series. 
+% Copyright (C) 2016  Kay A. Robbins, Kelly Kleifgas, UTSA
+% 
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+%% Set up the histogram information
+histogramFiles = ...
+    {'O:\ARL_Data\VEP\BlinkOutput\vep_oddball_ALLUnRef_histogram.mat';
+     'O:\ARL_Data\Shooter\BlinkOutput\shooter_AllMastRefCombined_histogram.mat'};
+experimentNames = {'vep'; 'shooter'};
 
 %% Show blink histograms
-numExp = 4;
+numExp = length(histogramFiles);
 theColors = [0.7, 0.7, 0.7; 0.5, 0.5, 0.5; 0, 1, 0; 0, 0, 1];
 theShapes = {'o', 's', 'x', '^'};
 
 %% Read in the occular indices for these collections
 theHistograms = cell(numExp, 1);
 for k = 1:numExp
-    load(experiments{k});
+    load(histogramFiles{k});
     theHistograms{k} = blinkHistograms;
 end
 

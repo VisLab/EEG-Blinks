@@ -24,6 +24,22 @@ function [blinks, params] = extractBlinks(candidateSignals, signalType, params)
 % called directly. Most of the time, you will want to call the wrapper 
 % extractBlinksEEG to set up the calls using an EEGLAB EEG structure.
 %
+% BLINKER extracts blinks and ocular indices from time series. 
+% Copyright (C) 2016  Kay A. Robbins, Kelly Kleifgas, UTSA
+% 
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 %% Set the blinks structure
 blinks  = createBlinksStructure();
 blinks.srate = params.srate;
@@ -43,6 +59,8 @@ for k = 1:length(params.signalNumbers)
 end
 
 %% Process each signal
+correlationThresholdTop = params.correlationThresholdTop;
+correlationThresholdBottom = params.correlationThresholdBottom;
 parfor k = 1:length(params.signalNumbers)
     try
         blinkFits = fitBlinks(signalData(k).signal, signalData(k).blinkPositions);
@@ -76,10 +94,10 @@ parfor k = 1:length(params.signalNumbers)
             mean(signalData(k).signal(outsideBlink));
         
         %% Now calculate the cutoff ratios -- use default for the values
-        goodMaskTop = leftR2 >= params.correlationThresholdTop & ...
-            rightR2 >= params.correlationThresholdTop;
-        goodMaskBottom = leftR2 >= params.correlationThresholdBottom & ...
-            rightR2 >= params.correlationThresholdBottom;
+        goodMaskTop = leftR2 >= correlationThresholdTop & ...
+            rightR2 >= correlationThresholdTop;
+        goodMaskBottom = leftR2 >= correlationThresholdBottom & ...
+            rightR2 >= correlationThresholdBottom;
         if sum(goodMaskTop) < 2 
             continue;
         end

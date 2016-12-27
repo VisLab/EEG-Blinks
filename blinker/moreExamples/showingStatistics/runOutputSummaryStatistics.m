@@ -1,25 +1,30 @@
-%% Output the break down of selected signals and blink totals
+%% Output the break down of selected signals and blink totals.
 %
-% This script assumes that a blinkStatisticsSummary has been computed.
-%
-%% Load the NCTU directory
-% summaryDir = 'O:\ARL_Data\NCTU\NCTUBlinksNewRefactored';
-% summaryFile = 'NCTU_LKAllMastNewBothSummary.mat';
+% This script assumes that you have created a summary file for datasets
 
-%% Load the Shooter directory
-% summaryDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
-% summaryFile = 'ShooterAllMastNewBothCombinedSummary.mat';
+% BLINKER extracts blinks and ocular indices from time series. 
+% Copyright (C) 2016  Kay A. Robbins, Kelly Kleifgas, UTSA
+% 
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+%% VEP summary file
+%summaryFile = 'O:\ARL_Data\VEP\BlinkOutput\vep_oddball_ALLUnRef_summary.mat';
 
-%% Load the BCIT directory
-summaryDir = 'O:\ARL_Data\BCITBlinksNewRefactored';
-summaryFile = 'BCITLevel0AllUnrefNewBothBlinksSummary.mat';
-
-%% Load the BCI2000 directory
-% summaryFile = 'BCI2000AllMastNewBothCombinedSummary.mat';
-% summaryDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';
+%% Shooter summary file
+summaryFile = 'O:\ARL_Data\Shooter\BlinkOutput\shooter_AllMastRefCombined_summary.mat';
 
 %% Load the summary file
-load([summaryDir filesep summaryFile]);
+load(summaryFile);
 
 %% Overall counts
 fprintf('Total datasets: %d\n', length(fileMask));
@@ -133,5 +138,3 @@ fprintf('Total seconds: %d\n', totalSeconds);
 totalMinutes = totalSeconds/60;
 fprintf('Minutes datasets: %g\n', totalMinutes);
 fprintf('Blinks/minute datasets: %g\n', totalBlinks/totalMinutes);
-
-%% Print the overall averages 

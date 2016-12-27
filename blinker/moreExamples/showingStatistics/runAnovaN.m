@@ -1,11 +1,27 @@
 %% Run an n-way analysis of variance on a blinks data structure
 %
 %
+% BLINKER extracts blinks and ocular indices from time series. 
+% Copyright (C) 2016  Kay A. Robbins, Kelly Kleifgas, UTSA
+% 
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 %% Shooter blinks
 experiment = 'Shooter';
-blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
-summaryFileName = 'ShooterAllMastNewBothCombinedSummary.mat';
-aNovaFileName = 'ShooterAllMastNewBothCombinedANOVA.mat';
+blinkDir = 'O:\ARL_Data\Shooter\BlinkOutput';
+summaryFile = 'shooter_AllMastRefCombined_summary.mat';
+aNovaFile = 'shooter_AllMastRefCombined_ANOVA.mat';
 taskTypes = {'SEF2', 'SEF4', 'SEO2', 'SEO4', ...
              'DEF2', 'DEF4', 'DEO2', 'DEO4', 'ARIT', ...
              'EC', 'EO'};
@@ -51,24 +67,24 @@ theVersion = 'SingleVSDualArit';
 % theVersion = '4Separate';
 
 %% Load the summary file
-load([blinkDir filesep summaryFileName]);
+load([blinkDir filesep summaryFile]);
 
 %% Set up the groups
-used = cellfun(@double, {blinkSummary.usedNumber});
-componentValid = ~isnan(used);
+srate = cellfun(@double, {blinkStatisticsSummary.srate});
+componentValid = ~isnan(srate);
 
 %% Remove the Nan entries
-blinkSummary = blinkSummary(componentValid);
-subjects = {blinkSummary.subjectID};
-tasks = {blinkSummary.task};
-used = cellfun(@double, {blinkSummary.usedNumber});
-taskTimes = 1:length(blinkSummary);
+blinkStatisticsSummary = blinkStatisticsSummary(componentValid);
+subjects = {blinkStatisticsSummary.subjectID};
+tasks = {blinkStatisticsSummary.task};
+used = cellfun(@double, {blinkStatisticsSummary.usedNumber});
+taskTimes = 1:length(blinkStatisticsSummary);
 
 %% Compute the order variables
 uniqueSubjects = unique(subjects);
 taskOrder = zeros(size(subjects));
 taskGroups = getTaskGroups(tasks, taskGroupList);
-datasetIndex = 1:length(blinkSummary);
+datasetIndex = 1:length(blinkStatisticsSummary);
 for k = 1:length(uniqueSubjects)
     theseSubjects = strcmpi(subjects, uniqueSubjects{k});
     theseTimes = taskTimes(theseSubjects);
@@ -105,14 +121,14 @@ pValues = cell(length(indicatorType), numAnovaVariations);  % 6 variations of an
 for k = 1:length(indicatorType)
     fprintf('Indicator %d: %s\n', k, indicatorType{k});
     subjectInd = ['subject' indicatorType{k}];
-    indicatorBase = nan(length(blinkSummary), 1);
+    indicatorBase = nan(length(blinkStatisticsSummary), 1);
     for n = 1:length(indicatorBase)
-        value = blinkSummary(n).(indicatorType{k});
+        value = blinkStatisticsSummary(n).(indicatorType{k});
          if ~isempty(value)
              indicatorBase(n) = value(1);
          end
     end
-    %indicatorBase = blinkSummary.(indicatorType{k})(:, 1);
+    %indicatorBase = blinkStatisticsSummary.(indicatorType{k})(:, 1);
     indicatorValid = ~isnan(indicatorBase);
     theseSubjects = subjects(indicatorValid);
     theseTasks = tasks(indicatorValid);
@@ -247,7 +263,7 @@ for k = 1:length(indicatorType)
 end
 
 %% Save the file
-save([blinkDir filesep aNovaFileName], 'pValues', '-v7.3');
+save([blinkDir filesep aNovaFile], 'pValues', '-v7.3');
 
 %% Print out the indicators
 [numIndicators, numVersions] = size(pValues);

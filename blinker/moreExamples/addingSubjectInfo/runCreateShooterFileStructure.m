@@ -1,12 +1,27 @@
 %% Create a file list structure for the shooter data. This script
 % relies on having a file called sFilesEstimated.mat with metatadata.
 
+%     
+% BLINKER extracts blinks and ocular indices from time series. 
+% Copyright (C) 2016  Kay A. Robbins, Kelly Kleifgas, UTSA
+% 
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %% Set up directories
 infoFile = 'E:\CTADATA\Shooter\AdditionalDocumentation\sFilesEstimated.mat';
-blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
+blinkDir = 'O:\ARL_Data\Shooter\BlinkOutput';
 experiment = 'Shooter';
 collectionType = 'FILES2';
-typeBlinks = 'AllMastNewBoth';
 pathName = 'E:\CTADATA\Shooter\Level0';
 
 %% Create the list of files to be processed
@@ -15,7 +30,7 @@ numFiles = length(fileList);
 blinkFiles(numFiles) = createBlinkFileStructure();
 
 %% Create the file name of the output
-blinkFileListName = [blinkDir filesep experiment typeBlinks 'FileList.mat'];
+blinkFileListName = [blinkDir filesep experiment '_blinkFileInfo.mat'];
 
 %% Load the subject and experiment information
 load(infoFile);
@@ -33,7 +48,7 @@ end
 %% Remap the files
 numberFiles = length(fileList);
 for k = 1:numberFiles
-    blinkFiles(k).fileName = fileList{k};
+    blinkFiles(k).pathName = fileList{k};
     [thePath, theName, theExt] = fileparts(fileList{k});
     pieces = strsplit(theName, '_');
     blinkFiles(k).subjectID = pieces{2};  %#ok<*SAGROW>

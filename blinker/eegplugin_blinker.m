@@ -5,7 +5,7 @@
 %
 %   see also: pop_blinker, runBlinkerPipeline
 
-% Author: Kay Robbins and Kelly Kliegfas, 2016
+% Author: Kay Robbins and Kelly Kliefgas, 2016
 
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by

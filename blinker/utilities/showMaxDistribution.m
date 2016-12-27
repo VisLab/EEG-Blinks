@@ -1,5 +1,35 @@
 function fighan = showMaxDistribution(blinks, blinkFits, params)
 %% Display the distributions of blink maxima
+%
+% Parameters
+%   blinks      blink structure for the dataset
+%   blinkFits  blinkFits structure for the dataset
+%   params     parameter structure
+%     parameters in use
+%         correlationThresholdTop: left and right tent correlation for the
+%                      "best" blinks [default 0.98]
+%         correlationThresholdMiddle: left and right tent correlation for the
+%                      "better" blinks [default 0.98]
+%         correlationThresholdBottom: left and right tent correlation for the
+%                      "good" blinks [default 0.90]
+%         numberMaxBins:  number of bins for plotting blink maxima 
+%                      histogram [default 80]
+%     
+% BLINKER extracts blinks and ocular indices from time series. 
+% Copyright (C) 2016  Kay A. Robbins, Kelly Kleifgas, UTSA
+% 
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %% Display the distribution of blinks in a
     if nargin < 3 || isempty(params)
        correlationThresholdTop = 0.98;
