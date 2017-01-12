@@ -12,7 +12,9 @@ that can be unzipped into your EEGLAB plugins directory.
 BLINKER is freely available under the GNU General Public License. 
 Please cite the following publication if using:  
 > Kleifges K, Bigdely-Shamlo N, Kerick S, and Robbins KA  
-> BLINKER: Large-scale automated analysis of ocular indices extracted from EEG  
+> BLINKER: Automated extraction of ocular indices from EEG enabling large-scale analysis. 
+> Front. Neurosci. 11:12. doi: 10.3389/fnins.2017.00012.  
+> [http://journal.frontiersin.org/article/10.3389/fnins.2017.00012/abstract](http://journal.frontiersin.org/article/10.3389/fnins.2017.00012/abstract)  
 >  
 
 ### People
