@@ -37,6 +37,7 @@ excludedTasks = {'EC', 'EO'};
 blinkFileList = [blinkDir filesep experiment '_blinkFileInfo.mat'];
 blinkIndir = [blinkDir filesep typeBlinks];
 
+
 %% BCI2000
 % experiment = 'BCI2000';
 % blinkDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';

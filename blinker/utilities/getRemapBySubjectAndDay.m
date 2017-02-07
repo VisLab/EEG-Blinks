@@ -59,7 +59,7 @@ end
 %% Create the remap structure for the subjects
 blinkRemap(totalCombinations) = getRemapStructure();
 for k = 1:totalCombinations-1
-    blinkRemap(k) = blinkRemap(length(uniqueSubjects));
+    blinkRemap(k) = blinkRemap(end);
 end
 
 %% Now process to compute the remap
@@ -80,9 +80,10 @@ for k = 1:length(uniqueSubjects)
         blinkStructures = cell(length(theseBlinkFiles), 1);
         signalMap = containers.Map('KeyType', 'char', 'ValueType', 'any');
         blinkIndices = zeros(length(theseBlinkFiles) + 1, 1);
-        
+        blinkFileNames = cell(length(theseBlinkFiles), 1);
         %% Find the blinkStructures for this subject and date
         for n = 1:length(blinkStructures)
+            blinkFileNames{n} = theseBlinkFiles(n).blinkFileName;
             try
                 blinks = []; blinkFits = []; blinkProperties =[]; params = []; %#ok<*NASGU>
                 theFile = [theseBlinkFiles(n).blinkFileName '_' typeBlinks '.mat'];
@@ -90,6 +91,7 @@ for k = 1:length(uniqueSubjects)
                 blinks = sTemp.blinks;
                 blinkFits = sTemp.blinkFits;
                 blinkProperties = sTemp.blinkProperties;
+          
             catch Mex
                 warning('%s could not be read: %s\n', ...
                     theseBlinkFiles(n).blinkFileName, Mex.message);
@@ -116,7 +118,8 @@ for k = 1:length(uniqueSubjects)
              
         %% Now consolidate the blinks and compute the distributions
         theKeys = keys(signalMap);
-        blinkRemap(k).signalLabels = theKeys;
+        blinkRemap(kN).signalLabels = theKeys;
+        blinkRemap(kN).blinkFileNames = blinkFileNames;
         cutoffs = nan(length(theKeys), 1);
         bestMedians = nan(length(theKeys), 1);
         bestRobustStds = nan(length(theKeys), 1);
@@ -248,7 +251,8 @@ for kN = 1:length(blinkRemap)
 end
 
     function s = getRemapStructure()
-        s = struct('subjectID', nan,  'startDate', [], ...
+        s = struct('subjectID', nan,  'startDate', nan, ...
+            'blinkFiles', nan, ...
             'signalLabels', nan,  'cutoffs', nan, 'bestMedians', nan, ...
             'bestRobustStds', nan, 'goodRatios', nan, 'goodCounts', nan, ...
             'numberBlinks', nan, 'usedSignal', nan, 'usedSign', nan);

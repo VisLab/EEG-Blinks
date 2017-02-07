@@ -12,34 +12,27 @@ correlationTop = 0.98;
 correlationBottom = 0.90;
 cutoffRatioThreshold = 0.7;  
 
-%% Shooter
-experiment = 'Shooter';
-blinkDir = 'O:\ARL_Data\Shooter\ShooterBlinksNewRefactored';
-excludedTasks = {'EC', 'EO'};
-typeBlinks = 'AllMastNewBoth';
-fileListName = 'ShooterFileList.mat';
+%% NCTU_RWN_VDE
+experiment = 'NCTU_RWN_VDE';
+blinkDir = 'J:\CTAData\NCTU_RWN_VDE\Blinks';
+typeBlinks = 'AllMastRef';
+excludedTasks = {'Pre_EXP_resting', 'Post_EXP_resting'};
+blinkFileList = [blinkDir filesep experiment '_blinkFileList.mat'];
+blinkIndDir = [blinkDir filesep typeBlinks];
 
-%% BCI2000
-% experiment = 'BCI2000';
-% blinkDir = 'O:\ARL_Data\BCI2000\BCI2000BlinksNewRefactored';
-% excludedTasks = {'EyesOpen', 'EyesClosed'};
-% typeBlinks = 'AllMastNewBoth';
-% fileListName = 'BCI2000FileList.mat';
 
 %% Read in the files and make the directories
 typeBlinksCombined = [typeBlinks 'CombinedWithDate'];
-blinkIndir = [blinkDir filesep typeBlinks];
 blinkOutdir = [blinkDir filesep typeBlinksCombined];
 if ~exist(blinkOutdir, 'dir')
     mkdir(blinkOutdir);
 end;
 
 %% Load the file list
-blinkFileList = [blinkDir filesep fileListName];
 load(blinkFileList);
 
 %% Calculate the remap
-[blinkRemap, signalMap] = getRemapBySubjectAndDay(blinkIndir, blinkFiles, typeBlinks, ...
+[blinkRemap, signalMap] = getRemapBySubjectAndDay(blinkIndDir, blinkFiles, typeBlinks, ...
     excludedTasks, correlationTop, correlationBottom, cutoffRatioThreshold);
 
 %% Now remap
@@ -47,4 +40,4 @@ combinedFile = [experiment 'BlinksNew' typeBlinks 'CombinedMapsWithDate.mat'];
 save ([blinkDir filesep combinedFile], 'blinkRemap', 'signalMap', '-v7.3');
 
 %% Now remap
-remapBySubjectAndDay(blinkIndir, blinkOutdir, blinkRemap);
+remapBySubjectAndDay(blinkIndDir, blinkOutdir, blinkRemap);

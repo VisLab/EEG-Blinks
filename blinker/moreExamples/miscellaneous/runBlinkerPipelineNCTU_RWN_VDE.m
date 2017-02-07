@@ -33,26 +33,17 @@
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
 %% Setup
-pop_editoptions('option_single', false, 'option_savetwofiles', false);
+%pop_editoptions('option_single', false, 'option_savetwofiles', false);
 params = struct();
 
-%% VEP example -- assumes a blink info file has been created
-experiment = 'vep';
-blinkDir = 'O:\ARL_Data\VEP\BlinkOutput';
-typeBlinks = 'AllUnRefA';
-blinkFileList = [blinkDir filesep experiment '_blinkFileInfo.mat'];
-blinkIndDir = [blinkDir filesep typeBlinks];
-
-%% Shooter example -- assumes a blink info file has been created
-% Shows example of two phases with combining
-% experiment = 'shooter';
-% blinkDir = 'O:\ARL_Data\Shooter\BlinkOutput';
-% typeBlinks = 'AllMastRef';
-% blinkFileList = [blinkDir filesep experiment '_blinkFileInfo.mat'];
-% blinkIndDir = [blinkDir filesep typeBlinks];
-
 %% NCTU_RWN_VDE
-J:\CTAData\NCTU_RWN_VDE\Blinks
+experiment = 'NCTU_RWN_VDE';
+blinkDir = 'J:\CTAData\NCTU_RWN_VDE\Blinks';
+typeBlinks = 'AllMastRef';
+blinkFileList = [blinkDir filesep experiment '_blinkFileList.mat'];
+blinkIndDir = [blinkDir filesep typeBlinks];
+dataDir = 'J:\CTAData\NCTU_RWN_VDE\Level1\session';
+
 %% Make the directory for the blink extraction
 if ~exist(blinkIndDir, 'dir')
     mkdir(blinkIndDir);
@@ -62,10 +53,10 @@ end
 load(blinkFileList);
 
 %% Run the blinker blink extraction to create a file.
-skipIfPresent = true;
+skipIfPresent = false;
 numberFiles = length(blinkFiles);
 for k = 1:numberFiles
-    fprintf('%d: %s\n', k, blinkFiles(k).pathName);
+    fprintf('%d: %s\n', k, blinkFiles(k).fileName);
     blinkerSaveFile = [blinkIndDir filesep ...
                       blinkFiles(k).blinkFileName '_' typeBlinks '.mat'];
     if skipIfPresent && exist(blinkerSaveFile, 'file')
@@ -73,28 +64,30 @@ for k = 1:numberFiles
        continue;
     end
     try
-        EEG = pop_loadset(blinkFiles(k).pathName);
+        pathName = [dataDir filesep num2str(k) filesep blinkFiles(k).fileName];
+        EEG = pop_loadset(pathName);
         params = checkBlinkerDefaults(struct(), getBlinkerDefaults(EEG));
         params.subjectID = blinkFiles(k).subjectID;
         params.experiment = blinkFiles(k).experiment;
         params.uniqueName = blinkFiles(k).uniqueName;
         params.task = blinkFiles(k).task;
-        params.fileName = blinkFiles(k).pathName;
+        params.fileName = pathName;
         params.startDate = blinkFiles(k).startDate;
         params.startTime = blinkFiles(k).startTime;
+        params.signalNumbers = 1:62;
         params.blinkerSaveFile = blinkerSaveFile;
         params.dumpBlinkerStructures = true;
         params.blinkerDumpDir = blinkIndDir;
         params.dumpBlinkImages = false;
         params.dumpBlinkPositions = false;
         params.keepSignals = true;      % Make true if combining downstream
-        params.showMaxDistribution = false;
+        params.showMaxDistribution = true;
         params.verbose = false;
-        %params.excludeLabels = {'a1', 'a2', 'vehicle position'}; 
+        params.excludeLabels = {'a1', 'a2', 'EKG'}; 
        [EEG, com, blinks, blinkFits, blinkProperties, blinkStatistics, ...
            params] = pop_blinker(EEG, params); 
+       close all;
     catch Mex
         blinks.status = ['failure:' Mex.message];
     end
-    
 end

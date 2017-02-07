@@ -37,78 +37,77 @@ dirTypes = [inList(:).isdir];
 fileNames = dirNames(~dirTypes);
 
 %% Now create the new blinks file
-subjects = {blinkRemap.subjectID};
-for k = 1:length(fileNames)
-    
-    fprintf('Processing %s\n', fileNames{k});
-    [thePath, theName, theExt] = fileparts(fileNames{k});
-    inName = [blinkIndir filesep theName theExt];
-    outName = [blinkOutdir filesep theName 'Combined.mat'];
-    try
-       blinks = []; blinkFits = []; blinkProperties = [];  %#ok<NASGU>
-       blinkStatistics = []; params = [];  %#ok<NASGU>
-       lTemp = load(inName);
-       blinks = lTemp.blinks;
-       blinkFits = lTemp.blinkFits;
-       blinkProperties = lTemp.blinkProperties;
-       blinkStatistics = lTemp.blinkStatistics;
-       params = lTemp.params;
- 
-    catch mex
-        warning('----%s does not exist (%s)....\n', inName, mex.message);
-        continue;
-    end
-    if ~exist('blinks', 'var')
-        warning('----%s has no blinks structure', inName);
-        continue;
-    end
-    theSubject = blinks.subjectID;
-    pos = find(strcmpi(subjects, theSubject), 1, 'first');
-    rmap = blinkRemap(pos);
-    used = rmap.usedSignal;
-    if ~ischar(used) || isnan(blinks.usedSignal)
-        blinks.usedSignal = NaN; %#ok<*SAGROW>
-        blinkProperties = [];
-        blinkFits = [];
-        blinkStatistics = [];
-        blinks.status = ['Recombined failed old[' blinks.status ']'];
-        saveFiles(outName);
-        warning('---%s: %s', outName, blinks.status);
-        continue;
-    end
-    rmapPos = find(strcmpi(rmap.signalLabels, used), 1, 'first');
-    sData = blinks.signalData;
-    myLabels = {sData.signalLabel};
-    pos = find(strcmpi(myLabels, used), 1, 'first');
-    if ~isempty(pos)
-        sData = sData(pos);
-        sData.signalType = 'RemappedBySubject';
-        sData.bestMedian = rmap.bestMedians(rmapPos);
-        sData.bestRobustStd = rmap.bestRobustStds(rmapPos);
-        sData.goodRatio = rmap.goodRatios(rmapPos);
-        sData.cutoff = rmap.cutoffs(rmapPos);
+    subjects = {blinkRemap.subjectID};
+    for k = 1:length(fileNames)
+        fprintf('Processing %s\n', fileNames{k});
+        [thePath, theName, theExt] = fileparts(fileNames{k});
+        inName = [blinkIndir filesep theName theExt];
+        outName = [blinkOutdir filesep theName 'Combined.mat'];
+        try
+           blinks = []; blinkFits = []; blinkProperties = [];  %#ok<NASGU>
+           blinkStatistics = []; params = [];  %#ok<NASGU>
+           lTemp = load(inName);
+           blinks = lTemp.blinks;
+           blinkFits = lTemp.blinkFits; %#ok<NASGU>
+           blinkProperties = lTemp.blinkProperties; %#ok<NASGU>
+           blinkStatistics = lTemp.blinkStatistics; %#ok<NASGU>
+           params = lTemp.params;
 
-        if sData.signalNumber ~= abs(blinks.usedSignal)
-            sData.blinkAmplitudeRatio = NaN;
-            [blinkProperties, blinkFits] = ...
-                extractBlinkProperties(sData, params); %#ok<*ASGLU>
-            blinkStatistics = extractBlinkStatistics(blinks, blinkFits, ...
-                                              blinkProperties, params);
-            fprintf('---%s: changed from %d to %d\n', ...
-                inName, blinks.usedSignal, sData.signalNumber);
+        catch mex
+            warning('----%s does not exist (%s)....\n', inName, mex.message);
+            continue;
         end
-        blinks.signalData = sData;
-        blinks.usedSignal = rmap.usedSign*sData.signalNumber;
-    else
-        blinks.usedSignal = NaN; %#ok<*SAGROW>
-        blinkProperties = []; %#ok<NASGU>
-        blinkFits = []; %#ok<NASGU>
-        blinkStatistics = []; %#ok<NASGU>
-        blinks.status = ['Recombined failed old[' blinks.status ']'];
-        warning('---%s: %s', inName, blinks.status);
+        if ~exist('blinks', 'var')
+            warning('----%s has no blinks structure', inName);
+            continue;
+        end
+        theSubject = blinks.subjectID;
+        pos = find(strcmpi(subjects, theSubject), 1, 'first');
+        rmap = blinkRemap(pos);
+        used = rmap.usedSignal;
+        if ~ischar(used) || isnan(blinks.usedSignal)
+            blinks.usedSignal = NaN; %#ok<*SAGROW>
+            blinkProperties = []; %#ok<NASGU>
+            blinkFits = []; %#ok<NASGU>
+            blinkStatistics = []; %#ok<NASGU>
+            blinks.status = ['Recombined failed old[' blinks.status ']'];
+            saveFiles(outName);
+            warning('---%s: %s', outName, blinks.status);
+            continue;
+        end
+        rmapPos = find(strcmpi(rmap.signalLabels, used), 1, 'first');
+        sData = blinks.signalData;
+        myLabels = {sData.signalLabel};
+        pos = find(strcmpi(myLabels, used), 1, 'first');
+        if ~isempty(pos)
+            sData = sData(pos);
+            sData.signalType = 'RemappedBySubject';
+            sData.bestMedian = rmap.bestMedians(rmapPos);
+            sData.bestRobustStd = rmap.bestRobustStds(rmapPos);
+            sData.goodRatio = rmap.goodRatios(rmapPos);
+            sData.cutoff = rmap.cutoffs(rmapPos);
+
+            if sData.signalNumber ~= abs(blinks.usedSignal)
+                sData.blinkAmplitudeRatio = NaN;
+                [blinkProperties, blinkFits] = ...
+                    extractBlinkProperties(sData, params); %#ok<*ASGLU>
+                blinkStatistics = extractBlinkStatistics(blinks, blinkFits, ...
+                                                  blinkProperties, params); %#ok<NASGU>
+                fprintf('---%s: changed from %d to %d\n', ...
+                    inName, blinks.usedSignal, sData.signalNumber);
+            end
+            blinks.signalData = sData;
+            blinks.usedSignal = rmap.usedSign*sData.signalNumber;
+        else
+            blinks.usedSignal = NaN; 
+            blinkProperties = [];  %#ok<NASGU>
+            blinkFits = [];  %#ok<NASGU>
+            blinkStatistics = []; %#ok<NASGU>
+            blinks.status = ['Recombined failed old[' blinks.status ']'];
+            warning('---%s: %s', inName, blinks.status);
+        end
+        saveFiles(outName);
     end
-    saveFiles(outName);
-end
 
    function [] = saveFiles(fileName)
        save(fileName, 'blinks', 'blinkFits',  'blinkProperties', ...

@@ -46,7 +46,7 @@ function [blinkRemap, signalMap] = getRemapBySubject(blinkIndir, blinkFiles, ...
     %% Create the remap structure for the subjects
     blinkRemap(length(uniqueSubjects)) = getRemapStructure();
     for k = 1:length(uniqueSubjects)-1
-        blinkRemap(k) = blinkRemap(length(uniqueSubjects));
+        blinkRemap(k) = blinkRemap(end);
     end
 
     %% Now process to compute the remap
