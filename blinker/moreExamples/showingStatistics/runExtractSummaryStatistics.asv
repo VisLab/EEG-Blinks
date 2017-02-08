@@ -29,19 +29,19 @@
 % summaryFile = 'O:\ARL_Data\VEP\BlinkOutput\vep_oddball_ALLUnRef_summary.mat';
 
 %% Setup to generate summary for the Shooter combined data
-% blinkDirInd = 'O:\ARL_Data\Shooter\BlinkOutput\AllMastRefCombined';
-% blinkFileList = 'O:\ARL_Data\Shooter\BlinkOutput\shooter_blinkFileInfo';
-% typeBlinks = 'AllMastRefCombined';
-% excludedTasks = {'EC', 'EO'};
-% summaryFile = 'O:\ARL_Data\Shooter\BlinkOutput\shooter_AllMastRefCombined_summary.mat';
+blinkDirInd = 'O:\ARL_Data\Shooter\BlinkOutput\AllMastRefCombined';
+blinkFileList = 'O:\ARL_Data\Shooter\BlinkOutput\shooter_blinkFileInfo';
+typeBlinks = 'AllMastRefCombined';
+excludedTasks = {'EC', 'EO'};
+summaryFile = 'O:\ARL_Data\Shooter\BlinkOutput\shooter_AllMastRefCombined_summary.mat';
 
 %% Setup to generate summary for the NCTU_RWN_VDE combined data
 experiment = 'NCTU_RWN_VDE';
-blinkDir = 'J:\CTAData\NCTU_RWN_VDE\Blinks';
-blinkDirInd = [blinkDir filesep 'AllMastRefCombinedWithDate'];
+blinkDirInd = 'J:\CTAData\NCTU_RWN_VDE\Blinks\AllMastRefCombinedWithDate';
 typeBlinks = 'AllMastRefCombined';
-summaryFile = [blinkDir filesep experiment ...
+summaryFile = ['J:\CTAData\NCTU_RWN_VDE\Blinks\' experiment ...
               '_AllMastRefCombinedWithDate_summary.mat'];
+blinkDir = 'J:\CTAData\NCTU_RWN_VDE\Blinks';
 excludedTasks = {'Pre_EXP_resting', 'Post_EXP_resting'};
 blinkFileList = [blinkDir filesep experiment '_blinkFileList.mat'];
 

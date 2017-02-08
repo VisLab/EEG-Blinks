@@ -46,13 +46,11 @@ for k = 1:length(fileNames)
     inName = [blinkIndir filesep theName theExt];
     outName = [blinkOutdir filesep theName 'Combined.mat'];
     try
-       blinks = []; blinkFits = []; blinkProperties = []; 
-       blinkStatistics = [];params = [];
+       blinks = []; blinkFits = []; blinkProperties = []; params = [];
        lTemp = load(inName);
        blinks = lTemp.blinks;
        blinkFits = lTemp.blinkFits;
        blinkProperties = lTemp.blinkProperties;
-       blinkStatistics = lTemp.blinkStatistics;
        params = lTemp.params;
  
     catch mex
@@ -113,7 +111,6 @@ for k = 1:length(fileNames)
 end
 
    function [] = saveFiles(fileName)
-       save(fileName, 'blinks', 'blinkFits',  'blinkProperties', ...
-           'blinkStatistics', 'params', '-v7.3');
+       save(fileName, 'blinks', 'blinkFits',  'blinkProperties', 'params', '-v7.3');
    end
 end
