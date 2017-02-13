@@ -1,5 +1,5 @@
-%% Run an n-way analysis of variance on blinksStatisticsSummary structure
-% This script shows an example of how to do an n-way anova.
+%% Run an n-way analysis of variance on a blinks data structure
+%
 %
 % BLINKER extracts blinks and ocular indices from time series. 
 % Copyright (C) 2016  Kay A. Robbins, Kelly Kleifgas, UTSA
@@ -18,20 +18,30 @@
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %% Shooter blinks
-experiment = 'Shooter';
-blinkDir = 'O:\ARL_Data\Shooter\BlinkOutput';
-summaryFile = 'shooter_AllMastRefCombined_summary.mat';
-aNovaFile = 'shooter_AllMastRefCombined_ANOVA.mat';
-taskTypes = {'SEF2', 'SEF4', 'SEO2', 'SEO4', ...
-             'DEF2', 'DEF4', 'DEO2', 'DEO4', 'ARIT', ...
-             'EC', 'EO'};
-taskGroupList = {{'SEF2', 'SEF4', 'SEO2', 'SEO4'};
-              {'DEF2', 'DEF4', 'DEO2', 'DEO4', 'ARIT'};
-              {'EC', 'EO'}};
-excludedGroups = 3; 
-excludedTasks = {'EC', 'EO'};
-theVersion = 'SingleVSDualArit';
+% experiment = 'Shooter';
+% blinkDir = 'O:\ARL_Data\Shooter\BlinkOutput';
+% summaryFile = 'shooter_AllMastRefCombined_summary.mat';
+% aNovaFile = 'shooter_AllMastRefCombined_ANOVA.mat';
+% taskTypes = {'SEF2', 'SEF4', 'SEO2', 'SEO4', ...
+%              'DEF2', 'DEF4', 'DEO2', 'DEO4', 'ARIT', ...
+%              'EC', 'EO'};
+% taskGroupList = {{'SEF2', 'SEF4', 'SEO2', 'SEO4'};
+%               {'DEF2', 'DEF4', 'DEO2', 'DEO4', 'ARIT'};
+%               {'EC', 'EO'}};
+% excludedGroups = 3; 
+% excludedTasks = {'EC', 'EO'};
+% theVersion = 'SingleVSDualArit';
 
+%% NCTU_RWN_VDE
+experiment = 'NCTU_RWN_VDE';
+blinkDir = 'J:\CTAData\NCTU_RWN_VDE\Blinks';
+blinkDirInd = [blinkDir filesep 'AllMastRefCombinedWithDate'];
+typeBlinks = 'AllMastRefCombined';
+summaryFile = 'NCTU_RWN_VDE_AllMastRefCombinedWithDate_summary.mat';
+excludedTasks = {'Pre_EXP_resting', 'Post_EXP_resting'};
+blinkFileList = [blinkDir filesep experiment '_blinkFileList.mat'];
+taskTypes = {'PVT', 'LKT', 'DAS_High', 'DAS_Low'};
+excludedGroups = {};
 %% NCTU
 % blinkDir = 'O:\ARL_Data\NCTU\NCTU_Blinks';
 % experiment = 'NCTU_LK';
@@ -78,22 +88,38 @@ blinkStatisticsSummary = blinkStatisticsSummary(componentValid);
 subjects = {blinkStatisticsSummary.subjectID};
 tasks = {blinkStatisticsSummary.task};
 used = cellfun(@double, {blinkStatisticsSummary.usedNumber});
-taskTimes = 1:length(blinkStatisticsSummary);
+uniqueNames = {blinkStatisticsSummary.uniqueName};
+fatigueLevels = cell(size(subjects));
 
-%% Compute the order variables
-uniqueSubjects = unique(subjects);
-taskOrder = zeros(size(subjects));
-taskGroups = getTaskGroups(tasks, taskGroupList);
-datasetIndex = 1:length(blinkStatisticsSummary);
-for k = 1:length(uniqueSubjects)
-    theseSubjects = strcmpi(subjects, uniqueSubjects{k});
-    theseTimes = taskTimes(theseSubjects);
-    [sortTimes, sortIndex] = sort(theseTimes);
-    thesePositions = datasetIndex(theseSubjects);
-    taskOrder(theseSubjects) = sortIndex;
+for k = 1:length(subjects)
+    pieces = strsplit(uniqueNames{k}, '_');
+    if sum(strcmpi(pieces, 'HighFatigue')) > 0
+        fatigueLevels{k} = 'High';
+    elseif sum(strcmpi(pieces, 'LowFatigue')) > 0
+        fatigueLevels{k} = 'Low';
+    elseif sum(strcmpi(pieces, 'Normal')) > 0
+        fatigueLevels{k} = 'Normal';
+    else
+        fatigueLevels{k} = 'Unknown';
+        warning('%d: %s does not have a correct fatigue level', k, uniqueNames{k});
+    end
 end
+% taskTimes = 1:length(blinkStatisticsSummary);
+% 
+% %% Compute the order variables
+% uniqueSubjects = unique(subjects);
+% taskOrder = zeros(size(subjects));
+% taskGroups = getTaskGroups(tasks, taskGroupList);
+% datasetIndex = 1:length(blinkStatisticsSummary);
+% for k = 1:length(uniqueSubjects)
+%     theseSubjects = strcmpi(subjects, uniqueSubjects{k});
+%     theseTimes = taskTimes(theseSubjects);
+%     [sortTimes, sortIndex] = sort(theseTimes);
+%     thesePositions = datasetIndex(theseSubjects);
+%     taskOrder(theseSubjects) = sortIndex;
+% end
 
-%% Calculate masks for excluded tasks and excluded groups
+% %% Calculate masks for excluded tasks and excluded groups
 tasksExcluded = false(size(tasks));
 if ~isempty(excludedTasks)
     for k = 1:length(tasks)
@@ -103,13 +129,13 @@ if ~isempty(excludedTasks)
     end
 end
 groupsExcluded = false(size(tasks));
-if ~isempty(excludedGroups)
-    for k = 1:length(tasks)
-        if sum(excludedGroups == taskGroups(k))
-            groupsExcluded(k) = true;
-        end
-    end
-end
+% if ~isempty(excludedGroups)
+%     for k = 1:length(tasks)
+%         if sum(excludedGroups == taskGroups(k))
+%             groupsExcluded(k) = true;
+%         end
+%     end
+% end
 
 %% Initialize the structures
 baseStruct = struct('ocularIndex', NaN, 'aNovaType', NaN, ...
@@ -132,9 +158,10 @@ for k = 1:length(indicatorType)
     indicatorValid = ~isnan(indicatorBase);
     theseSubjects = subjects(indicatorValid);
     theseTasks = tasks(indicatorValid);
-    theseGroups = taskGroups(indicatorValid);
+    theseFatigues = fatigueLevels(indicatorValid);
+    %theseGroups = taskGroups(indicatorValid);
     theseIndicators = indicatorBase(indicatorValid);
-    theseOrders = taskOrder(indicatorValid);
+    %theseOrders = taskOrder(indicatorValid);
     theseTasksExcluded = tasksExcluded(indicatorValid);
     theseGroupsExcluded = groupsExcluded(indicatorValid);
 
@@ -149,42 +176,42 @@ for k = 1:length(indicatorType)
     b.pStats = theStats;
     pValues{k, 1} = b;
     
-    %% Calculate aNova for subjects versus taskGroups
-    [p, theTable, theStats] = anovan(theseIndicators, {theseSubjects, theseGroups}, ...
-          'display', 'off', 'varnames', {subjectInd, 'group'});
-    b = baseStruct;
-    b.ocularIndex = indicatorType{k};
-    b.aNovaType = 'Subject-Group';
-    b.p = p;
-    b.pTable = theTable;
-    b.pStats = theStats;
-    pValues{k, 2} = b;
+%     %% Calculate aNova for subjects versus taskGroups
+%     [p, theTable, theStats] = anovan(theseIndicators, {theseSubjects, theseGroups}, ...
+%           'display', 'off', 'varnames', {subjectInd, 'group'});
+%     b = baseStruct;
+%     b.ocularIndex = indicatorType{k};
+%     b.aNovaType = 'Subject-Group';
+%     b.p = p;
+%     b.pTable = theTable;
+%     b.pStats = theStats;
+%     pValues{k, 2} = b;
     
-    %% ANova with subject-task-taskorder
+    %% ANova with subject-task-fatigue level
     [p, theTable, theStats] = anovan(theseIndicators, ...
-        {theseSubjects, theseTasks, theseOrders}, ...
+        {theseSubjects, theseTasks, theseFatigues}, ...
         'display', 'off', ...
-        'varnames', {subjectInd, 'task', 'taskOrder' });
+        'varnames', {subjectInd, 'task', 'fatigue' });
     b = baseStruct;
     b.ocularIndex = indicatorType{k};
-    b.aNovaType = 'Subject-Task-TaskOrder';
+    b.aNovaType = 'Subject-Task-Fatigue';
     b.p = p;
     b.pTable = theTable;
     b.pStats = theStats;
     pValues{k, 3} = b;
     
     %% ANova with subject-group-taskorder
-    [p, theTable, theStats] = anovan(theseIndicators, ...
-        {theseSubjects, theseGroups, theseOrders}, ...
-        'display', 'off', ...
-        'varnames', {subjectInd, 'group', 'taskOrder' });
-    b = baseStruct;
-    b.ocularIndex = indicatorType{k};
-    b.aNovaType = 'Subject-Group-TaskOrder';
-    b.p = p;
-    b.pTable = theTable;
-    b.pStats = theStats;
-    pValues{k, 4} = b;
+%     [p, theTable, theStats] = anovan(theseIndicators, ...
+%         {theseSubjects, theseGroups, theseOrders}, ...
+%         'display', 'off', ...
+%         'varnames', {subjectInd, 'group', 'taskOrder' });
+%     b = baseStruct;
+%     b.ocularIndex = indicatorType{k};
+%     b.aNovaType = 'Subject-Group-TaskOrder';
+%     b.p = p;
+%     b.pTable = theTable;
+%     b.pStats = theStats;
+%     pValues{k, 4} = b;
     
     %% ANova subject-task with excluded tasks eliminated
     theseExSubjects = theseSubjects(~theseTasksExcluded);
@@ -201,21 +228,21 @@ for k = 1:length(indicatorType)
     pValues{k, 5} = b;
 
     %% Anova subject-taskgroup-no-excludedgroup
-    theseExGroups = theseGroups(~theseGroupsExcluded);
-    theseExGSubjects = theseSubjects(~theseGroupsExcluded);
-    theseExGIndicators = theseIndicators(~theseGroupsExcluded);
-    [p, theTable, theStats] = anovan(theseExGIndicators, ...
-                                     {theseExGSubjects, theseExGroups}, ...
-          'display', 'off', 'varnames', {subjectInd, 'taskGroup'});
-    b = baseStruct;
-    b.ocularIndex = indicatorType{k};
-    b.aNovaType = 'Subject-Group-No-Excluded-Group ';
-    b.p = p;
-    b.pTable = theTable;
-    b.pStats = theStats;
-    pValues{k, 6} = b;
-    
-    %% Compute subject subtraction and division scaling
+%     theseExGroups = theseGroups(~theseGroupsExcluded);
+%     theseExGSubjects = theseSubjects(~theseGroupsExcluded);
+%     theseExGIndicators = theseIndicators(~theseGroupsExcluded);
+%     [p, theTable, theStats] = anovan(theseExGIndicators, ...
+%                                      {theseExGSubjects, theseExGroups}, ...
+%           'display', 'off', 'varnames', {subjectInd, 'taskGroup'});
+%     b = baseStruct;
+%     b.ocularIndex = indicatorType{k};
+%     b.aNovaType = 'Subject-Group-No-Excluded-Group ';
+%     b.p = p;
+%     b.pTable = theTable;
+%     b.pStats = theStats;
+%     pValues{k, 6} = b;
+%     
+    %% Compute subject subtraction and division scaling - scaled by low-fatigue
     indicatorSub = theseExGIndicators;
     indicatorDiv = theseExGIndicators;
    
@@ -238,32 +265,32 @@ for k = 1:length(indicatorType)
     b.pStats = theStats;
     pValues{k, 7} = b;
     
-    %% Anova subject-task using subtraction scaling with interactions
-    [p, theTable, theStats] = anovan(indicatorSub, {theseExGSubjects, theseExGroups}, ...
-          'display', 'off', 'varnames', {[subjectInd 'Sub'], 'taskGroup' }, ...
-          'model', 'interaction');
-    b = baseStruct;
-    b.ocularIndex = indicatorType{k};
-    b.aNovaType = 'Subject-Group-Interaction-No-Ex-Sub-Scaling';
-    b.p = p;
-    b.pTable = theTable;
-    b.pStats = theStats;
-    pValues{k, 8} = b;
-    
-    %% Anova subject-task using division scaling
-    [p, theTable, theStats] = anovan(indicatorDiv, {theseExGSubjects, theseExGroups}, ...
-          'display', 'off', 'varnames', {[subjectInd 'Div'], 'taskGroup' });
-    b = baseStruct;
-    b.ocularIndex = indicatorType{k};
-    b.aNovaType = 'Subject-Group-No-Ex-Div-Scaling';
-    b.p = p;
-    b.pTable = theTable;
-    b.pStats = theStats;
-    pValues{k, 9} = b;
+%     %% Anova subject-task using subtraction scaling with interactions
+%     [p, theTable, theStats] = anovan(indicatorSub, {theseExGSubjects, theseExGroups}, ...
+%           'display', 'off', 'varnames', {[subjectInd 'Sub'], 'taskGroup' }, ...
+%           'model', 'interaction');
+%     b = baseStruct;
+%     b.ocularIndex = indicatorType{k};
+%     b.aNovaType = 'Subject-Group-Interaction-No-Ex-Sub-Scaling';
+%     b.p = p;
+%     b.pTable = theTable;
+%     b.pStats = theStats;
+%     pValues{k, 8} = b;
+%     
+%     %% Anova subject-task using division scaling
+%     [p, theTable, theStats] = anovan(indicatorDiv, {theseExGSubjects, theseExGroups}, ...
+%           'display', 'off', 'varnames', {[subjectInd 'Div'], 'taskGroup' });
+%     b = baseStruct;
+%     b.ocularIndex = indicatorType{k};
+%     b.aNovaType = 'Subject-Group-No-Ex-Div-Scaling';
+%     b.p = p;
+%     b.pTable = theTable;
+%     b.pStats = theStats;
+%     pValues{k, 9} = b;
 end
 
 %% Save the file
-save([blinkDir filesep aNovaFile], 'pValues', '-v7.3');
+%save([blinkDir filesep aNovaFile], 'pValues', '-v7.3');
 
 %% Print out the indicators
 [numIndicators, numVersions] = size(pValues);
@@ -271,6 +298,10 @@ for k = 1:numIndicators
     fprintf('%s:\n', pValues{k, 1}.ocularIndex);
     for n = 1:numVersions
         p = pValues{k, n};
+        if isempty(p)
+            continue;
+        end
+        
         fprintf('  %s: [', p.aNovaType)
         fprintf(' %g', p.p);
         fprintf(' ]\n');
@@ -283,6 +314,9 @@ for k = 1:numIndicators
     fprintf('%s:\n', pValues{k, 1}.ocularIndex);
     for n = 1:numVersions
         p = pValues{k, n};
+        if isempty(p)
+            continue;
+        end
         pTable = p.pTable;
         sources = size(pTable, 1);
         fprintf('  %s [', p.aNovaType)
@@ -299,6 +333,9 @@ for k = 1:numIndicators
     fprintf('%s:\n', pValues{k, 1}.ocularIndex);
     for n = 1:numVersions
         p = pValues{k, n};
+        if isempty(p)
+            continue;
+        end
         pTable = p.pTable;
         sources = size(pTable, 1);
         fprintf('  %s [\n', p.aNovaType)

@@ -1,5 +1,5 @@
 %% Run an n-way analysis of variance on blinksStatisticsSummary structure
-% This script shows an example of how to do an n-way anova.
+% This script shows an example of how to 
 %
 % BLINKER extracts blinks and ocular indices from time series. 
 % Copyright (C) 2016  Kay A. Robbins, Kelly Kleifgas, UTSA

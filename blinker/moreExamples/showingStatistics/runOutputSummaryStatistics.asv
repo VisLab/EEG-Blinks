@@ -17,17 +17,19 @@
 % 
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
-%% Summary files
+%% Summary file
 %summaryFile = 'O:\ARL_Data\VEP\BlinkOutput\vep_oddball_ALLUnRef_summary.mat';
-%summaryFile = 'O:\ARL_Data\Shooter\BlinkOutput\shooter_AllMastRefCombined_summary.mat';
+summaryFile = 'O:\ARL_Data\Shooter\BlinkOutput\shooter_AllMastRefCombined_summary.mat';
+%% Shooter summary file
 
-%% NCTU_RWN_VDE summary file
 experiment = 'NCTU_RWN_VDE';
 blinkDir = 'J:\CTAData\NCTU_RWN_VDE\Blinks';
 blinkDirInd = [blinkDir filesep 'AllMastRefCombinedWithDate'];
 typeBlinks = 'AllMastRefCombined';
 summaryFile = [blinkDir filesep experiment ...
               '_AllMastRefCombinedWithDate_summary.mat'];
+excludedTasks = {'Pre_EXP_resting', 'Post_EXP_resting'};
+blinkFileList = [blinkDir filesep experiment '_blinkFileList.mat'];
 
 %% Load the summary file
 load(summaryFile);

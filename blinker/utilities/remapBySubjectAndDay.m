@@ -41,7 +41,7 @@ subjects = {blinkRemap.subjectID};
 startDays = {blinkRemap.startDate};
 for k = 1:length(fileNames)
     blinks = []; blinkFits = []; blinkProperties = []; params = []; %#ok<*NASGU>
-    fprintf('Processing %s\n', fileNames{k});
+    fprintf('Processing %d: %s\n', k, fileNames{k});
     [thePath, theName, theExt] = fileparts(fileNames{k});
     inName = [blinkIndir filesep theName theExt];
     outName = [blinkOutdir filesep theName 'Combined.mat'];
@@ -56,7 +56,7 @@ for k = 1:length(fileNames)
        params = lTemp.params;
  
     catch mex
-        warning('----%s does not exist (%s)....\n', inName, mex.message);
+        warning('----%s does not exist (%s)....', inName, mex.message);
         continue;
     end
     if ~exist('blinks', 'var')
