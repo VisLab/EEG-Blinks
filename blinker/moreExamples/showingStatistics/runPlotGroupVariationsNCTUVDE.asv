@@ -128,7 +128,7 @@ for k = 1:length(indicatorType)
     end
     
     %% Plot groups using boxplots
-    theName = [experiment ' ' indicatorType{k} ' grouped'];
+    theName = [experiment ' ' indicatorType{k} ': grouped'];
     h = figure('Name', theName);
     boxplot(theseIndicators, fatigueLevels, 'notch', 'on', ...
         'colors', [0, 0, 0], 'groupOrder', {'Low', 'Normal', 'High'}, ...
@@ -144,7 +144,7 @@ for k = 1:length(indicatorType)
         saveas(h, [imageDir filesep theName '.png'], 'png');
     end
     %% Plot groups using boxplots
-    theName = [experiment ' ' indicatorType{k} ' grouped DIV'];
+    theName = [experiment ' ' indicatorType{k} ': grouped/DIV']];
     h = figure('Name', theName);
     boxplot(indicatorsDiv, fatigueLevels, 'notch', 'on', ...
         'colors', [0, 0, 0], ...
@@ -155,15 +155,14 @@ for k = 1:length(indicatorType)
     set(gca, 'LineWidth', 1)
     %set(gca, 'GridLineStyle', ':', 'XGrid', 'on', 'YGrid', 'off');
     title(theName, 'Interpreter', 'None');
-    if ~isempty(imageDir)
+        if ~isempty(imageDir)
         saveas(h, [imageDir filesep theName '.fig'], 'fig');
         saveas(h, [imageDir filesep theName '.pdf'], 'pdf');
         saveas(h, [imageDir filesep theName '.png'], 'png');
     end
-
     %% Plot groups using boxplots
-    theName = [experiment ' ' indicatorType{k} ' grouped SUB'];
-    h = figure('Name', theName);
+    theName = [experiment ' ' indicatorType{k} ': grouped'];
+    figure('Name', [indicatorType{k} ': grouped/SUB']);
     boxplot(indicatorsSub, fatigueLevels, 'notch', 'on', ...
         'colors', [0, 0, 0], 'groupOrder', {'Low', 'Normal', 'High'}, ...
         'datalim', [dataLimitsLow(k, 3), dataLimitsHigh(k, 3)])
@@ -172,12 +171,7 @@ for k = 1:length(indicatorType)
     set(gca, 'YGrid', 'on');
     set(gca, 'LineWidth', 1)
     title([indicatorType{k} ': grouped/SUB']);
-    title(theName, 'Interpreter', 'None');
-    if ~isempty(imageDir)
-        saveas(h, [imageDir filesep theName '.fig'], 'fig');
-        saveas(h, [imageDir filesep theName '.pdf'], 'pdf');
-        saveas(h, [imageDir filesep theName '.png'], 'png');
-    end
+    
     %% Plot subjects using boxplots
     if  plotIndividualSubjects
         figure('Name', [indicatorType{k}]); %#ok<UNRCH>

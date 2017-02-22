@@ -22,4 +22,5 @@ The primary developers of BLINKER are Kelly Kliefgas and Kay Robbins of UTSA. BL
 uses Eye-Catch developed by Nima Bigdely-Shamlo while at USCS SCCN to eliminate 
 independent components that are not eye-related. Kay Robbins of UTSA maintains BLINKER.
 
-### Releases   
+### Releases  
+1.0.1  Implemented combine by subject and date for determining max distributions 

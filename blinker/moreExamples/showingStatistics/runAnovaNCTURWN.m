@@ -27,7 +27,7 @@ excludedTasks = {'Pre_EXP_resting', 'Post_EXP_resting'};
 blinkFileList = [blinkDir filesep experiment '_blinkFileList.mat'];
 taskTypes = {'PVT', 'LKT', 'DAS_High', 'DAS_Low'};
 excludedGroups = {};
-
+aNovaFile = [blinkDir filesep experiment '_aNovaResults.mat'];
 %% Load the summary file
 load([blinkDir filesep summaryFile]);
 
@@ -161,7 +161,8 @@ for k = 1:length(indicatorType)
     %% Compute subject subtraction and division scaling - scaled by low-fatigue
     indicatorSub = theseIndicators;
     indicatorDiv = theseIndicators;
-    scaleFatigueTasks = strcmpi(theseFatigues, 'Normal');
+    scaleFatigueTasks = strcmpi(theseFatigues, 'Normal') | ...
+                        strcmpi(theseFatigues, 'Low');
     for s = 1:length(uniqueSubjects)
         thisSubject = uniqueSubjects{s};
         thisIndex = strcmpi(theseSubjects, thisSubject);
@@ -206,7 +207,7 @@ for k = 1:length(indicatorType)
 end
 
 %% Save the file
-save([blinkDir filesep aNovaFile], 'pValues', '-v7.3');
+save(aNovaFile, 'pValues', '-v7.3');
 
 %% Print out the indicators
 [numIndicators, numVersions] = size(pValues);
