@@ -23,4 +23,14 @@ uses Eye-Catch developed by Nima Bigdely-Shamlo while at USCS SCCN to eliminate
 independent components that are not eye-related. Kay Robbins of UTSA maintains BLINKER.
 
 ### Releases  
-1.0.1  Implemented combine by subject and date for determining max distributions 
+1.0.1  Implemented combine-by-subject and date for determining max distributions 
+
+### Support  
+This research was sponsored by the Army Research Laboratory and was  
+accomplished under Cooperative Agreement Number W911NF-10-2-0022.  
+The views and conclusions contained in this document are those of  
+the authors and should not be interpreted as representing the official  
+policies, either expressed or implied, of the Army Research Laboratory  
+or the U.S. Government. The U.S. Government is authorized to reproduce  
+and distribute reprints for Government purposes notwithstanding any  
+copyright notation herein.  
