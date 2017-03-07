@@ -36,10 +36,10 @@ function EEG = addBlinkEvents(EEG, blinkFits, blinkProperties)
 
     %% Merge events
     [urEvents, uPositionsEEG, uPositionsBlinks] = ...
-                   mergeEventsNew(EEG.urevent, blinkUREvents);
+                   mergeEvents(EEG.urevent, blinkUREvents);
     eventsEEGn = rmfield(EEG.event, 'urevent');
     [events, positionsEEG, positionsBlinks] = ...
-                    mergeEventsNew(eventsEEGn, blinkUREvents);
+                    mergeEvents(eventsEEGn, blinkUREvents);
 
     events(1).urevent = NaN;
     for k = 1:length(positionsEEG)
