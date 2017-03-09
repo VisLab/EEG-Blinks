@@ -116,13 +116,13 @@ function [events, blinkSignal] = ...
         validEvents(5).userTags = '/Action/EyeBlink';
         validEvents(6).fieldName = 'leftZeroHalfHeight';
         validEvents(6).label = 'BlinkLeftZeroHalf';
-        validEvents(6).longName = 'Time blink signal reaches zero half height on close';
-        validEvents(6).description =  'Time blink signal reaches zero half height on close';
+        validEvents(6).longName = 'Time blink signal local minimum on close';
+        validEvents(6).description =  'Time blink signal local minimum on close';
         validEvents(6).userTags = '/Action/EyeBlink';
         validEvents(7).fieldName = 'rightZeroHalfHeight';
-        validEvents(7).label = 'BlinkRightHalfZero';
-        validEvents(7).longName = 'Time blink signal reaches zero half height on open';
-        validEvents(7).description =  'Time blink signal reaches zero half height on open';
+        validEvents(7).label = 'BlinkRightBase';
+        validEvents(7).longName = 'Time blink signal crosses low on open';
+        validEvents(7).description =  'Time blink signal first crosses local minimum on open';
         validEvents(7).userTags = '/Action/EyeBlink';
    
 

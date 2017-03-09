@@ -5,8 +5,7 @@ blinkFileDir = 'J:\CTAData\NCTU_RWN_VDE\Blinks\AllMastRefCombinedWithDate';
 blinkFileList = 'J:\CTAData\NCTU_RWN_VDE\NCTU_RWN_VDE_BlinkFileList.mat';
 blinkType = 'AllMastRefCombined';
 EEGDir = 'J:\CTAData\NCTU_RWN_VDE\Level1\session';
-fieldList = {'maxFrame', 'leftZero', 'rightZero', 'leftBase', 'rightBase', ...
-             'leftZeroHalfHeight', 'rightZeroHalfHeight'};
+fieldList = {'maxFrame', 'leftZero', 'rightZero'};
 %% Load the blink file list
 load(blinkFileList);
 
@@ -22,4 +21,4 @@ test = load([blinkFileDir filesep blinkName]);
 %% Add blink events to the EEG
 [EEGNew, blinkSignal] = ...
     addBlinkEvents(EEG, test.blinks, test.blinkFits, ...
-                   test.blinkProperties, fieldList);
+                   test.blinkProperties, fi);

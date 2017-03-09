@@ -17,15 +17,14 @@ function [EEG, blinkSignal] = addBlinkEvents(EEG, blinks, blinkFits, ...
 %  Written by Kay Robbins, UTSA, 2017
 %
 %% Check arguments
-if nargin < 4
+if nargin < 3
     error('addBlinkEvents:NotEnoughParameters', 'Need at least 3 arguments');
-elseif nargin == 4
-    fieldList = {'maxFrame'};
+elseif nargin == 3
+    fieldList = {maxFrame};
 end
 
 %% First make sure that there are blink events to add
-      [blinkEvents, blinkSignal] = ...
-          getBlinkEvents(blinks, blinkFits, blinkProperties, fieldList); 
+      [blinkEvents, blinkSignal] = getBlinkEvents(blinkFits, blinkProperties, fieldList); 
       if isempty(blinkEvents)
           blinkSignal = zeros(1, size(EEG.data, 2));
           warning('addBlinkEvents:NoEvents', 'No blink events detected');
