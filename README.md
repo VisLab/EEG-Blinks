@@ -23,7 +23,8 @@ uses Eye-Catch developed by Nima Bigdely-Shamlo while at USCS SCCN to eliminate
 independent components that are not eye-related. Kay Robbins of UTSA maintains BLINKER.
 
 ### Releases  
-1.0.1  Implemented combine-by-subject and date for determining max distributions 
+1.0.1  2/22/2017 Implemented combine-by-subject and date for determining max distributions 
+1.0.2  3/9/2017 Implemented insertion of blink events into EEG structure
 
 ### Support  
 This research was sponsored by the Army Research Laboratory and was  

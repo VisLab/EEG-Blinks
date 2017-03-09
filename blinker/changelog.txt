@@ -1,0 +1,9 @@
+blinker 1.0.2 Change log 3/9/2017
+
+1. Added blink events to EEG structures
+
+blinker 1.0.1 Change log 2/22/2017
+
+1. Added capability combining datasets over both subject ID and date
+   to get better session estimates of blink max amplitude distribution.
+
