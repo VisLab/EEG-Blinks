@@ -1,3 +1,9 @@
+blinker 1.1.0 Change log 3/17/2017
+1. Added additional blink events and zeroed blink signal to blink events
+2. Corrected NaN issue in latencies when specified field is NaN
+3. Replaced NaN durations with zeros. Replaced NaN usertags and hedtags with ''.
+
+
 blinker 1.0.2 Change log 3/9/2017
 
 1. Added blink events to EEG structures

@@ -67,8 +67,8 @@ end
     end
     
     %% Now update the EEG
-    EEG.event = events;
-    EEG.urevent = urEvents;
+    EEG.event = cleanupNans(events);
+    EEG.urevent = cleanupNans(urEvents);
 end 
 
 function events = addUREventField(events)
@@ -79,5 +79,20 @@ function events = addUREventField(events)
     events(1).urevent = 1;
     for k = 2:length(events)
         events(k).urevent = k;
+    end  
+end
+
+function events = cleanupNans(events)
+%% Replace NaNs for duration, usertags, and hedtags with 0, '', and ''
+    for k = 1:length(events)
+        if isnan(events(k).duration)
+            events(k).duration = 0;
+        end
+        if isnan(events(k).usertags)
+            events(k).usertags = '';
+        end
+        if isnan(events(k).hedtags)
+            events(k).hedtags = '';
+        end
     end
 end

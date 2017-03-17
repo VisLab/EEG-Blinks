@@ -29,47 +29,66 @@ function [events, blinkSignal] = ...
         warning('insertBlinkEvents:NoValidFields', 'Field values are not invalid');
         return;
     end
-    usedEvents = validEvents(vMask);
+    usedEventTypes = validEvents(vMask);
     badFields = setdiff(fieldList, validFields);
     if ~isempty(badFields)
        badFieldString = badFields{1};
-       for k = 1:length(badFields)
-           badFieldString = [badFieldString ',' badFields{k}]; %#ok<AGROW>
+       for k = 2:length(badFields)
+           badFieldString = [badFieldString ',' badFields{k}]; 
        end
        warning('insertBlinkEvents:SkippingFields', 'Invalid fields %s', badFieldString);
     end
 
 %% Get preliminary number of blinks and create an events structure
     numBlinks = length(blinkFits);
-    numEvents = length(usedEvents)*numBlinks;
+    numEvents = length(usedEventTypes)*numBlinks;
     events(numEvents) = struct('type', NaN, 'latency', NaN, ...
         'duration', NaN, 'usertags', NaN,  'hedtags', NaN);
 
-    pos = 0; 
-    for n = 1:length(usedEvents)
-        theLatencies = cellfun(@double, {blinkFits.(usedFields{n})});
-        userTags = ['/Event/Category/Incidental,' ...
-            '/Event/Label/' usedEvents(n).label ',' ...
-            '/Event/Long name/' usedEvents(n).longName ',' ...
-            '/Event/Description/' usedEvents(n).description ',' ...
-            usedEvents(n).userTags];
-
-        for k = 1:numBlinks
+%% Set up the usertags for the used fields  
+    userTags = cell(length(usedEventTypes), 1);
+    for n = 1:length(usedEventTypes)
+        userTags{n} = ['/Event/Category/Incidental,' ...
+            '/Event/Label/' usedEventTypes(n).label ',' ...
+            '/Event/Long name/' usedEventTypes(n).longName ',' ...
+            '/Event/Description/' usedEventTypes(n).description ',' ...
+            usedEventTypes(n).userTags];
+    end
+    pos = 0;
+    for k = 1:numBlinks
+        hedTags = '';
+        durationHZ = blinkProperties(k).durationHalfZero;
+        if ~isnan(durationHZ)
+            hedTags = ['/Attribute/Blink/Duration/' num2str(durationHZ) ' s,'];
+        end
+        PAVR = blinkProperties(k).posAmpVelRatioBase;
+        if ~isnan(PAVR)
+            hedTags = [hedTags '/Attribute/Blink/PAVR/' num2str(PAVR) ' cs,']; %#ok<*AGROW>
+        end
+        NAVR = blinkProperties(k).negAmpVelRatioBase;
+        if ~isnan(NAVR)
+            hedTags = [hedTags '/Attribute/Blink/NAVR/' num2str(NAVR) ' cs'];
+        end
+        if strcmpi(hedTags, ',')
+            hedTags = hedTags(1:(end-1));
+        end
+        for n = 1:length(usedEventTypes)
+            theLatency = blinkFits(k).(usedFields{n});
+            if isnan(theLatency)
+                warning('getBlinkEvents:SkipNan', ...
+                    'Warning, skipping blink %d for field %s', k, usedFields{n});
+                continue;
+            end
             pos = pos + 1;
             events(pos) = events(numEvents);
-            events(pos).type = usedEvents(n).fieldName;
-            events(pos).latency = theLatencies(k);
+            events(pos).type = usedEventTypes(n).fieldName;
+            events(pos).latency = theLatency;
             events(pos).duration = 0;
-            events(pos).usertags = userTags;
-            events(pos).hedtags = ...
-                ['/Attribute/Blink/Duration/' ...
-                num2str(blinkProperties(k).durationHalfZero) ' s,' ...
-                '/Attribute/Blink/PAVR/' ...
-                num2str(blinkProperties(k).posAmpVelRatioBase) ' cs,' ...
-                '/Attribute/Blink/NAVR/' ...
-                num2str(blinkProperties(k).negAmpVelRatioBase) ' cs'];
+            events(pos).usertags = userTags{n};
+            events(pos).hedtags = hedTags;
         end
     end
+    events = events(1:pos);
     
     %% Now construct the zeroed signal
     if isempty(blinks) || ~isfield(blinks, 'signalData') || isempty(blinks.signalData)
@@ -81,6 +100,11 @@ function [events, blinkSignal] = ...
     startZeros = cellfun(@double, {blinkFits.leftZero});
     endZeros = cellfun(@double, {blinkFits.rightZero});
     for k = 1:numBlinks
+        if isnan(startZeros(k)) || isnan(endZeros(k))
+            warning('getBlinkEvents:SkipBlink', ...
+                'Skipping blink %d because end point not defined', k);
+            continue;
+        end
         blinkSignal(startZeros(k):endZeros(k)) = signal(startZeros(k):endZeros(k));
     end
     blinkSignal(blinkSignal < 0) = 0;
@@ -114,12 +138,12 @@ function [events, blinkSignal] = ...
         validEvents(5).longName = 'Time blink signal crosses low on open';
         validEvents(5).description =  'Time of blink signal first local minimum on open';
         validEvents(5).userTags = '/Action/Eye blink/Right base';
-        validEvents(6).fieldName = 'leftHalfHeight';
+        validEvents(6).fieldName = 'leftZeroHalfHeight';
         validEvents(6).label = 'BlinkLeftHalfHeight';
         validEvents(6).longName = 'Time blink signal reaches zero half height on close';
         validEvents(6).description =  'Time blink signal last reaches zero half height on close';
         validEvents(6).userTags = '/Action/Eye blink/Left half height';
-        validEvents(7).fieldName = 'rightHalfHeight';
+        validEvents(7).fieldName = 'rightZeroHalfHeight';
         validEvents(7).label = 'BlinkRightHalfHeight';
         validEvents(7).longName = 'Time blink signal reaches zero half height on open';
         validEvents(7).description =  'Time blink signal first reaches zero half height on open';
