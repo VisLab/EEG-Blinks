@@ -107,22 +107,29 @@ function [events, blinkSignal] = ...
         validEvents(4).fieldName = 'leftBase';
         validEvents(4).label = 'BlinkLeftBase';
         validEvents(4).longName = 'Time blink signal local minimum on close';
-        validEvents(4).description =  'Time of blink signal last local minimum on close';
-        validEvents(4).userTags = '/Action/Eye blink/Left base';
+        validEvents(4).description =  'Time blink signal local minimum on close';
+        validEvents(4).userTags = '/Action/Eye blink/Right base';
         validEvents(5).fieldName = 'rightBase';
         validEvents(5).label = 'BlinkRightBase';
         validEvents(5).longName = 'Time blink signal crosses low on open';
-        validEvents(5).description =  'Time of blink signal first local minimum on open';
-        validEvents(5).userTags = '/Action/Eye blink/Right base';
+        validEvents(5).description =  'Time blink signal first crosses local minimum on open';
+        validEvents(5).userTags = '/Action/Eye blink/Left half height';
         validEvents(6).fieldName = 'leftHalfHeight';
         validEvents(6).label = 'BlinkLeftHalfHeight';
         validEvents(6).longName = 'Time blink signal reaches zero half height on close';
-        validEvents(6).description =  'Time blink signal last reaches zero half height on close';
-        validEvents(6).userTags = '/Action/Eye blink/Left half height';
+        validEvents(6).description =  'Time blink signal reaches zero half height on close';
+        validEvents(6).userTags = '/Action/Eye blink/Right half height';
         validEvents(7).fieldName = 'rightHalfHeight';
         validEvents(7).label = 'BlinkRightHalfHeight';
         validEvents(7).longName = 'Time blink signal reaches zero half height on open';
-        validEvents(7).description =  'Time blink signal first reaches zero half height on open';
+        validEvents(7).description =  'Time blink signal reaches zero half height on open';
         validEvents(7).userTags = '/Action/Eye blink/Right half height';
+   
+
+        %         validFields = {'maxFrame', 'leftOuter', 'rightOuter', ...
+        %                'leftZero', 'rightZero', 'leftBase', 'rightBase', ...
+        %                'leftBaseHalfHeight', 'rightBaseHalfHeight', ...
+        %                'leftZeroHalfHeight', 'rightZeroHalfHeight'};
+
     end
 end
