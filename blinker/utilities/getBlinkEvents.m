@@ -48,10 +48,10 @@ function [events, blinkSignal] = ...
 %% Set up the usertags for the used fields  
     userTags = cell(length(usedEventTypes), 1);
     for n = 1:length(usedEventTypes)
-        userTags{n} = ['/Event/Category/Incidental,' ...
-            '/Event/Label/' usedEventTypes(n).label ',' ...
-            '/Event/Long name/' usedEventTypes(n).longName ',' ...
-            '/Event/Description/' usedEventTypes(n).description ',' ...
+        userTags{n} = ['Event/Category/Incidental,' ...
+            'Event/Label/' usedEventTypes(n).label ',' ...
+            'Event/Long name/' usedEventTypes(n).longName ',' ...
+            'Event/Description/' usedEventTypes(n).description ',' ...
             usedEventTypes(n).userTags];
     end
     pos = 0;
@@ -59,15 +59,15 @@ function [events, blinkSignal] = ...
         hedTags = '';
         durationHZ = blinkProperties(k).durationHalfZero;
         if ~isnan(durationHZ)
-            hedTags = ['/Attribute/Blink/Duration/' num2str(durationHZ) ' s,'];
+            hedTags = ['Attribute/Blink/Duration/' num2str(durationHZ) ' s,'];
         end
         PAVR = blinkProperties(k).posAmpVelRatioBase;
         if ~isnan(PAVR)
-            hedTags = [hedTags '/Attribute/Blink/PAVR/' num2str(PAVR) ' cs,']; %#ok<*AGROW>
+            hedTags = [hedTags 'Attribute/Blink/PAVR/' num2str(PAVR) ' cs,']; %#ok<*AGROW>
         end
         NAVR = blinkProperties(k).negAmpVelRatioBase;
         if ~isnan(NAVR)
-            hedTags = [hedTags '/Attribute/Blink/NAVR/' num2str(NAVR) ' cs'];
+            hedTags = [hedTags 'Attribute/Blink/NAVR/' num2str(NAVR) ' cs,'];
         end
         if strcmpi(hedTags, ',')
             hedTags = hedTags(1:(end-1));
@@ -117,36 +117,36 @@ function [events, blinkSignal] = ...
         validEvents(1).label = 'BlinkMax';
         validEvents(1).longName = 'Time of maximum blink amplitude';
         validEvents(1).description = 'Time blink signal first reaches maximum';
-        validEvents(1).userTags = '/Action/Eye blink/Max';
+        validEvents(1).userTags = 'Action/Eye blink/Max';
         validEvents(2).fieldName = 'leftZero';
         validEvents(2).label = 'BlinkLeftZero';
         validEvents(2).longName = 'Blink first crosses zero on close';
         validEvents(2).description = 'Time blink signal first crosses zero on close';
-        validEvents(2).userTags = '/Action/Eye blink/Left zero';
+        validEvents(2).userTags = 'Action/Eye blink/Left zero';
         validEvents(3).fieldName = 'rightZero';
         validEvents(3).label = 'BlinkRightZero';
         validEvents(3).longName = 'Time blink signal first crosses zero on open';
         validEvents(3).description =  'Time blink signal first crosses zero on open';
-        validEvents(3).userTags = '/Action/Eye blink/Right zero';
+        validEvents(3).userTags = 'Action/Eye blink/Right zero';
         validEvents(4).fieldName = 'leftBase';
         validEvents(4).label = 'BlinkLeftBase';
         validEvents(4).longName = 'Time blink signal local minimum on close';
         validEvents(4).description =  'Time of blink signal last local minimum on close';
-        validEvents(4).userTags = '/Action/Eye blink/Left base';
+        validEvents(4).userTags = 'Action/Eye blink/Left base';
         validEvents(5).fieldName = 'rightBase';
         validEvents(5).label = 'BlinkRightBase';
         validEvents(5).longName = 'Time blink signal crosses low on open';
         validEvents(5).description =  'Time of blink signal first local minimum on open';
-        validEvents(5).userTags = '/Action/Eye blink/Right base';
+        validEvents(5).userTags = 'Action/Eye blink/Right base';
         validEvents(6).fieldName = 'leftZeroHalfHeight';
         validEvents(6).label = 'BlinkLeftHalfHeight';
         validEvents(6).longName = 'Time blink signal reaches zero half height on close';
         validEvents(6).description =  'Time blink signal last reaches zero half height on close';
-        validEvents(6).userTags = '/Action/Eye blink/Left half height';
+        validEvents(6).userTags = 'Action/Eye blink/Left half height';
         validEvents(7).fieldName = 'rightZeroHalfHeight';
         validEvents(7).label = 'BlinkRightHalfHeight';
         validEvents(7).longName = 'Time blink signal reaches zero half height on open';
         validEvents(7).description =  'Time blink signal first reaches zero half height on open';
-        validEvents(7).userTags = '/Action/Eye blink/Right half height';
+        validEvents(7).userTags = 'Action/Eye blink/Right half height';
     end
 end
