@@ -26,6 +26,7 @@ independent components that are not eye-related. Kay Robbins of UTSA maintains B
 1.0.1  2/22/2017 Implemented combine-by-subject and date for determining max distributions 
 1.0.2  3/9/2017 Implemented insertion of blink events into EEG structure
 1.1.0  3/17/2017 Implemented insertion of additional blink features as events and constructed zeroed blink signal
+1.1.1  9/6/2018 Modified getBlinkEvents to not include leading slashes in HED tags
 
 ### Support  
 This research was sponsored by the Army Research Laboratory and was  
