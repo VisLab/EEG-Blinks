@@ -34,7 +34,8 @@ minEventLen = 0.05; % events less than 50 ms are discarded
 minEventSep = 0.05; % events less than 50 ms apart are discarded
 
 mu = mean(blinkComp); 
-robustStdDev = 1.4826*mad(blinkComp);
+%robustStdDev = 1.4826*mad(blinkComp);
+robustStdDev = 1.4826*mad(blinkComp, 1);
 minBlink = minEventLen * srate;              % minimum blink frames
 threshold = mu + stdThreshold * robustStdDev;      % actual threshold
 

@@ -1,3 +1,7 @@
+blinker 1.1.2 Change log 9/7/2018
+1. Modified getBlinkPositions to calculate robustStdDev using median
+absolute deviation rather than mean absolute deviation
+
 blinker 1.1.1 Change log 9/6/2018
 1. Modified getBlinkEvents to not have leading slashes on HED tags
 
