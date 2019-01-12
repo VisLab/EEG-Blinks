@@ -52,7 +52,6 @@ blinkIndDir = [blinkDir filesep typeBlinks];
 % blinkIndDir = [blinkDir filesep typeBlinks];
 
 %% NCTU_RWN_VDE
-J:\CTAData\NCTU_RWN_VDE\Blinks
 %% Make the directory for the blink extraction
 if ~exist(blinkIndDir, 'dir')
     mkdir(blinkIndDir);
