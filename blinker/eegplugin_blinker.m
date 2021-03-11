@@ -25,7 +25,7 @@ function vers = eegplugin_blinker(fig, trystrs, catchstrs)
 %% Adds blinker as a plugin under the tools menu on EEGLAB
 
 %% Set the version number
-vers = 'blinker1.0.0';
+vers = 'blinker1.1.2';
 
 %% Add subfolders
 tmp = which('getBlinkerDefaults');
