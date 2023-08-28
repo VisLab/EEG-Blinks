@@ -1,3 +1,11 @@
+blinker 1.2.0 Change log 8/28/2023
+1. Included eyeCatch in the utilities directory as it does not seem to
+be easily available elsewhere. It makes the distribution very large.
+Because of GitHub limitations, this repository cannot be zipped into a
+single file to be installed as an EEGLAB Plugin. Thus, if you don't
+install through the EEGLAB interface, you must download this repository
+into EEGLAB/plugins/blinkerv1.2.0.
+
 blinker 1.1.2 Change log 9/7/2018
 1. Modified getBlinkPositions to calculate robustStdDev using median
 absolute deviation rather than mean absolute deviation

@@ -5,8 +5,17 @@ Contains tools for the BLINKER pipeline for automatically extracting blinks and 
 ocular indices from EEG. You can find user documention at: 
    http://vislab.github.io/EEG-Blinks/   
    
-**Note:** For convenience, EEGLABPlugin directory contains the latest released version of BLINKER
-that can be unzipped into your EEGLAB plugins directory.  
+
+This version has Eye-catch embedded. The original code
+for Eye-catch is available at [https://github.com/bigdelys/eye-catch](https://github.com/bigdelys/eye-catch).
+
+### Installing as a plugin in EEGLAB
+
+You can install blinker as a plugin from EEGLAB plugin manager.
+However, if you want to install from GitHub:  
+1. Download this repository.  
+2. Rename the blinker directory blinkerv1.2.0.  
+3. Copy the blinkerv1.2.0 into the EEGLAB/plugins directory.  
 
 ### Citing the BLINKER pipeline
 BLINKER is freely available under the GNU General Public License. 
@@ -27,6 +36,7 @@ independent components that are not eye-related. Kay Robbins of UTSA maintains B
 1.0.2  3/9/2017 Implemented insertion of blink events into EEG structure
 1.1.0  3/17/2017 Implemented insertion of additional blink features as events and constructed zeroed blink signal
 1.1.1  9/6/2018 Modified getBlinkEvents to not include leading slashes in HED tags
+1.2.0  8/28/2022 Incorporated eyeCatch since not easily available elsewhere.
 
 ### Support  
 This research was sponsored by the Army Research Laboratory and was  
